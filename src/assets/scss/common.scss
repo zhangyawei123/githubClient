@@ -1,0 +1,139 @@
+$text-normal: #333; //正常字体颜色黑一点的
+$text-light: #5c697e;//浅色一点的文字
+$text-tips: #a1a8b3;//提示文字的颜色
+$bg-color: #fafafa;
+$border-color: #e2e5e7;
+$primary-color: #1278ec;//主题颜色
+//引入原始饿了么样式，修改主题色
+//$--color-primary: #1278EC;
+//$--font-path: '~element-ui/lib/theme-chalk/fonts';
+//@import "~element-ui/packages/theme-chalk/src/index";
+
+body {
+  background: #F3F4F5;
+}
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.common-width {
+  margin: 0 auto;
+  width: 1200px;
+  min-width: 1200px;
+}
+.public-header {
+  width: 100%;
+  height: 60px;
+  padding: 10px 0;
+  box-sizing: border-box;
+  background: #fff;
+}
+.header-logo-box {
+  float: left;
+}
+.header-logo {
+  float: left;
+  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+}
+.platform-name {
+  display: inline-block;
+  line-height: 40px;
+  font-size: 16px;
+  color: $text-normal;
+}
+.user-info-box {
+  float: right;
+  height: 100%;
+}
+.massage {
+  float: right;
+  margin-top: 10px;
+  width: 24px;
+  height: 18px;
+  background: #f00;
+}
+.user-logo {
+  float: right;
+  margin-left: 36px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid $border-color;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.user-name {
+  float: right;
+  margin-left: 10px;
+  width: 80px;
+  line-height: 40px;
+}
+.wrap {
+  margin-top: 40px;
+}
+/* 菜单开始 */
+.main-menu {
+  width: 190px;
+  float: left;
+  background: #fff;
+}
+.main-menu .iconfont {
+  font-size: 18px;
+  color: $text-tips;
+}
+.main-menu-item a,.main-menu-h1{
+  display: block;
+  padding-left: 24px;
+  height: 50px;
+  line-height: 50px;
+  text-align: left;
+  box-sizing: border-box;
+  border-left: 2px solid transparent;
+}
+.main-menu-h1 {
+  color: $text-tips;
+}
+.main-menu-item a i,.main-menu-h1 i {
+  margin-right: 24px;
+}
+.sub-menu-item a{
+  display: block;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+}
+.main-menu-item a:hover,.sub-menu-item a:hover {
+  color: $text-tips;
+}
+.menu-selected a{
+  background: rgba(18,120,236,.1);
+  color: $primary-color;
+  border-left: 2px solid $primary-color;
+}
+.menu-selected a:hover {
+  color: $primary-color;
+}
+.stag {
+  width: 980px;
+  margin-bottom: 60px;
+  float: right;
+  box-sizing: border-box;
+  min-height: 200px;
+  padding: 30px 40px;
+  background: #fff;
+}
+
+
+
+
+
+
+
+
+
+
+
+

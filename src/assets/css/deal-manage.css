@@ -1,0 +1,132 @@
+.message-title {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.sub-title {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E2E5E7;
+  color: #A1A8B3;
+}
+.message-cell {
+  padding: 24px 0 20px 60px;
+  overflow: hidden;
+  border-bottom: 1px solid #E2E5E7;
+}
+.visitor-pic {
+  float: left;
+  width: 40px;
+  height: 40px;
+  margin-left: -60px;
+  margin-top: -6px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f0f;
+}
+.visitor-name {
+  margin-bottom: 14px;
+  color: #5C697E;
+}
+.visitor-message {
+  margin-bottom: 14px;
+  font-size: 16px;
+}
+.message-to {
+  padding: 17px 20px;
+  color: #5C697E;
+  background: #F8F8F8;
+}
+.time-reply {
+  padding: 20px 0 10px;
+  overflow: hidden;
+  color: #A1A8B3;
+}
+.reply-btn {
+  float: right;
+  color: #1278ec;
+  cursor: pointer;
+}
+.reply-btn.disabled {
+  color: #a1a8b3;
+  cursor: default;
+}
+.reply-box {
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background: #f8f8f8;
+}
+.reply-box textarea{
+  margin-bottom: 8px;
+  padding: 10px 20px;
+  height: 80px;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+}
+.send-info {
+  line-height: 36px;
+  overflow: hidden;
+  color: #A1A8B3;
+}
+.send-btn {
+  float: right;
+  width: 80px;
+  text-align: center;
+  border-radius: 3px;
+  color: #fff;
+  background: #1278ec;
+  cursor: pointer;
+}
+.send-btn.disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.answered {
+  color: #A1A8B3;
+}
+.answer-box {
+  overflow: hidden;
+  background: #f8f8f8;
+}
+.answer-item {
+  margin: 20px;
+}
+.answer-content {
+  margin-bottom: 8px;
+}
+.answer-to {
+  color: #5C697E;
+}
+.answer-time,.message-from {
+  color: #A1A8B3;
+}
+.delete {
+  margin-left: 10px;
+  cursor: pointer;
+}
+.more-btn {
+  display: block;
+  margin: 20px auto;
+  width: 110px;
+  line-height: 36px;
+  border: solid 1px #e2e5e7;
+  color: #5c697e;
+  text-align: center;
+}
+/* 咨询管理部分 */
+.contact-state {
+  float: right;
+}
+.visitor-info-key {
+  display: inline-block;
+  color: #5c697e;
+  margin-right: 50px;
+  margin-bottom: 20px;
+}
+.visitor-info-key:last-of-type {
+  margin-bottom: 0;
+}
+.visitor-info-value {
+  margin-left: 5px;
+  color: #333;
+}

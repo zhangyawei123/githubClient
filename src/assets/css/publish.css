@@ -1,0 +1,230 @@
+/* 产品 */
+.tips {
+  color: #a1a8b3;
+}
+.publish-header {
+  padding: 30px 40px 0;
+  background: #fff;
+  border-radius: 3px;
+}
+.publish-h1 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+.publish-title-item {
+  margin-right: 50px;
+  display: inline-block;
+  line-height: 50px;
+  font-size: 16px;
+  color: #5c697e;
+  border-bottom: 3px solid transparent;
+}
+.publish-title-item.selected {
+  color: #1278ec;
+  border-bottom: 3px solid #1289ec;
+}
+.product-info-item {
+  margin-top: 15px;
+  padding: 40px 40px 10px 0;
+  background: #fff;
+  border-radius: 3px;
+}
+.product-attribute {
+  padding: 30px 0;
+  background: #fafafa;
+}
+.product-info-item dl {
+  overflow: hidden;
+}
+.product-info-item dt {
+  padding-right: 20px;
+  float: left;
+  width: 130px;
+  text-align: right;
+  box-sizing: border-box;
+}
+.product-info-item dd {
+  margin-left: 130px;
+  margin-bottom: 30px;
+}
+.attribute-tips {
+  margin-bottom: 20px;
+}
+.attribute-box {
+  overflow: hidden;
+}
+.attribute-item {
+  float: left;
+  margin-bottom: 20px;
+  width: 50%;
+  line-height: 40px;
+}
+.attribute-item-key {
+  display: inline-block;
+  width: 116px;
+  text-align: right;
+  padding-right: 20px;
+}
+.attribute-item-value {
+  width: 240px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 3px;
+}
+/*上传视频的按钮*/
+.video-upload-btn {
+  margin-bottom: 10px;
+  width: 360px;
+  height: 200px;
+  border: 1px solid #e2e5e7;
+}
+input.attribute-item-value {
+  width: 238px;
+  height: 38px;
+  line-height: 38px;
+  padding: 0;
+  border: 1px solid #e2e5e7;
+}
+.product-profession-item {
+  margin-bottom: 20px;
+  display: inline-block;
+  width: 128px;
+  cursor: pointer;
+}
+.product-profession-item input {
+  display: none;
+}
+.product-profession-item i {
+  float: left;
+  display: inline-block;
+  margin-right: 14px;
+  width: 16px;
+  height: 16px;
+  background: #00f;
+}
+.product-profession-item.selected i {
+  background: #0f0;
+}
+.component {
+  width: 100%;
+  border: 1px solid #e3e6e9;
+  margin-bottom: 30px;
+  table-layout: fixed;
+}
+.component thead tr {
+  line-height: 48px;
+  background: #fafafa;
+  border-bottom: 1px solid #e3e6e9;
+}
+.component .name {
+  width: 400px;
+  padding-left: 40px;
+  padding-right: 80px;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.component tbody tr {
+  line-height: 94px;
+  border-bottom: 1px solid #e3e6e9;
+}
+.component .component-pic {
+  float: left;
+  margin-top: 20px;
+  margin-right: 8px;
+  width: 52px;
+  height: 52px;
+  border: 1px solid #f0f0f0;
+}
+.delete {
+  color: #1278ec;
+}
+.add-btn {
+  float: left;
+  margin-top: -20px;
+  margin-right: 20px;
+  width: 96px;
+  line-height: 36px;
+  text-align: center;
+  color: #1278ec!important;
+  border: 1px solid #e3e6e9;
+  border-radius: 3px;
+}
+.state-box {
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+.show-state {
+  float: left;
+  margin-right: 40px;
+  cursor: pointer;
+}
+.show-state input {
+  display: none;
+}
+.show-state i {
+  margin-right: 10px;
+  float: left;
+  width: 16px;
+  height: 16px;
+  background: #f00;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.show-state.selected i {
+  background: #00f;
+}
+.configure .name {
+  width: 360px;
+}
+.introduction .name {
+  width: 386px;
+  padding-right: 0;
+}
+.introduction .profession {
+  width: 352px;
+}
+.introduction tbody tr {
+  line-height: 70px;
+}
+.introduction tbody td input {
+  padding-left: 20px;
+  height: 40px;
+  line-height: 40px;
+  width: 300px;
+  border: 1px solid #e2e5e7;
+}
+.publish-btn-box {
+  margin-top: 40px;
+  height: 100px;
+  line-height: 100px;
+  background: #fff;
+  text-align: center;
+}
+.publish-btn {
+  display: inline-block;
+  width: 120px;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  background: #1278ec;
+  border-radius: 3px;
+}
+/* 圈子发布 */
+
+.circle-title-item.selected {
+  display: inline-block;
+  width: 80px;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  color: #1278ec;
+  border-radius: 3px;
+  border: solid 1px #1278ec;
+}
+
+
+
+
