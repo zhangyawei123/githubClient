@@ -1,8 +1,8 @@
 <template>
-    <div class="panel-box">
+    <div class="panel-box" v-if="panelShow">
       <div class="panel-header clearfix">
         <span>添加可加工零件</span>
-        <a href="##" class="close-btn">&times;</a>
+        <a class="close-btn" v-on:click="panelClose">&times;</a>
       </div>
       <div class="panel-body">
         <el-tabs v-model="activeName">
@@ -118,6 +118,7 @@
         name: "alert-panel",
         data() {
             return {
+              panelShow: false,
               activeName: 'second',
               seachkey: '',
               tableData3: [{
@@ -177,6 +178,9 @@
           VueImgInputer
         },
         methods: {
+          panelClose(){
+            this.panelShow = false;
+          },
           handleSelectionChange(val) {      //零件库添加
             this.multipleSelection = val;
           },

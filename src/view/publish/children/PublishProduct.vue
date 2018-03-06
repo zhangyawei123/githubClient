@@ -399,8 +399,8 @@
     text-align: center;
   }
   .avatar {
-    width: 120px;
-    height: 120px;
+    width: 120px!important;
+    height: 120px!important;
     display: block;
   }
   /*多选框部分*/
