@@ -48,6 +48,7 @@ Temporary Items
 
 .DS_Store
 node_modules/
+test/
 dist/
 npm-debug.log*
 yarn-debug.log*
