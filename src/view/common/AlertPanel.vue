@@ -57,6 +57,7 @@
                 <td class="custom-item2">行业</td>
                 <td class="custom-item3">行业</td>
                 <td class="custom-item4">系统</td>
+                <td class="custom-item5">操作</td>
               </tr>
               </thead>
             </table>
@@ -92,7 +93,7 @@
                       </el-option>
                     </el-select>
                   </td>
-                  <td>
+                  <td class="custom-item4">
                     <el-select v-model="custom.systemValue" class="custom-select" placeholder="请选择">
                       <el-option
                         v-for="item in tradeOptions"
@@ -101,6 +102,9 @@
                         :value="item.value">
                       </el-option>
                     </el-select>
+                  </td>
+                  <td>
+                    <a class="delete-btn">删除</a>
                   </td>
                 </tr>
                 </tbody>
@@ -118,10 +122,11 @@
         name: "alert-panel",
         data() {
             return {
-              panelShow: false,
+              panelShow: true,
               activeName: 'second',
               seachkey: '',
-              tableData3: [{
+              tableData3: [
+                {
                 date: '2016-05-03',
                 name: '王小虎',
                 address: '上海市普陀区金沙江路 1518 弄'
@@ -149,9 +154,11 @@
                 date: '2016-05-07',
                 name: '王小虎',
                 address: '上海市普陀区金沙江路 1518 弄'
-              }],
-              multipleSelection: [],
-              tradeOptions: [{
+              }
+              ],
+              multipleSelection: [],                          //table选中项
+              tradeOptions: [
+                {
                 value: '选项1',
                 label: '黄金糕'
               }, {
@@ -166,12 +173,14 @@
               }, {
                 value: '选项5',
                 label: '北京烤鸭'
-              }],
+              }
+              ],
               customList: [
                 {imageUrl: '',tradeValue: '',systemValue: ''},
                 {imageUrl: '',tradeValue: '',systemValue: ''},
                 {imageUrl: '',tradeValue: '',systemValue: ''}
-              ]
+              ],
+              customListSelection: []                         //自定义添加选中项
             }
         },
         components: {

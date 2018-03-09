@@ -23,6 +23,8 @@ import VideoManageEdit from '@/view/content/videochildren/VideoManageEdit'
 import CircleManage from '@/view/content/CircleManage'
 import CircleManageList from '@/view/content/circlechildren/CircleManageList'
 import CircleManageVideo from '@/view/content/circlechildren/CircleVideo'
+import CircleManagePic from '@/view/content/circlechildren/CirclePic'
+import CircleManageActicle from '@/view/content/circlechildren/CircleArticle'
 //产品管理
 import ProductManage from '@/view/product/ProductManage'
 import ProductManageList from '@/view/product/children/ProductManageList'
@@ -98,6 +100,8 @@ export default new Router({
           children: [
             { path: '', component: CircleManageList},
             { path: 'video', component: CircleManageVideo},
+            { path: 'pic', component: CircleManagePic},
+            { path: 'article', component: CircleManageActicle},
           ]
         },
       	{path: '/productManage',component: ProductManage,

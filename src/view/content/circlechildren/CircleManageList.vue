@@ -8,12 +8,12 @@
             <img src="../../../assets/img/content-item-pic.png" alt="">
           </div>
           <div class="cell-title">
-            <router-link :to="{path: '/circleManage/video',query: { videoIndex: index}}">{{item.title}}</router-link>
+            <router-link :to="{path: '/circleManage/article',query: { videoIndex: index}}">{{item.title}}</router-link>
           </div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete">删除</span></div>
+          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listAll)">删除</span></div>
           <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
         </div>
-        <a href="##" v-if="loadSign(listAll.length)" class="load-more">查看更多</a>
+        <a href="##" v-if="listAll.length%10 === 0 && listAll.length !==0" class="load-more">查看更多</a>
         <span class="load-all" v-else>已显示全部内容</span>
       </el-tab-pane>
       <el-tab-pane label="审核中" name="second">
@@ -22,7 +22,7 @@
             <img src="../../../assets/img/content-item-pic.png" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete">删除</span></div>
+          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listVerify)">删除</span></div>
           <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
         </div>
       </el-tab-pane>
@@ -32,7 +32,7 @@
             <img src="../../../assets/img/content-item-pic.png" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete">删除</span></div>
+          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listPublish)">删除</span></div>
           <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
         </div>
       </el-tab-pane>
@@ -42,7 +42,7 @@
             <img src="../../../assets/img/content-item-pic.png" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete">删除</span></div>
+          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listNoPass)">删除</span></div>
           <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
         </div>
       </el-tab-pane>
@@ -110,12 +110,23 @@
       handleClick(tab, event) {
         // console.log(tab, event);
       },
-      loadSign(value) {
-        if (value%10 !== 0) {
-          return false
-        }else {
-          return true
-        }
+      removeItem(index,list) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '删除提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          list.splice(index,1);
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       }
     },
     // filters: {

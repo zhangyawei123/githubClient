@@ -166,16 +166,23 @@
   width: 94px;
 }
 .panel-box .custom-content .custom-item2 {
-  width: 308px;
+  width: 220px;
 }
 .panel-box .custom-content .custom-item3 {
   width: 160px;
+}
+.panel-box .custom-content .custom-item4 {
+  width: 160px;
+}
+.delete-btn {
+  color: #1278ec;
+  cursor: pointer;
 }
 .panel-box .custom-content .custom-item-desc {
   /*padding:0 10px;*/
   /*margin-top: 20px;*/
   box-sizing: border-box;
-  width: 267px;
+  width: 200px;
   height: 40px;
   /*border: 1px solid #e5e5e5;*/
   border-radius: 3px;
