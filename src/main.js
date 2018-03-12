@@ -28,6 +28,23 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.prototype.axios = axios;
 Vue.prototype.echarts = echarts;
+
+
+//    全局时间过滤器，时间格式化
+Vue.filter('formatTime', function (time) {
+  var nowTime = new Date().getTime();
+  var publishTime = new Date(time);
+  var timeDis = nowTime - time;
+  var hours = publishTime.getHours();
+  var minutes = publishTime.getHours();
+  if (hours < 10) hours = '0'+hours;
+  if (minutes < 10) minutes = '0'+minutes;
+  if (timeDis < 1000*60) return Math.floor(timeDis/1000) +'秒前';
+  if (timeDis < 1000*60*60&&timeDis >= 1000*60) return Math.floor(timeDis/(1000*60)) +'分钟前';
+  if (timeDis < 1000*60*60*24&&timeDis >= 1000*60*60) return Math.floor(timeDis/(1000*60*60)) +'小时前';
+  if (timeDis > 1000*60*60*24) return publishTime.getFullYear() + '-' + (publishTime.getMonth()+1) + '-' + publishTime.getDate() +'\t'+
+    hours +':'+minutes;
+})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
