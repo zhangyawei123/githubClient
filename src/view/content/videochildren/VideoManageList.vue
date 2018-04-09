@@ -10,20 +10,20 @@
       <div class="video-cell clearfix" v-for="(item,index) in lists">
         <div class="video-item video-item1">
           <div class="video-cover">
-            <img src="../../../assets/img/content-item-pic.png" height="226" width="339" alt="">
+            <img :src="item.videoCover" height="226" width="339" alt="">
           </div>
-          <div class="video-name">{{item.videotitle}}</div>
+          <div class="video-name">{{item.title}}</div>
         </div>
         <div class="video-item video-item2">
           <div class="relate-product">
-            <img src="../../../assets/img/user-logo.png" height="116" width="141" alt="">
+            <img :src="item.equipmentCover" height="116" width="141" alt="">
           </div>
           <div class="product-info">
-            <p class="product-name">{{item.productname}}</p>
+            <p class="product-name">{{item.equipmentName}}</p>
           </div>
         </div>
         <div class="video-item video-item3">
-          <p class="publish-time">{{item.publishtime}}</p>
+          <p class="publish-time">{{item.publishTime | formatTime}}</p>
         </div>
         <div class="video-item video-item4">
           <div class="operate">
@@ -41,70 +41,48 @@
       <el-pagination
         background
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage1"
-        :page-size="15"
+        :current-page.sync="currentPage"
+        :page-size="10"
         layout="prev, pager, next,total"
-        :total="100">
+        :total="Number(total)">
       </el-pagination>
     </div>
   </div>
 </template>
 <script>
+  import { httpUrl} from "../../../http_url";
   export default {
     name: 'video-manage-list',
     data () {
       return {
-        lists: [
-          {
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心高级立式车削卧式...',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },{
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心高级',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },{
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },{
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心高级加工中心加工中心立式车削卧式...',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },{
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心高级立式车削卧式...',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },{
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心高级立式车削卧式...',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },{
-            videocover: '',
-            videotitle: '高级立式车削卧式加工中心高级立式车削卧式...',
-            producturl: '',
-            productname: '斗山 PUMA VST5000',
-            publishtime: '2016年11月16日 16:00'
-          },
-        ],
-        currentPage1: 5
+        total: '',
+        lists: [],
+        currentPage: 1
       }
     },
+    mounted: function () {
+      this.$nextTick(function () {
+        this.checkLogIn();
+        console.log('123');
+        this.getDataList((this.currentPage-1));
+      })
+    },
     methods: {
+      getDataList: function (currentPage) {
+        var _this = this;
+        this.axios.get(httpUrl + '/api/product/equipment/video/list?accessToken='+ this.$cookie.get('accessToken') +'&&currentPage=' + currentPage,)
+          .then(response => {
+            // console.log(response.data);
+            _this.total = response.data.total;
+            _this.lists = response.data.list;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+        this.getDataList(val);
       },
       removeItem(index){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -112,7 +90,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.lists.splice(index,1);
+          this.dataBack.list.splice(index,1);
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -125,11 +103,7 @@
         });
       },
     },
-    mounted: function () {
-      this.$nextTick(function () {
-        console.log('msg');
-      })
-    }
+
   }
 </script>
 <style scoped>

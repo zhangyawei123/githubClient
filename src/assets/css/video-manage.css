@@ -108,6 +108,7 @@
   text-align: center;
   color: #fff;
   box-sizing: border-box;
+  cursor: pointer;
 }
 .publish-new {
   padding-top: 60px;

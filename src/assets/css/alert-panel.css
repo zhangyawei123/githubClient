@@ -151,6 +151,7 @@
   cursor: pointer;
 }
 .panel-box .add-btn {
+  margin-right: 20px;
   background: #1278ec;
   color: #fff;
 }
@@ -165,8 +166,14 @@
   padding-left: 30px;
   width: 94px;
 }
+.custom-item-name {
+  width: 100px;
+}
+.custom-item-name > div {
+  width: 80px;
+}
 .panel-box .custom-content .custom-item2 {
-  width: 220px;
+  width: 146px;
 }
 .panel-box .custom-content .custom-item3 {
   width: 160px;
@@ -182,7 +189,7 @@
   /*padding:0 10px;*/
   /*margin-top: 20px;*/
   box-sizing: border-box;
-  width: 200px;
+  width: 130px;
   height: 40px;
   /*border: 1px solid #e5e5e5;*/
   border-radius: 3px;

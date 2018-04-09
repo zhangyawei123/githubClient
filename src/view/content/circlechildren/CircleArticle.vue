@@ -2,7 +2,7 @@
     <div>
       <div class="crumbs">
         <div class="crumbs-inner">
-          <router-link to="/posterManage">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/posterManage">海报管理</router-link><i class="crumbs-icon">&gt;</i><span>海报编辑</span>
+          <router-link to="/circleManage">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/circleManage">圈子管理</router-link><i class="crumbs-icon">&gt;</i><span>详情</span>
         </div>
       </div>
       <div class="article-box">
@@ -49,7 +49,6 @@
               <div class="visitor-message" v-if="answer.type===0">{{answer.message}}//@{{answer.toName}}：{{answer.toMessage}}</div>
               <div class="time-reply"><span>{{answer.time}}</span><span class="reply-btn" @click="changOpen(answer)">回复</span></div>
               <div class="reply-box" v-if="answer.opened">
-                <!--<textarea class="reply-text" name="" id="" placeholder="回复该留言" v-model="item.textarea"></textarea>-->
                 <el-input
                   class="reply-text"
                   type="textarea"
@@ -64,12 +63,6 @@
                 </div>
               </div>
             </div>
-            <!--<div class="answer-item" v-for="answer in item.answers">-->
-            <!--<div class="answer-content">-->
-            <!--<span class="answer-to">上海东研(商家) &gt; {{item.name}}：</span>{{answer}}-->
-            <!--</div>-->
-            <!--<p class="answer-time">刚刚</p>-->
-            <!--</div>-->
           </div>
         </div>
       </div>
@@ -102,6 +95,11 @@
               }
             ],
           }
+        },
+        mounted(){
+          this.$nextTick(function () {
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
+          })
         },
         methods: {
           changOpen: function (item) {

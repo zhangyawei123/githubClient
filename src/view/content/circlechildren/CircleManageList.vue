@@ -4,129 +4,191 @@
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="全部" name="first">
         <div class="circle-cell" v-for="(item,index) in listAll">
-          <div class="cell-pic">
-            <img src="../../../assets/img/content-item-pic.png" alt="">
+          <div class="cell-pic" v-if="item.mainPic">
+            <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">
-            <router-link :to="{path: '/circleManage/article',query: { videoIndex: index}}">{{item.title}}</router-link>
+            <router-link v-if="item.type ==='video'" :to="{path: '/circleManage/video',query: { videoIndex: item.id}}">{{item.title}}</router-link>
+            <router-link v-else-if="item.type ==='image'" :to="{path: '/circleManage/image',query: { videoIndex: item.id}}">{{item.title}}</router-link>
+            <router-link v-else-if="item.type ==='article'" :to="{path: '/circleManage/article',query: { videoIndex: item.id}}">{{item.title}}</router-link>
           </div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listAll)">删除</span></div>
-          <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺  · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listAll,item.id,item.type)">删除</span></div>
+          <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
-        <a href="##" v-if="listAll.length%10 === 0 && listAll.length !==0" class="load-more">查看更多</a>
+        <a href="javascript:void(0)" v-if="listAllLoadMoreTips" class="load-more" @click="loadListAll">查看更多</a>
         <span class="load-all" v-else>已显示全部内容</span>
       </el-tab-pane>
       <el-tab-pane label="审核中" name="second">
         <div class="circle-cell" v-for="(item,index) in listVerify">
-          <div class="cell-pic">
-            <img src="../../../assets/img/content-item-pic.png" alt="">
+          <div class="cell-pic" v-if="item.mainPic">
+            <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listVerify)">删除</span></div>
-          <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listVerify)">删除</span></div>
+          <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
+        <a href="javascript:void(0)" v-if="listVerifyLoadMoreTips" class="load-more" @click="loadMoreVerify">查看更多</a>
+        <span class="load-all" v-else>已显示全部内容</span>
       </el-tab-pane>
       <el-tab-pane label="已发布" name="third">
         <div class="circle-cell" v-for="(item,index) in listPublish">
-          <div class="cell-pic">
-            <img src="../../../assets/img/content-item-pic.png" alt="">
+          <div class="cell-pic" v-if="item.mainPic">
+            <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listPublish)">删除</span></div>
-          <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listPublish)">删除</span></div>
+          <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
+        <a href="javascript:void(0)" v-if="listPublishLoadMoreTips" class="load-more" @click="loadMorePublish">查看更多</a>
+        <span class="load-all" v-else>已显示全部内容</span>
       </el-tab-pane>
       <el-tab-pane label="未通过" name="fourth">
         <div class="circle-cell" v-for="(item,index) in listNoPass">
-          <div class="cell-pic">
-            <img src="../../../assets/img/content-item-pic.png" alt="">
+          <div class="cell-pic" v-if="item.mainPic">
+            <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{item.mark}}</span>工艺 · 未审核 · 刚刚 · <span class="delete" @click="removeItem(index,listNoPass)">删除</span></div>
-          <div class="infomation"><span>阅读 613</span><span>评论 0</span><span class="last">收藏 0</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listNoPass)">删除</span></div>
+          <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
+        <a href="javascript:void(0)" v-if="listNoPassLoadMoreTips" class="load-more" @click="loadMoreNoPass">查看更多</a>
+        <span class="load-all" v-else>已显示全部内容</span>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
+  import { httpUrl} from "../../../http_url";
   export default {
     name: 'circleManage',
     data () {
       return {
         activeName: 'first',
-        listAll: [
-          {
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          },{
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          },{
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          },
-        ],
-        listVerify: [
-          {
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          },{
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          }
-        ],
-        listPublish: [
-          {
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          },{
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          }
-        ],
-        listNoPass: [
-          {
-            imgurl: '',
-            title: '机械化做的劈杀大瓶，你吃过吗？还可以加蛋的',
-            mark: '已发布'
-          }
-        ],
+        listAllLoadMoreTips: true,
+        listVerifyLoadMoreTips: true,
+        listPublishLoadMoreTips: true,
+        listNoPassLoadMoreTips: true,
+        listAllPage: -1,
+        listVerifyPage: -1,
+        listPublishPage: -1,
+        listNoPassPage: -1,
+        listAll: [],
+        listVerify: [],
+        listPublish: [],
+        listNoPass: [],
+        stateObj: {
+          '2001': '未审核',
+          '2002': '已发布',
+          '2003': '未通过 ',
+          '2004': '审核中',
+        }
       }
     },
     mounted: function () {
       this.$nextTick(function () {
-
+        var _this = this;
+        this.checkLogIn();
+        this.loadListAll();
+        this.loadMoreVerify();
+        this.loadMorePublish();
+        this.loadMoreNoPass();
       })
     },
     methods: {
       handleClick(tab, event) {
         // console.log(tab, event);
       },
-      removeItem(index,list) {
+      removeItem(index,list,circleId,type) {
+        var _this = this;
         this.$confirm('此操作将永久删除该文件, 是否继续?', '删除提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          list.splice(index,1);
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          this.axios.post(httpUrl + '/api/circle/manager/del?accessToken='+this.$cookie.get('accessToken')+'&circleId='+circleId+'&type='+ type)
+            .then(function (response) {
+              console.log(response.data);
+              if (response.data.code ===1) {
+                list.splice(index,1);
+                _this.$message({
+                  type: 'success',
+                  message: response.data.msg
+                });
+              }else {
+                _this.$message({
+                  type: 'warning',
+                  message: response.data.msg
+                });
+              }
+            })
+            .catch(function (error) {
+
+            })
+
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
           });
         });
+      },
+      loadListAll() {
+        var _this = this;
+        this.listAllPage++;
+        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+  _this.listAllPage)
+          .then(function (response) {
+            console.log(response.data);
+            _this.listAll = _this.listAll.concat(response.data.list);
+            if(_this.listAllPage === (response.data.pageSum -1) || response.data.pageSum===0) {  //如果当前页等于总页码的时候加载更多按钮消失
+              _this.listAllLoadMoreTips = false;
+            }
+          })
+          .catch(function (error) {
+
+          })
+      },
+      loadMoreVerify() {
+        var _this = this;
+        this.listVerifyPage++;
+        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+ _this.listVerifyPage+ '&&verifyState=2002')
+          .then(function (response) {
+            _this.listVerify = _this.listVerify.concat(response.data.list);
+            if(_this.listVerifyPage === (response.data.pageSum -1) || response.data.pageSum===0) {  //如果当前页等于总页码的时候加载更多按钮消失
+              _this.listVerifyLoadMoreTips = false;
+            }
+          })
+          .catch(function (error) {
+
+          })
+      },
+      loadMorePublish() {
+        var _this = this;
+        this.listPublishPage++;
+        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+  _this.listPublishPage+ '&&verifyState=2002')
+          .then(function (response) {
+            _this.listPublish = _this.listPublish.concat(response.data.list);
+            if(_this.listPublishPage === (response.data.pageSum -1) || response.data.pageSum===0) {  //如果当前页等于总页码的时候加载更多按钮消失
+              _this.listPublishLoadMoreTips = false;
+            }
+          })
+          .catch(function (error) {
+
+          })
+      },
+      loadMoreNoPass() {
+        var _this = this;
+        this.listNoPassPage++;
+        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+ _this.listNoPassPage+ '&&verifyState=2003')
+          .then(function (response) {
+            console.log(response.data);
+            _this.listNoPass = _this.listNoPass.concat(response.data.list);
+            if(_this.listNoPassPage === (response.data.pageSum -1) || response.data.pageSum===0) {  //如果当前页等于总页码的时候加载更多按钮消失
+              _this.listNoPassLoadMoreTips = false;
+            }
+          })
+          .catch(function (error) {
+
+          })
       }
     },
     // filters: {

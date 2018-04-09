@@ -2,7 +2,7 @@
     <div>
       <div class="crumbs">
         <div class="crumbs-inner">
-          <router-link to="/posterManage">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/posterManage">海报管理</router-link><i class="crumbs-icon">&gt;</i><span>海报编辑</span>
+          <router-link to="/circleManage">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/circleManage">圈子管理</router-link><i class="crumbs-icon">&gt;</i><span>详情</span>
         </div>
       </div>
       <swiper :options="swiperOption" ref="mySwiper" @slideChangeTransitionStart="callback">
@@ -143,9 +143,9 @@
             return this.$refs.mySwiper.swiper
           }
         },
-        mounted() {
+        mounted(){
           this.$nextTick(function () {
-
+            document.body.scrollTop = document.documentElement.scrollTop = 0;
           })
         },
         methods: {

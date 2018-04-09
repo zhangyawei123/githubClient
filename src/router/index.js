@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/view/HelloWorld'
+
+//登录
+import LogIn from '@/view/login/LogIn'
 //主页
 import Home from '@/view/home/Home'
 //消息中心
@@ -29,6 +32,12 @@ import CircleManageActicle from '@/view/content/circlechildren/CircleArticle'
 import ProductManage from '@/view/product/ProductManage'
 import ProductManageList from '@/view/product/children/ProductManageList'
 import ProductManageEdit from '@/view/product/children/ProductManageEdit'
+//商家管理
+import MerchantInfo from '@/view/merchant/MerchantInfo'
+import HomePageEdit from '@/view/merchant/HomePageEdit'
+import Trends from '@/view/merchant/Trends'
+import TrendsBody from '@/view/merchant/children/TrendsBody'
+import TrendsPublishNew from '@/view/merchant/children/TrendsPublishNew'
 //数据统计
 import Data from '@/view/data/Data'
 import DataProfiling from '@/view/data/children/DataProfiling'
@@ -47,6 +56,8 @@ import DataProductSingle from '@/view/data/children/productchildren/DataProductS
 import Single from '@/view/data/children/productchildren/children/Single'
 
 import DataCircle from '@/view/data/children/DataCircle'
+import DataCircleWhole from '@/view/data/children/circlechildren/DataCircleWhole'
+import DataCircleSingle from '@/view/data/children/circlechildren/DataCircleSingle'
 //交易管理
 import LeaveWordManage from '@/view/deal/LeaveWordManage'
 import AnswerManage from '@/view/deal/AnswerManage'
@@ -63,7 +74,9 @@ import Account from '@/view/account/Account'
 Vue.use(Router)
 
 export default new Router({
+  // 'mode': 'history',
   routes: [
+    { path: '/login', component: LogIn},
     {
       path: '/',
       // name: 'HelloWorld',
@@ -100,7 +113,7 @@ export default new Router({
           children: [
             { path: '', component: CircleManageList},
             { path: 'video', component: CircleManageVideo},
-            { path: 'pic', component: CircleManagePic},
+            { path: 'image', component: CircleManagePic},
             { path: 'article', component: CircleManageActicle},
           ]
         },
@@ -108,6 +121,14 @@ export default new Router({
           children: [
             {path: '', component: ProductManageList},
             {path: 'edit',component: ProductManageEdit}
+          ]
+        },
+        {"path": '/merchantinfo', component: MerchantInfo},
+        {"path": '/homepageedit', component: HomePageEdit},
+        {"path": '/trends', component: Trends,
+          children: [
+            { path: '', component: TrendsBody},
+            { path: 'publishnew', component: TrendsPublishNew},
           ]
         },
       	{
@@ -134,10 +155,15 @@ export default new Router({
                 {path: 'single',component:DataProductSingle }
               ]
             },
-            {path: 'circle',component:DataCircle},
+            {path: 'circle',component:DataCircle,
+              children: [
+                { path: '', component: DataCircleWhole},
+                { path: 'single', component: DataCircleSingle}
+              ]
+            },
           ]
         },
-        {path: '/analyse',component:Single},
+        {path: '/analyse',component:Single},                              //单个产品的数据分析
         {path: '/leaveWordManage',component: LeaveWordManage},
       	{path: '/answerManage',component: AnswerManage},
       	{path: '/seekManage',component: SeekManage},

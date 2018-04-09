@@ -1,56 +1,78 @@
 <template>
   <div>
-    <div class="content-item" v-for="(item,index) in lists">
-      <div class="content-item-pic">
-        <img src="./../../../assets/img/content-item-pic.png" alt="">
-      </div>
-      <div class="content-item-info">
-        <p class="content-item-title">{{item.title}}</p>
-        <p class="content-item-view">浏览次数：{{item.viewcount}}次</p>
-        <p class="content-item-time">发布时间：{{item.time}}</p>
-        <div class="content-item-oprate">
-          <router-link :to="{ path: '/posterManage/edit', query: { posterIndex: index }}"><i class="iconfont icon-bianji"></i>编辑</router-link>
-          <router-link :to="{ path: 'data', query: { posterIndex: index }}"><i class="iconfont icon-fenxi"></i>分析</router-link>
+    <div class="clearfix">
+      <div class="content-item" v-for="(item,index) in lists">
+        <div class="content-item-pic">
+          <img :src="item.videoCover" alt="">
+        </div>
+        <div class="content-item-info">
+          <p class="content-item-title">{{item.title}}</p>
+          <p class="content-item-view">浏览次数：{{item.viewNum}}次</p>
+          <p class="content-item-time">发布时间：{{item.publishTime | formatTime}}</p>
+          <div class="content-item-oprate">
+            <router-link :to="{ path: '/posterManage/edit', query: { posterIndex: index }}"><i class="iconfont icon-bianji"></i>编辑</router-link>
+            <router-link :to="{ path: 'data', query: { posterIndex: index }}"><i class="iconfont icon-fenxi"></i>分析</router-link>
+          </div>
         </div>
       </div>
     </div>
-    <alert-panel  />
+    <el-pagination
+      background
+      @current-change="handleCurrentChange"
+      :current-page.sync="currentPage"
+      :page-size="10"
+      layout="prev, pager, next,total"
+      :total="Number(total)">
+    </el-pagination>
   </div>
 </template>
 <script>
-  import AlertPanel from '../../common/AlertPanel'
+  import { httpUrl} from "../../../http_url";
+
   export default {
     name: 'poster-manage-list',
     data () {
       return {
-        lists: [
-          {
-            'picUrl': '',
-            'title' : '斗山高效率立式加工中心机床',
-            'viewcount': '365',
-            'time' : '2016年11月29日 16:51'
-          },
-          {
-            'picUrl': '',
-            'title' : '斗山高效率立式加工中心机床',
-            'viewcount': '365',
-            'time' : '2016年11月29日 16:51'
-          },
-          {
-            'picUrl': '',
-            'title' : '斗山高效率立式加工中心机床',
-            'viewcount': '365',
-            'time' : '2016年11月29日 16:51'
-          }
-        ],
+        lists: [],
+        currentPage: 1,
+        total: '',
       }
     },
-    components: {
-      AlertPanel
+    mounted() {
+      this.$nextTick(function () {
+        this.checkLogIn();
+        console.log('accessToken ' + this.$cookie.get('accessToken'));
+        console.log('secret ' + this.$cookie.get('secret'));
+        console.log('cid ' + this.$cookie.get('cid'));
+        this.getDataList();
+      })
+    },
+    methods: {
+      getDataList: function (currentPage) {
+        var _this = this;
+        this.axios.get(httpUrl + '/api/product/equipment/poster/list?accessToken='+ this.$cookie.get('accessToken') +'&&currentPage=' + currentPage,)
+          .then(response => {
+            // console.log(response.data);
+            _this.total = response.data.total;
+            _this.lists = response.data.list;
+          })
+          .catch(err => {
+            this.checkLogIn();
+            console.log(err);
+          });
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+        this.getDataList(val);
+      },
     }
   }
 </script>
 <style scoped>
+  .el-pagination {
+    margin-top: 20px;
+    text-align: center;
+  }
   .stag {
     width: 1010px;
     padding: 0;

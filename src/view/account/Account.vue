@@ -1,47 +1,34 @@
 <template>
   <div>
-    <VueImgInputer v-model="file" accept="image/*" size="small" noMask customerIcon="&#xe66c;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
+    <AlertPanel :showState="jiajia" />
+    <script id="container" name="content" type="text/plain">
+        这里写你的初始化内容
+    </script>
+    <div>
+      dashijdjs
+    </div>
   </div>
 </template>
 
 <script>
-  import VueImgInputer from 'vue-img-inputer'
+  import AlertPanel from '../common/AlertPanel'
     export default {
-        data() {
-            return {
-              file: null
-            }
-        },
+      data() {
+        return {
+          jiajia: 'api/product/equipment/parts'
+        }
+      },
+      mounted(){
+        var ue = UE.getEditor('container');
+      },
       components: {
-        VueImgInputer
+        AlertPanel
       },
       methods: {
-        fileChange(file, name) {
-          // console.log('File:', file);
-          // console.log('FileName:', name);
-          console.log(file);
-        }
+
       }
     }
 </script>
-
-<style scoped>
-  .img-inputer {
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-  .img-inputer.nhe:hover {
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-  }
-  .img-inputer--small {
-    margin-top: 50px;
-    width: 50px!important;
-    height: 50px!important;
-  }
-  .img-inputer__preview-box {
-    background: none!important;
-  }
+<style>
+  @import url(../../assets/css/publish.css);
 </style>

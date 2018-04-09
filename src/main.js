@@ -3,8 +3,11 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import VueCookie from 'vue-cookie'
 import axios from 'axios'
+import qs from 'qs';
 import echarts from 'echarts'
+import {LogIn,GetAccessToken,checkLogIn } from './utils'
 // import VueAxios from 'vue-axios'
 import ElementUI from 'element-ui'
 import $ from 'jquery'
@@ -18,6 +21,14 @@ import '../static/UE/ueditor.all.min.js'
 import '../static/UE/lang/zh-cn/zh-cn.js'
 import '../static/UE/ueditor.parse.min.js'
 
+
+// import '../static/toutiao/jquery-3.1.1.min.js'
+// import '../static/toutiao/jquery-file-upload-pack.js'
+
+// import '../static/jquery-file-upload/js/vendor/jquery.ui.widget.js'
+// import '../static/jquery-file-upload/js/jquery.iframe-transport.js'
+// import '../static/jquery-file-upload/js/jquery.fileupload.js'
+
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 
 
@@ -25,9 +36,14 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 import '../static/js/test'
 
 Vue.config.productionTip = false
+Vue.use(VueCookie);
 Vue.use(ElementUI)
 Vue.prototype.axios = axios;
+Vue.prototype.qs = qs;      //axios解决跨域问题
 Vue.prototype.echarts = echarts;
+Vue.prototype.LogIn = LogIn;
+Vue.prototype.GetAccessToken = GetAccessToken;
+Vue.prototype.checkLogIn = checkLogIn;
 
 
 //    全局时间过滤器，时间格式化
@@ -36,7 +52,7 @@ Vue.filter('formatTime', function (time) {
   var publishTime = new Date(time);
   var timeDis = nowTime - time;
   var hours = publishTime.getHours();
-  var minutes = publishTime.getHours();
+  var minutes = publishTime.getMinutes();
   if (hours < 10) hours = '0'+hours;
   if (minutes < 10) minutes = '0'+minutes;
   if (timeDis < 1000*60) return Math.floor(timeDis/1000) +'秒前';

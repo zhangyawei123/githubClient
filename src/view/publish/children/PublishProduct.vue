@@ -1,5 +1,7 @@
 <template>
   <div>
+    <el-form :model="productRuleForm" :rules="productRules" :inline="true" ref="ruleForm" class="demo-ruleForm">
+      <el-button type="primary" @click="submitForm('ruleForm')">click me</el-button>
     <div class="product-info-item">
       <dl>
         <dt>* 产品属性：</dt>
@@ -8,153 +10,88 @@
           <div class="product-attribute">
             <div class="main-attribute-box attribute-box">
               <div class="attribute-item">
-                <span class="attribute-item-key"> 系列：</span>
-                <!--<select class="attribute-item-value" name="" id=""></select>-->
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+                <span class="attribute-item-key"> 品牌：</span>
+                <el-form-item prop="brandValue">
+                  <el-select v-model="productRuleForm.brandValue" placeholder="请选择" class="attribute-item-value">
+                    <el-option
+                      v-for="item in brandOptions"
+                      :key="item.brandId"
+                      :label="item.brandName"
+                      :value="item.brandId">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
               </div>
               <div class="attribute-item">
-                <span class="attribute-item-key"> 型号：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
+                <span class="attribute-item-key"> 专业：</span>
+                <el-form-item prop="majorsValue">
+                <el-select v-model="productRuleForm.majorsValue" placeholder="请选择" class="attribute-item-value" @focus="getMajors">
                   <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in majorsOptions"
+                    :key="item.major"
+                    :label="item.majorName"
+                    :value="item.major">
                   </el-option>
                 </el-select>
+                </el-form-item>
+              </div>
+              <div class="attribute-item">
+                <span class="attribute-item-key"> *产地：</span>
+                <el-form-item prop="areaValue">
+                  <el-select v-model="productRuleForm.areaValue" placeholder="请选择" class="attribute-item-value">
+                    <el-option
+                      v-for="item in areaOptions"
+                      :key="item.id"
+                      :label="item.value"
+                      :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </div>
+              <div class="attribute-item">
+                <span class="attribute-item-key"> * 系列：</span>
+                <el-form-item prop="seriesConfirmValue">
+                  <el-input v-model="productRuleForm.seriesConfirmValue.value" placeholder="请选择系列" class="attribute-item-value" readonly @focus="showSeriesPanel" clearable></el-input>
+                </el-form-item>
+              </div>
+              <div class="attribute-item">
+                <span class="attribute-item-key"> * 型号：</span>
+                <el-form-item prop="modelo">
+                  <el-input v-model="productRuleForm.modelo" class="attribute-item-value" :maxlength="80" placeholder="请输入型号"></el-input>
+                </el-form-item>
               </div>
               <div class="attribute-item">
                 <span class="attribute-item-key"> * 价格：</span>
-                <!--<input type="text" class="attribute-item-value">-->
-                <el-input v-model="price" placeholder="请输入" :maxlength="80" class="attribute-item-value"></el-input>
-              </div>
-              <div class="attribute-item">
-                <span class="attribute-item-key"> * * 专业：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-
-              <div class="attribute-item">
-                <span class="attribute-item-key"> * 品牌：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="attribute-item">
-                <span class="attribute-item-key"> * 产地：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-            </div>
-            <!-- 附属参数 -->
-            <div class="sub-attribute-box attribute-box">
-              <div class="attribute-item">
-                <span class="attribute-item-key"> * 电源：</span>
-                <el-input v-model="electricalSource" placeholder="请输入" :maxlength="80" class="attribute-item-value"></el-input>
-              </div>
-              <div class="attribute-item">
-                <span class="attribute-item-key"> * 额定容量：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="attribute-item">
-                <span class="attribute-item-key"> *  最大负荷量：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="attribute-item">
-                <span class="attribute-item-key"> * 满负荷电流：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-
-              <div class="attribute-item">
-                <span class="attribute-item-key"> *  截断电流：</span>
-                <el-select v-model="seriesValue" placeholder="请选择" class="attribute-item-value">
-                  <el-option
-                    v-for="item in seriesOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
-              <div class="attribute-item">
-                <span class="attribute-item-key"> *  电气图纸版本：</span>
-                <el-input v-model="blueprint" placeholder="请输入" :maxlength="80" class="attribute-item-value"></el-input>
+                <el-form-item prop="price">
+                  <el-input v-model="productRuleForm.price" placeholder="请输入价格" :maxlength="80" class="attribute-item-value"></el-input>
+                </el-form-item>
               </div>
             </div>
           </div>
         </dd>
-        <dt>* 产品图：</dt>
+        <dt><span class="require-icon">*</span>产品图：</dt>
         <dd>
-          <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
-            list-type="picture-card"
-            :limit="5"
-            :file-list="fileList2"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove">
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
+          <div class="product-pic-box">
+            <div class="product-pic-item" v-for="(pic,picIndex) in productFileList">
+              <div class="item-mask">
+                <i class="el-icon-delete" @click="delPic(picIndex,pic.pid)"></i>
+              </div>
+              <img :src="pic.url" alt="">
+            </div>
+            <label class="product-pic-item add-pic-btn" for="addPic" v-if="productFileList.length < 5"></label>
+            <input type="file" id="addPic" @change="onFileChange" multiple style="display: none">
+          </div>
           <div class="tips">图片上传尺寸为750*420px，最多可上传5张。</div>
         </dd>
-        <dt>* 产品封面图：</dt>
+        <dt><span class="require-icon">*</span>产品封面图：</dt>
         <dd>
-          <el-upload
-            class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
+          <div class="product-pic-box">
+            <div class="product-pic-item" v-for="(pic) in coverFileList">
+              <img :src="pic.url" alt="" @click="changeCover">
+            </div>
+            <label class="product-pic-item add-pic-btn" for="addCoverPic" v-if="!coverFileList.length"></label>
+            <input type="file" id="addCoverPic" @change="onFileChangeCover" multiple style="display: none">
+          </div>
           <div class="tips">产品封面将会在设备列表、设备搜素等页面出现，建议上传尺寸为400*400，白色背景为宜</div>
         </dd>
         <dt>* 产品视频：</dt>
@@ -253,7 +190,9 @@
             </tr>
             </tbody>
           </table>
-          <div class="tips"><a href="##" class="add-btn">添加</a>最多可添加零件20条。</div>
+          <a href="javascript:void(0);" class="add-btn" @click="addProductIntro">添加</a>
+          <div class="tips"><br>
+            logo图片格式PNG、JPGE、PNG，文件尺寸为120*120px.</div>
         </dd>
       </dl>
     </div>
@@ -267,7 +206,7 @@
       <dl>
         <dt>* 产品介绍：</dt>
         <dd>
-          <table class="component introduction">
+          <table class="component introduction" v-if="ProductsIntroList.length > 0">
             <thead>
             <tr>
               <td class="name">参数名称</td>
@@ -285,40 +224,87 @@
             </tr>
             </tbody>
           </table>
-          <div class="tips"><a href="##" class="add-btn" @click="addProductIntro">添加</a><a href="##" class="add-btn" @click="showlisy">查看</a>列表前三项为关键参数，将显示于产品介绍页，请尽可能多的填写产品性能参数。</div>
+            <a href="javascript:void(0);" class="add-btn" @click="addProductIntro">添加</a>
+            <div class="tips">品牌logo即为该商号所经营售卖的产品品牌logo。<br>
+              logo图片格式PNG、JPGE、PNG，文件尺寸为120*120px.</div>
         </dd>
       </dl>
+    </div>
+    </el-form>
+    <!--系列的弹出框-->
+    <div class="seriesPanel" v-if="seriesPanelState">
+      <div class="panel-header">
+        <span>添加系列</span>
+        <a href="javascript:void(0)" class="close-btn" @click="seriesPanelState=false">&times;</a>
+      </div>
+      <div class="panel-body">
+        <div class="series-wrapper">
+          <div class="series-box">
+            <el-radio-group v-model="seriesValue">
+            <ul>
+              <li class="series-item" v-for="(series,eriesIndex) in seriesOptions"><el-radio :label="series.sid">{{series.name}}</el-radio><a class="delete-series-btn" href="javascript:void(0)" @click="deleteSeries(series.sid,eriesIndex)">&times;</a></li>
+            </ul>
+            </el-radio-group>
+          </div>
+          <div class="add-series-box">
+            <input class="add-series-input" v-on:keyup.enter="addSeriesFn" v-model="addSeriesName" placeholder="输入系列名，15字符以内，按回车以生成系列名称" />
+          </div>
+        </div>
+        <div class="footer clearfix">
+          <span class="warning-tips">该系列名称正在被使用，请更换后再删除！</span>
+          <div class="oprate-box">
+            <a href="javascript:void(0);" class="add-btn" v-on:click="showseriesValue">确定</a>
+            <a href="javascript:void(0);" class="cancel-btn" @click="seriesPanelState=false">取消</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
 </template>
 <script>
+  import { httpUrl} from "../../../http_url";
   const professionOptions = ['汽车', '航空航天', '工程机械', '农业机械', '纺织机械', '通用机械', '轨道交通', '通信计算机', '石油天然气', '电子与电气仪表'];
   export default {
     name: 'publish-product',
     data() {
       return {
-        seriesOptions: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }],
-        seriesValue: '',        //select的值，目前只用了这一个
+        productRuleForm:{
+          brandValue: '',          //品牌的值
+          majorsValue: '',         //专业的值
+          areaValue: '',           //产地
+          seriesConfirmValue: {},     //产品系列弹出框选中确认关闭的时候的值
+          modelo: '',         // 型号
+          price: ''            // 价格
+        },
+        productRules: {
+          brandValue: [
+            { required: true, message: '请选择品牌', trigger: 'change' }
+          ],
+          majorsValue: [
+            { required: true, message: '请选择专业', trigger: 'change' }
+          ],
+          seriesConfirmValue: [
+            { required: true, message: '请选择系列', trigger: 'blur' }
+          ],
+          areaValue: [
+            { required: true, message: '请选择产地', trigger: 'change' }
+          ],
+          modelo: [
+            { required: true, message: '请输入型号', trigger: 'blur' }
+          ],
+          price: [
+            { required: true, message: '请输入价格', trigger: 'blur' }
+          ]
+        },
+        brandOptions: [],       //品牌的下拉选项
+        majorsOptions:[],       //专业的下拉选项
+        areaOptions: [],        //产地下拉框
+        seriesOptions: [],      //系列弹窗列表
+        seriesValue: '',        //产品系列弹出框的选中值
         price: '',              //价格
-        electricalSource: '',   //电源
-        blueprint: '',           //图纸版本
-        fileList2: [],
+        productFileList: [],    //产品图的图片数组
+        coverFileList: [],      //产品封面图的图片数组
         dialogImageUrl: '',
         dialogVisible: false,
         imageUrl: '',
@@ -327,31 +313,214 @@
         showState: '1',
         ProductsIntroList: [
 
-        ]
+        ],
+        seriesPanelState: false, //系列弹窗的显示影藏状态
+        addSeriesName: '', //系列弹窗的增加系列的输入框的值
       }
     },
+    mounted(){
+      this.$nextTick(function () {
+        this.checkLogIn();
+        this.getbrands();
+        this.getAreas();
+      })
+    },
     methods: {
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
+      getbrands(){         //获取品牌的下拉框数据
+        this.axios.get(httpUrl + 'api/company/brands?accessToken='+ this.$cookie.get('accessToken'))
+          .then(response => {
+            console.log(response.data.list);
+            this.brandOptions = response.data.list;
+          })
+          .catch(err => {
+            console.log(err);
+          });
       },
-      handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
+      getMajors(){        //根据品牌获取专业的下拉框数据
+        if(!this.productRuleForm.brandValue) {
+          this.$notify({
+            title: '警告',
+            message: '请先选择品牌',
+            type: 'warning'
+          });
+        }else {
+          this.axios.get(httpUrl + 'api/company/brand/majors?brandId='+this.productRuleForm.brandValue+'&accessToken='+ this.$cookie.get('accessToken'),)
+            .then(response => {
+              console.log(response.data);
+              this.majorsOptions = response.data.list
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
       },
-      beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
-        const isLt2M = file.size / 1024 / 1024 < 2;
+      showSeriesPanel(){                //打开系列面板，获取数据
+        console.log('打开系列选择面板');
+        this.seriesPanelState = true;
+        this.axios.get(httpUrl + 'api/product/serieses?accessToken='+ this.$cookie.get('accessToken'))
+          .then(response => {
+              console.log(response.data);
+              this.seriesOptions = response.data.list;
+          })
+          .catch(err => {
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+          })
+      },
+      addSeriesFn(){                    //输入框添加系列的值
+        console.log('zengjiazhi');
+        this.axios.post(httpUrl + 'api/product/series/add', this.qs.stringify({
+          accessToken: this.$cookie.get('accessToken'),
+          name: this.addSeriesName
+        }))
+          .then(response => {
+            console.log(response.data);
+            this.seriesOptions.push({name: this.addSeriesName,sid: response.data.sid});
+            this.addSeriesName = '';
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      },
+      deleteSeries(sid,index){                   //删除系列
+        this.axios.post(httpUrl + 'api/product/series/del', this.qs.stringify({
+          accessToken: this.$cookie.get('accessToken'),
+          sid: sid
+        }))
+          .then(response => {
+            if(response.data.code === 10050003) {
+              this.$message({
+                message: '该系列名称正在被使用，请更换后再删除！',
+                type: 'warning'
+              });
+            }else {
+              console.log(response.data);
+              this.$message({
+                message: response.data.msg,
+                type: 'success'
+              });
+              this.seriesOptions.splice(index,1);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      },
+      showseriesValue() {                               //把系列弹窗选中的值回显到页面内
+        console.log(this.seriesValue);
+        for (let i=0;i < this.seriesOptions.length;i++){
+          if(this.seriesOptions[i].sid == this.seriesValue) {
+            this.productRuleForm.seriesConfirmValue = { sid: this.seriesOptions,value: this.seriesOptions[i].name};
+            this.seriesPanelState = false;
+          }
         }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!');
+      },
+      getAreas(){
+        this.axios.get(httpUrl + '/api/common/codes?val=area&accessToken='+ this.$cookie.get('accessToken'))
+          .then(response => {
+            console.log(response.data.list);
+            this.areaOptions = response.data.list;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      },
+      onFileChange(e) {    //产品图上传多图
+        var _this = this;
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) return;
+        if(files.length>5) {
+          this.$notify({
+            title: '警告',
+            message: '文件个数不能超过5个',
+            type: 'warning'
+          });
+          return
         }
-        return isJPG && isLt2M;
+        console.log(files);
+        var formData = new FormData();
+        formData.append('accessToken', this.$cookie.get('accessToken'));
+        for (var i=0;i< files.length;i++) {
+          formData.append('imgfile', files[i]);
+        }
+        $.ajax({
+          url:httpUrl + '/api/common/image/upload',
+          type:'POST',
+          data:formData,
+          cache: false,
+          async: false,
+          contentType: false,    //不可缺
+          processData: false,    //不可缺
+          success:function(result){
+            console.log(result);
+            _this.productFileList = _this.productFileList.concat(result.list);
+          },
+          error:function(result){
+            console.log(result);
+          }
+        });
+      },
+      delPic(index,pid) {   //删除图片
+        var _this = this;
+        $.ajax({
+          url:httpUrl + 'api/common/image/del',
+          type:'POST',
+          data:{
+            pid:pid,
+            accessToken: _this.$cookie.get('accessToken')
+          },
+          success:function(result){
+            _this.$message({
+              type: 'success',
+              message: result.msg
+            });
+            _this.productFileList.splice(index,1);
+          },
+          error:function(result){
+            console.log(result);
+          }
+        });
+      },
+      changeCover(e) {
+        e.preventDefault();
+        $('#addCoverPic').trigger('click');
+        return false;
+      },
+      onFileChangeCover(e) {
+        var _this = this;
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) return;
+        console.log(files);
+        var formData = new FormData();
+        formData.append('accessToken', this.$cookie.get('accessToken'));
+        for (var i=0;i< files.length;i++) {
+          formData.append('imgfile', files[i]);
+        }
+        $.ajax({
+          url:httpUrl + '/api/common/image/upload',
+          type:'POST',
+          data:formData,
+          cache: false,
+          async: false,
+          contentType: false,    //不可缺
+          processData: false,    //不可缺
+          success:function(result){
+            console.log(result);
+            _this.coverFileList = result.list;
+          },
+          error:function(result){
+            console.log(result);
+          }
+        });
       },
       addProductIntro() {//添加产品介绍
         this.ProductsIntroList.push({parameterKey: '',parameterValue: ''});
@@ -361,12 +530,150 @@
       },
       showlisy() {
         console.log(this.ProductsIntroList);
-      }
+      },
+
     }
   }
 </script>
 <style scoped>
   @import url(../../../assets/css/publish.css);
+  /*添加图片部分开始*/
+  .product-pic-item {
+    position: relative;
+    margin-right: 10px;
+    width: 120px;
+    height: 120px;
+    display: inline-block;
+    border: solid 1px #e2e5e7;
+  }
+  .item-mask {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    line-height: 120px;
+    font-size: 24px;
+    text-align: center;
+    background: rgba(0,0,0,.5);
+    transition: opacity .3s;
+  }
+  .item-mask i {
+    color: #fff;
+    cursor: pointer;
+  }
+  .product-pic-item:hover .item-mask {
+    opacity: 1;
+  }
+  .product-pic-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .add-pic-btn {
+    background: url("../../../assets/img/ic_data_duration@2x.png") no-repeat center center;
+  }
+  /*添加图片部分结束*/
+  .el-radio-group {
+    display: block;
+  }
+  .el-form-item {
+    margin-bottom: 0;
+  }
+  .seriesPanel {
+    position: fixed;
+    width: 640px;
+    height: 580px;
+    top: 100px;
+    left: 50%;
+    margin-left: -320px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .3);
+  }
+  .panel-header {
+    padding: 0 50px;
+    height: 60px;
+    line-height: 60px;
+    background: #fafafa;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .close-btn {
+    float: right;
+    font-size: 30px;
+    font-weight: normal;
+    color: #888;
+  }
+  .panel-body {
+    padding: 20px 50px;
+  }
+  .series-wrapper {
+    margin-bottom: 10px;
+    border: 1px solid #e5e5e5;
+  }
+  .series-box {
+    height: 364px;
+    border-radius: 3px;
+    overflow: auto;
+  }
+  .add-series-box {
+    height: 56px;
+    padding: 10px 30px;
+    box-sizing: border-box;
+    background: #fafafa;
+  }
+  .series-item {
+    line-height: 48px;
+    padding: 0 30px;
+  }
+  .series-item:hover {
+    background: #fafafa;
+  }
+  .delete-series-btn {
+    display: none;
+    float: right;
+    margin-top: 16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #c8c8c8;
+    color: #fff;
+  }
+  .series-item:hover .delete-series-btn {
+    display: inherit;
+  }
+  .add-series-input {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #e5e5e5;
+    padding: 0 10px;
+    box-sizing: border-box;
+    border-radius: 3px;
+  }
+  .oprate-box {
+    float: right;
+  }
+  .oprate-box > a {
+    display: inline-block;
+    width: 96px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .cancel-btn {
+    background: #fafafa;
+  }
+  .seriesPanel .add-btn {
+    background: #1278ec;
+    color: #fff;
+  }
+  .warning-tips {
+    color: #ff2626;
+  }
 </style>
 <style>
   .el-upload--picture-card {

@@ -19,23 +19,23 @@
                 tooltip-effect="dark"
                 height="375"
                 style="width: 100%"
-                @selection-change="handleSelectionChange">
+                @select="handleSelectionChange">
                 <el-table-column
                   label="零件"
                   width="372">
                   <template slot-scope="scope">
-                    <span class="existent-item-pic"><img src="" alt=""></span>
-                    <span class="existent-item-name">xisdbhadgas</span>
+                    <span class="existent-item-pic"><img :src="scope.row.coverPic" alt=""></span>
+                    <span class="existent-item-name">{{scope.row.titleName}} {{scope.row.introduction}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column
-                  prop="name"
-                  label="姓名"
+                  prop="industryName"
+                  label="行业"
                   width="130">
                 </el-table-column>
                 <el-table-column
-                  prop="address"
-                  label="地址"
+                  prop="secondName"
+                  label="系统"
                   show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column
@@ -54,37 +54,29 @@
               <thead>
               <tr>
                 <td class="custom-item1">零件图片</td>
-                <td class="custom-item2">行业</td>
+                <td class="custom-item-name">名称</td>
+                <td class="custom-item2">零件名称及描述</td>
                 <td class="custom-item3">行业</td>
                 <td class="custom-item4">系统</td>
                 <td class="custom-item5">操作</td>
               </tr>
               </thead>
             </table>
-            <div style="max-height: 372px;overflow-y: auto;border: 1px solid #e5e5e5;margin-bottom: 20px;">
+            <div style="max-height: 372px;overflow-y: auto;border: 1px solid #e5e5e5;">
               <table class="custom-content">
                 <tbody>
-                <tr v-for="custom in customList">
+                <tr v-for="(custom,customIndex) in customList">
                   <td class="clearfix custom-item1">
-									<!--<span class="existent-item-pic"><img src="img/content-item-pic.png" alt="">-->
-									<!--</span>-->
-                    <!--<el-upload-->
-                      <!--class="avatar-uploader"-->
-                      <!--action="https://jsonplaceholder.typicode.com/posts/"-->
-                      <!--:show-file-list="false"-->
-                      <!--:on-success="handleAvatarSuccess"-->
-                      <!--:before-upload="beforeAvatarUpload">-->
-                      <!--<img v-if="custom.imageUrl" :src="custom.imageUrl" class="avatar">-->
-                      <!--<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
-                    <!--</el-upload>-->
-                    <VueImgInputer v-model="custom.imageUrl" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
+                    <VueImgInputer v-model="custom.coverPic" accept="image/*" size="small" :maxSize="5120" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
+                  </td>
+                  <td class="custom-item-name">
+                    <el-input v-model="custom.titleName" placeholder="名称"></el-input>
                   </td>
                   <td class="custom-item2">
-                    <!--<input type="text" class="custom-item-desc">-->
-                    <el-input class="custom-item-desc"></el-input>
+                    <el-input class="custom-item-desc" v-model="custom.introduction" placeholder="描述"></el-input>
                   </td>
                   <td class="custom-item3">
-                    <el-select v-model="custom.tradeValue" class="custom-select" placeholder="请选择">
+                    <el-select v-model="custom.industryName" class="custom-select" placeholder="请选择">
                       <el-option
                         v-for="item in tradeOptions"
                         :key="item.value"
@@ -94,7 +86,7 @@
                     </el-select>
                   </td>
                   <td class="custom-item4">
-                    <el-select v-model="custom.systemValue" class="custom-select" placeholder="请选择">
+                    <el-select v-model="custom.secondName" class="custom-select" placeholder="请选择">
                       <el-option
                         v-for="item in tradeOptions"
                         :key="item.value"
@@ -104,81 +96,78 @@
                     </el-select>
                   </td>
                   <td>
-                    <a class="delete-btn">删除</a>
+                    <a class="delete-btn" @click="delCustom(customIndex)">删除</a>
                   </td>
                 </tr>
                 </tbody>
               </table>
             </div>
+            <div class="add-new-btn-box"><a href="javascript:void(0);" class="add-new-btn" @click="addCustom">新增</a></div>
           </el-tab-pane>
         </el-tabs>
+        <div class="footer clearfix">
+          若您要选择的海报或产品这里没有，请先前往“发布”板块，发布对应的内容。
+          <div class="oprate-box">
+            <a href="javascript:void(0);" class="add-btn" @click="addComponent">添加</a>
+            <a href="javascript:void(0);" class="cancel-btn" @click="shoawdds">取消</a>
+          </div>
+        </div>
       </div>
     </div>
 </template>
 
 <script>
+  var listpingyins = {
+    coverPic: '图片',
+    titleName: '名称',
+    introduction: '描述',
+    industryName: '行业',
+    secondName: '专业',
+  }
   import VueImgInputer from 'vue-img-inputer'
-    export default {
+  import { httpUrl} from "../../http_url";
+
+  export default {
         name: "alert-panel",
+        props: ['showState','state2'],
         data() {
             return {
               panelShow: true,
-              activeName: 'second',
+              activeName: 'first',
               seachkey: '',
+              loadingFlag: false,
+              currentPage: -1,
               tableData3: [
-                {
-                date: '2016-05-03',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }, {
-                date: '2016-05-02',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }, {
-                date: '2016-05-04',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }, {
-                date: '2016-05-01',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }, {
-                date: '2016-05-08',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }, {
-                date: '2016-05-06',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }, {
-                date: '2016-05-07',
-                name: '王小虎',
-                address: '上海市普陀区金沙江路 1518 弄'
-              }
+              //   {
+              //     coverPic: '',
+              //     titleName: '螺母',
+              //     introduction: '我公司专业生产螺母等各种零件...',
+              //     industryName: '轨道交通',
+              //     secondName: '自动刹车系统'
+              // }
               ],
               multipleSelection: [],                          //table选中项
+              tableSelections: [],                            //table选中项储存一下
               tradeOptions: [
                 {
-                value: '选项1',
+                value: 1,
                 label: '黄金糕'
               }, {
-                value: '选项2',
+                value: 2,
                 label: '双皮奶'
               }, {
-                value: '选项3',
+                value: 3,
                 label: '蚵仔煎'
               }, {
-                value: '选项4',
+                value: 4,
                 label: '龙须面'
               }, {
-                value: '选项5',
+                value: 5,
                 label: '北京烤鸭'
               }
               ],
               customList: [
-                {imageUrl: '',tradeValue: '',systemValue: ''},
-                {imageUrl: '',tradeValue: '',systemValue: ''},
-                {imageUrl: '',tradeValue: '',systemValue: ''}
+                { coverPic: '',titleName: '',introduction: '',industryName: '',secondName: ''},
               ],
               customListSelection: []                         //自定义添加选中项
             }
@@ -186,70 +175,160 @@
         components: {
           VueImgInputer
         },
+        mounted() {
+          this.$nextTick(function () {
+            let _this = this;
+            console.log(this.loadingFlag);
+            this.checkLogIn();
+            this.getDataList();
+            _this.$refs.multipleTable.toggleRowSelection(_this.tableData3[0],true);
+            $('.el-table__body-wrapper').scroll(function () {
+              if($('.el-table__body-wrapper').scrollTop() + $('.el-table__body-wrapper').height() > ($('.el-table__body').height() -10) && !_this.loadingFlag) {
+
+                console.log(_this.multipleSelection);
+                _this.getDataList();
+                _this.multipleSelection.forEach(row => {
+                  _this.$refs.multipleTable.toggleRowSelection(row,true);
+                });
+              }
+            })
+            // console.log(this.showState);
+            // console.log(this.state2);
+          })
+        },
         methods: {
+          getDataList() {
+            this.loadingFlag = true;
+            this.currentPage++;
+            var _this = this;
+            this.axios.get(httpUrl + _this.showState + '?currentPage='+ _this.currentPage+'&accessToken=' + this.$cookie.get('accessToken'))
+              .then(function (response) {
+                // console.log(response.data);
+                if(response.data.current <= response.data.pageSum) {
+                  _this.tableData3 = _this.tableData3.concat(response.data.list);
+                  // _this.tableData3 = response.data.list;
+                  console.log(_this.multipleSelection);
+                  setTimeout(function () {                                    //从新加载数据的时候显示已经选中项
+                    _this.multipleSelection.forEach(row => {
+                      _this.$refs.multipleTable.toggleRowSelection(row,true);
+                    });
+                  },10)
+                  _this.loadingFlag = false;
+                }else {
+                  _this.loadingFlag = true;
+                }
+              })
+          },
+          addComponent() {
+            var _this = this;
+            if(this.customList.length>0) {
+              for(var i =0;i < this.customList.length; i++) {
+                console.log(this.customList[i].coverPic);
+                for (var key in this.customList[i]) {
+                  if(this.customList[i][key] === '') {
+                    _this.$notify.error({                               //提示错误，简单的表单验证
+                      title: '错误',
+                      message: '自定义添加选项第'+(i+1)+'行'+listpingyins[key]+'不能为空'
+                    });
+                    _this.activeName = 'second'                         //tab切换到自定义选项
+                    return;
+                  }
+                }
+                var formData = new FormData();
+                formData.append('accessToken', this.$cookie.get('accessToken'));
+                formData.append('imgfile', this.customList[i].coverPic);
+                $.ajax({
+                  url:httpUrl + 'api/common/image/upload',
+                  type:'POST',
+                  data:formData,
+                  cache: false,
+                  async: false,
+                  contentType: false,    //不可缺
+                  processData: false,    //不可缺
+                  success:function(result){
+                    console.log(result);
+                    _this.customList[i].coverPic = result.list[0].url;
+                  },
+                  error:function(result){
+                    console.log(result);
+                  }
+                });
+              }
+            }
+            this.multipleSelection = this.multipleSelection.concat(this.customList);
+            this.customList = [];
+            console.log(this.multipleSelection);
+            this.$emit('sendOutData',{'one':this.multipleSelection,'two':this.customList});
+          },
+          shoawdds() {
+            console.log(this.customList);
+          },
           panelClose(){
             this.panelShow = false;
           },
-          handleSelectionChange(val) {      //零件库添加
+          handleSelectionChange(val,row) {      //零件库添加
             this.multipleSelection = val;
+            // console.log(this.multipleSelection.length);
+            // var arr = [];
+            // arr.length = this.multipleSelection.length;
+            // for(let i =0;i < arr.length;i++) {
+            //   arr[i] = this.multipleSelection[i].name;
+            // }
+            // console.log(row);
+            console.log(this.multipleSelection);
           },
-          handleAvatarSuccess(res, file) {
-            this.imageUrl = URL.createObjectURL(file.raw);
+          addCustom() {                             //自定义添加一行数据
+            this.customList.push({coverPic: '',titleName: '',introduction: '',industryName: '',secondName: ''});
+            // console.log(this.customList);
           },
-          beforeAvatarUpload(file) {
-            const isJPG = file.type === 'image/jpeg';
-            const isLt2M = file.size / 1024 / 1024 < 2;
-
-            if (!isJPG) {
-              this.$message.error('上传头像图片只能是 JPG 格式!');
-            }
-            if (!isLt2M) {
-              this.$message.error('上传头像图片大小不能超过 2MB!');
-            }
-            return isJPG && isLt2M;
+          delCustom(index) {                             //自定义删除一列
+            this.customList.splice(index,1);
           },
           fileChange(file, name) {
             // console.log('File:', file);
             // console.log('FileName:', name);
-            console.log(file);
+            // console.log(file);
+            URL.createObjectURL(file);
           }
         }
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   @import url(../../assets/css/alert-panel.css);
-
+  .footer {
+    margin-top: 10px;
+    color: $text-tips;
+  }
+  .oprate-box {
+    float: right;
+  }
+  .oprate-box a {
+    display: inline-block;
+    width: 96px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .add-new-btn-box {
+    background: $bg-color;
+    border: 1px solid $border-color;
+  }
+  .add-new-btn {
+    margin: 10px 0 10px 20px;
+    display: inline-block;
+    width: 96px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 3px;
+    text-align: center;
+    color: $primary-color;
+    background-color: #fff;
+    border: 1px solid $border-color;
+  }
 </style>
 <style>
-  /*.avatar-uploader {}*/
-  /*.avatar-uploader .el-upload {*/
-    /*margin-top: 10px;*/
-    /*margin-bottom: -22px;*/
-    /*height: 56px;*/
-    /*line-height: 56px;*/
-    /*border: 1px dashed #d9d9d9;*/
-    /*border-radius: 6px;*/
-    /*cursor: pointer;*/
-    /*position: relative;*/
-    /*overflow: hidden;*/
-  /*}*/
-  /*.avatar-uploader .el-upload:hover {*/
-    /*border-color: #409EFF;*/
-  /*}*/
-  /*.avatar-uploader-icon {*/
-    /*font-size: 14px;*/
-    /*color: #8c939d;*/
-    /*width: 56px;*/
-    /*height: 56px;*/
-    /*line-height: 56px;*/
-    /*text-align: center;*/
-  /*}*/
-  /*.avatar {*/
-    /*width: 56px;*/
-    /*height: 56px;*/
-    /*display: block;*/
-  /*}*/
   .img-inputer {
     margin-top: 10px;
     margin-bottom: -22px;
@@ -268,5 +347,8 @@
   }
   .img-inputer__preview-box {
     background: none!important;
+  }
+  .img-inputer__preview-img {
+    height: 100%;
   }
 </style>

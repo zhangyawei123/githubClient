@@ -21,6 +21,7 @@
               :editable="false"
               v-model="value6"
               type="daterange"
+              :picker-options="pickerOptions"
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期">
@@ -114,11 +115,6 @@
       <div class="view-chart-panel">
         <div class="chart-title">浏览量趋势
           <span class="chart-select view-trend">
-								<!--<select class="view-chart-select" name="">-->
-								  <!--<option value="day">日</option>-->
-								  <!--<option value="week">周</option>-->
-								  <!--<option value="month">月</option>-->
-								<!--</select>-->
                  <el-select v-model="value" placeholder="日">
                     <el-option
                       v-for="item in options"
@@ -183,6 +179,11 @@
         name: "data-profiling",
         data() {
           return {
+            pickerOptions: {
+              disabledDate (time) {
+                return time.getTime() >= Date.now();
+              }
+            },
             value6: '',//datepicker的值
             value7: '',//浏览者位置各个城市赞比
             options: [
@@ -295,7 +296,7 @@
                     emphasis: {
                       show: true,
                       seriesIndex: 1,
-                      formatter: "{d}% \n {a} ",
+                      formatter: "{d}% \n {b} ",
                       textStyle: {
                         fontSize: '18',
                         fontWeight: 'bold'
@@ -339,7 +340,7 @@
                     emphasis: {
                       show: true,
                       seriesIndex: 1,
-                      formatter: "{d}% \n {a} ",
+                      formatter: "{d}% \n {b} ",
                       textStyle: {
                         fontSize: '18',
                         fontWeight: 'bold'
