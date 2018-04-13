@@ -1,16 +1,11 @@
 <template>
   <div>
-    <AlertPanel :showState="jiajia" />
-    <script id="container" name="content" type="text/plain">
-        这里写你的初始化内容
-    </script>
-    <div>
-      dashijdjs
-    </div>
+    <AlertPanel :showState="jiajia" v-if="true" ref="demodemo" @sendOutData="showchildData" />
   </div>
 </template>
 
 <script>
+  import fileupload from '../../../static/toutiao/jquery-file-upload-pack.js'
   import AlertPanel from '../common/AlertPanel'
     export default {
       data() {
@@ -19,13 +14,15 @@
         }
       },
       mounted(){
-        var ue = UE.getEditor('container');
+
       },
       components: {
         AlertPanel
       },
       methods: {
-
+        showchildData(data) {
+          console.log(data)                   //取子组件的值
+        }
       }
     }
 </script>

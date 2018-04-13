@@ -69,6 +69,16 @@ module.exports = {
       {
         test: /\.(swf|ttf|eot|svg|woff(2))(\?[a-z0-9]+)?$/,
         loader: 'file-loader',
+      },
+      {
+        test: require.resolve('jquery'),
+        use: [{
+          loader: 'expose-loader',
+          options: 'jQuery'
+        },{
+          loader: 'expose-loader',
+          options: '$'
+        }]
       }
     ]
   },
@@ -86,9 +96,5 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('common.js'),
-    new webpack.ProvidePlugin({
-    jQuery: "jquery",
-    $: "jquery"
-    })
   ]
 }

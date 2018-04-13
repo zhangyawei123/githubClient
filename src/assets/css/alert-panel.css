@@ -118,6 +118,9 @@
   height: 56px;
   background: #f0f;
 }
+.panel-box .poster .existent-item-pic {
+  width: 96px;
+}
 .panel-box .existent-item-pic img {
   display: block;
   width: 100%;
@@ -130,6 +133,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: inline-block;
+}
+.poster .existent-item-name {
+  width: 214px;
 }
 .panel-box .choose-btn {
   display: inline-block;

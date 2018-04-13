@@ -139,6 +139,11 @@ input.attribute-item-value {
   height: 52px;
   border: 1px solid #f0f0f0;
 }
+.component-pic img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 .delete {
   color: #1278ec;
 }

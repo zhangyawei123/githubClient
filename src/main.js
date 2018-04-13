@@ -21,9 +21,8 @@ import '../static/UE/ueditor.all.min.js'
 import '../static/UE/lang/zh-cn/zh-cn.js'
 import '../static/UE/ueditor.parse.min.js'
 
-
-// import '../static/toutiao/jquery-3.1.1.min.js'
-// import '../static/toutiao/jquery-file-upload-pack.js'
+import '../static/toutiao/jquery-3.1.1.min.js'
+import '../static/toutiao/jquery-file-upload-pack.js'
 
 // import '../static/jquery-file-upload/js/vendor/jquery.ui.widget.js'
 // import '../static/jquery-file-upload/js/jquery.iframe-transport.js'
@@ -32,8 +31,6 @@ import '../static/UE/ueditor.parse.min.js'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 
 
-
-import '../static/js/test'
 
 Vue.config.productionTip = false
 Vue.use(VueCookie);

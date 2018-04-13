@@ -22,7 +22,7 @@ export function GetAccessToken() {                             //获取令牌
   }))
     .then(response => {
       // console.log(response.data);
-      this.$cookie.set('accessToken', response.data.access_token,  { expires: '1h' });
+      this.$cookie.set('accessToken', response.data.access_token);
     })
     .catch(err => {
       console.log(err);

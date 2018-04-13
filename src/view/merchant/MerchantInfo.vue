@@ -23,15 +23,13 @@
       </dd>
       <dt>* 公司logo：</dt>
       <dd>
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload">
-          <img v-if="imageUrl" :src="imageUrl" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
+        <div class="product-pic-box">
+          <div class="product-pic-item" v-if="logoUrl">
+            <img :src="logoUrl" alt="" @click="changeCover">
+          </div>
+          <label class="product-pic-item add-pic-btn" for="addCoverPic" v-if="!logoUrl"></label>
+          <input type="file" id="addCoverPic" @change="onFileChangeCover" style="display: none">
+        </div>
         <div class="tips">产品封面将会在设备列表、设备搜素等页面出现，建议上传尺寸为400*400，白色背景为宜</div>
       </dd>
       <dt>* 品牌logo：</dt>
@@ -47,15 +45,15 @@
           <tbody>
             <tr v-for="(item,index) in brandLogoList">
               <td class="logo-img-url">
-                <VueImgInputer v-model="item.logoPic" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
+                <VueImgInputer v-model="item.picUrl" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
               </td>
-              <td class="logo-name"><el-input v-model="item.name"></el-input></td>
-              <td><a href="javascript: void(0);">删除</a></td>
+              <td class="logo-name"><el-input v-model="item.brandName"></el-input></td>
+              <td><a href="javascript: void(0);" @click="delBrandLogo">删除</a></td>
             </tr>
           </tbody>
         </table>
         <div class="clearfix">
-          <a href="javascript:void(0);" class="add-btn">添加</a>
+          <a href="javascript:void(0);" class="add-btn" @click="addBrandLogo">添加</a>
           <div class="tips">品牌logo即为该商号所经营售卖的产品品牌logo。<br>
             logo图片格式PNG、JPGE、PNG，文件尺寸为120*120px.</div>
         </div>
@@ -68,7 +66,7 @@
     ]">
           <el-checkbox-group
             v-model="ruleForm.checkedProfessions">
-            <el-checkbox v-for="profession in professions" :label="profession" :key="profession">{{profession}}</el-checkbox>
+            <el-checkbox v-for="profession in professions" :label="profession.id" :key="profession.id">{{profession.value}}</el-checkbox>
           </el-checkbox-group>
           </el-form-item>
           <div class="tips">该商号代理的所有产品的专业类型</div>
@@ -82,9 +80,9 @@
         <el-select v-model="ruleForm.areaValue" placeholder="公司所在地">
           <el-option
             v-for="area in areaOptions"
-            :key="area.value"
-            :label="area.label"
-            :value="area.value">
+            :key="area.id"
+            :label="area.value"
+            :value="area.id">
           </el-option>
         </el-select>
         </el-form-item>
@@ -152,8 +150,8 @@
 </template>
 
 <script>
+  import {httpUrl} from "../../http_url";
   import VueImgInputer from 'vue-img-inputer'
-  const professionOptions = ['机床', '刀具', '夹具', '工具', '量具', '自动化'];
     export default {
         name: "merchant-info",
       data() {
@@ -185,16 +183,16 @@
         };
           return {
             ruleForm: {
-              name: '',
-              short: '',
-              imageUrl: '',
-              checkedProfessions:[],
-              areaValue: '',
-              address: '',
-              merchantTel: '',
-              merchantMob:'',
-              email: '',
-              merchantIntro: '',
+              name: '',                         //商号全称
+              short: '',                        //商号简介
+              imageUrl: '',                     //公司logo
+              checkedProfessions:[11],            //主要经营选中项
+              areaValue: '',                    //公司所在地，国别
+              address: '',                      //详细地址
+              merchantTel: '',                  //商号电话
+              merchantMob:'',                   //手机
+              email: '',                        //绑定邮箱
+              merchantIntro: '',                //商家简介
             },
             rules: {
               merchantTel: [
@@ -211,34 +209,14 @@
                 { required: true, message: '请填写商家简介', trigger: 'blur' }
               ]
             },
-            name: '',
-            short: '',
-            imageUrl: '',
-            brandLogoList: [
-              { logoPic: '',name: ''},
+            logoUrl: '',                              //公司logo
+            brandLogoList: [                          //品牌logo
+              { picUrl: '',brandName: ''},
             ],
             imageUrl1: '',
             logoname: '',
-            professions: professionOptions,
-            checkedProfessions: [],
-            areaOptions: [
-              {
-              value: '选项1',
-              label: '欧洲'
-            }, {
-              value: '选项2',
-              label: '上海'
-            }, {
-              value: '选项3',
-              label: '美国'
-            }, {
-              value: '选项4',
-              label: '韩国'
-            }, {
-              value: '选项5',
-              label: '东北'
-            }
-            ],        //地区选择
+            professions: [],                    //主要经营六大行业
+            areaOptions: [],        //地区选择
             areaValue: '',
             address: '',
             merchantTel: '',
@@ -248,21 +226,89 @@
       components: {
         VueImgInputer
       },
+      mounted() {
+        this.$nextTick(function () {
+          this.getDataInfo();
+        })
+      },
       methods: {
-        handleAvatarSuccess(res, file) {
-          this.imageUrl = URL.createObjectURL(file.raw);
+        getDataInfo() {
+          let _this = this;
+          // 六大行业多选框
+          this.axios.get(httpUrl + 'api/common/codes?val=major&accessToken=' + _this.$cookie.get('accessToken'))
+            .then(function (response) {
+              console.log(response.data);
+              _this.professions = response.data.list
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+          // 地区选择下拉框
+          this.axios.get(httpUrl + '/api/common/codes?val=area&accessToken='+ this.$cookie.get('accessToken'))
+            .then(response => {
+              console.log(response.data.list);
+              this.areaOptions = response.data.list;
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          // 获取整体数据
+          this.axios.get(httpUrl + 'api/company/info/edit/index?accessToken=' + _this.$cookie.get('accessToken'))
+            .then(function (response) {
+              console.log(response.data);
+              _this.ruleForm.name = response.data.data.basicVO.firm
+              _this.ruleForm.short = response.data.data.basicVO.firmBrief
+              _this.logoUrl = response.data.data.basicVO.logoUrl
+              _this.brandLogoList = response.data.data.brands
+              _this.ruleForm.checkedProfessions = response.data.data.majors
+              _this.ruleForm.areaValue = response.data.data.basicVO.country
+              _this.ruleForm.address = response.data.data.basicVO.area
+              _this.ruleForm.merchantTel = response.data.data.basicVO.servicePhone
+              _this.ruleForm.merchantMob = response.data.data.basicVO.cellPhone
+              _this.ruleForm.email = response.data.data.basicVO.email
+              _this.ruleForm.merchantIntro = response.data.data.basicVO.introduction
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
         },
-        beforeAvatarUpload(file) {
-          const isJPG = file.type === 'image/jpeg';
-          const isLt2M = file.size / 1024 / 1024 < 2;
+        changeCover(e) {
+          e.preventDefault();
+          $('#addCoverPic').trigger('click');
+          return false;
+        },
+        onFileChangeCover(e) {
+          var _this = this;
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length) return;
+          console.log(files);
+          var formData = new FormData();
+          formData.append('accessToken', this.$cookie.get('accessToken'));
+          for (var i=0;i< files.length;i++) {
+            formData.append('imgfile', files[i]);
+          }
+          $.ajax({
+            url:httpUrl + '/api/common/image/upload',
+            type:'POST',
+            data:formData,
+            cache: false,
+            async: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            success:function(result){
+              console.log(result);
+              _this.logoUrl = result.list[0].url;
+            },
+            error:function(result){
+              console.log(result);
+            }
+          });
+        },
+        addBrandLogo() {                    //添加品牌logo
+          this.brandLogoList.push({ picUrl: '',brandName: ''});
+        },
+        delBrandLogo() {
 
-          if (!isJPG) {
-            this.$message.error('上传头像图片只能是 JPG 格式!');
-          }
-          if (!isLt2M) {
-            this.$message.error('上传头像图片大小不能超过 2MB!');
-          }
-          return isJPG && isLt2M;
         },
         fileChange(file, name) {
           console.log(file);
@@ -313,21 +359,22 @@
   .limit {
     color: $text-tips;
   }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
+  /*添加图片部分开始*/
+  .product-pic-item {
+    position: relative;
+    margin-right: 10px;
     width: 120px;
     height: 120px;
-    line-height: 120px;
-    text-align: center;
+    display: inline-block;
+    border: solid 1px #e2e5e7;
   }
-  .avatar {
-    width: 120px;
-    height: 120px;
+  .product-pic-item img {
     display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .add-pic-btn {
+    background: url("../../assets/img/ic_data_duration@2x.png") no-repeat center center;
   }
   table {
     width: 100%;

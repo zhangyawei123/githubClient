@@ -90,7 +90,7 @@
               <img :src="pic.url" alt="" @click="changeCover">
             </div>
             <label class="product-pic-item add-pic-btn" for="addCoverPic" v-if="!coverFileList.length"></label>
-            <input type="file" id="addCoverPic" @change="onFileChangeCover" multiple style="display: none">
+            <input type="file" id="addCoverPic" @change="onFileChangeCover" style="display: none">
           </div>
           <div class="tips">产品封面将会在设备列表、设备搜素等页面出现，建议上传尺寸为400*400，白色背景为宜</div>
         </dd>
@@ -424,7 +424,7 @@
           }
         }
       },
-      getAreas(){
+      getAreas(){                                         //获取地区选择
         this.axios.get(httpUrl + '/api/common/codes?val=area&accessToken='+ this.$cookie.get('accessToken'))
           .then(response => {
             console.log(response.data.list);

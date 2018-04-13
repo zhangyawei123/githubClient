@@ -187,9 +187,9 @@
 
                 console.log(_this.multipleSelection);
                 _this.getDataList();
-                _this.multipleSelection.forEach(row => {
-                  _this.$refs.multipleTable.toggleRowSelection(row,true);
-                });
+                // _this.multipleSelection.forEach(row => {
+                //   _this.$refs.multipleTable.toggleRowSelection(row,true);
+                // });
               }
             })
             // console.log(this.showState);
@@ -215,7 +215,7 @@
                   },10)
                   _this.loadingFlag = false;
                 }else {
-                  _this.loadingFlag = true;
+                  // _this.loadingFlag = true;
                 }
               })
           },

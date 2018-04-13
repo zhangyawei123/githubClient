@@ -1,29 +1,35 @@
 <template>
     <div>
-      <div class="title">信息编辑</div>
+      <div class="title">首页编辑</div>
       <dl>
         <dt>banner位：</dt>
         <dd>
           <table>
             <thead>
             <tr>
-              <td class="logo-img-url">LOGO</td>
-              <td class="logo-name">品牌名称</td>
+              <td class="logo-img-url">轮播图</td>
+              <td class="logo-name">链接内容</td>
               <td class="operate">操作</td>
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="(item,index) in bannerList">
               <td class="logo-img-url">
-                <VueImgInputer v-model="imageUrl1" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
+                <!--<VueImgInputer v-model="imageUrl1" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>-->
+                <img :src="item.bannerPics" alt="" class="add-banner-btn" v-if="item.bannerPics" @click="changePic(index)">
+                <label :for="'addBannerPic_' + index" class="add-banner-btn" v-else></label>
+                <input type="file" :id="'addBannerPic_' + index" class="change-banner-btn" @change="changeBanner" style="display: none">
               </td>
-              <td class="logo-name"><el-input v-model="logoname"></el-input></td>
-              <td><a href="javascript: void(0);">删除</a></td>
+              <td class="logo-name">
+                <el-input v-if="item.jumpTypeName && item.bannerTitles" v-model="item.jumpTypeName + ' ：' + item.bannerTitles" readonly @focus="showBannerPanel(index)"></el-input>
+                <el-input v-else readonly @focus="showBannerPanel(index)"></el-input>
+              </td>
+              <td><a href="javascript: void(0);" @click="delBanner(index)">删除</a></td>
             </tr>
             </tbody>
           </table>
           <div class="clearfix">
-            <a href="javascript:void(0);" class="add-btn">添加</a>
+            <a href="javascript:void(0);" v-if="bannerList.length <6" @click="addBanner" class="add-btn">添加</a>
             <div class="tips"><br>建议轮播图尺寸为750*375px；轮播图最多添加6张。</div>
           </div>
         </dd>
@@ -36,7 +42,7 @@
             </dd>
             <dt>内容：</dt>
             <dd>
-              <el-input v-model="address" :maxlength="50" placeholder="详细地址" class="input-long"></el-input><span class="limit"> {{address.length}} / 50</span>
+              <el-input v-model="address" type="textarea" :rows="2" :maxlength="50" placeholder="详细地址" class="input-long"></el-input><span class="limit"> {{address.length}} / 50</span>
             </dd>
           </dl>
         </dd>
@@ -120,29 +126,108 @@
         </dd>
       </dl>
       <div class="footer">
-        <a href="javascript: void(0);" class="save-btn">保存</a>
+        <a href="javascript: void(0);" class="save-btn" @click="showbannerLIST">保存</a>
         <a href="javascript: void(0);" class="mobile-preview">手机端预览</a>
       </div>
+      <AlertBanner @sendChildData="getChildData" :showState.sync="showState" />
     </div>
 </template>
 
 <script>
+  import {httpUrl} from "../../http_url";
+  import AlertBanner from '../common/AlertBanner'
   import VueImgInputer from 'vue-img-inputer'
     export default {
         name: "home-page-edit",
       data() {
           return {
-            imageUrl1: '',
-            logoname: '',
+            showState: false,
+            changeTextIndex: 0,                 //点击更换跳转链接文字的index
+            bannerList: [],
             address : '',
           }
       },
       components: {
-        VueImgInputer
+        VueImgInputer,
+        AlertBanner
+      },
+      mounted() {
+        this.$nextTick(function () {
+          this.getData();
+        })
       },
       methods: {
-        fileChange(file, name) {
-          console.log(file);
+        getData() {
+          let _this = this;
+          this.axios.get(httpUrl + '/api/company/home/edit/index?accessToken=' + _this.$cookie.get('accessToken'))
+            .then(function (response) {
+              console.log(response.data);
+              _this.bannerList = response.data.companyHome.banners
+            })
+            .catch(function (error) {
+              console.log(error)
+            })
+        },
+        changePic(index) {
+          $('.change-banner-btn').eq(index).click();
+        },
+        changeBanner(e) {
+          // console.log($(e.target).parent().parent().index());
+          let _index = $(e.target).parent().parent().index();
+          var _this = this;
+
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length) return;
+          console.log(files);
+          var formData = new FormData();
+          formData.append('accessToken', this.$cookie.get('accessToken'));
+          for (var i=0;i< files.length;i++) {
+            formData.append('imgfile', files[i]);
+          }
+          $.ajax({
+            url:httpUrl + '/api/common/image/upload',
+            type:'POST',
+            data:formData,
+            cache: false,
+            async: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            success:function(result){
+              console.log(result);
+              _this.bannerList[_index].bannerPics = result.list[0].url;
+              _this.bannerList[_index].bannerPid = result.list[0].pid;
+            },
+            error:function(result){
+              console.log(result);
+            }
+          });
+        },
+        addBanner() {
+          this.bannerList.push({
+            bannerJumpTypes:'',
+            bannerOutIds:'',
+            bannerPics:'',
+            bannerTitles:'',
+            companyBannerId:'',
+            jumpTypeName:'',
+            outHtml:'',
+          });
+        },
+        delBanner(index) {
+          this.bannerList.splice(index,1);
+        },
+        showBannerPanel(index) {
+          this.showState = true;
+          console.log(index);
+          this.changeTextIndex = index;
+        },
+        getChildData(data) {
+          console.log(data);
+          this.bannerList[this.changeTextIndex].jumpTypeName = data.jumpTypeName
+          this.bannerList[this.changeTextIndex].bannerTitles = data.bannerTitles
+        },
+        showbannerLIST() {
+          console.log(this.bannerList);
         }
       }
     }
@@ -150,6 +235,14 @@
 
 <style scoped lang="scss">
   @import url(../../assets/css/publish.css);
+  .add-banner-btn {
+    display: block;
+    width: 160px;
+    height: 80px;
+    margin-top: 20px;
+    margin-bottom: -40px;
+    border: 1px solid $border-color;
+  }
   .tips {
     color: #a1a8b3;
   }
