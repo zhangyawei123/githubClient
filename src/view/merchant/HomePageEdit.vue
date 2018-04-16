@@ -24,7 +24,7 @@
                 <el-input v-if="item.jumpTypeName && item.bannerTitles" v-model="item.jumpTypeName + ' ：' + item.bannerTitles" readonly @focus="showBannerPanel(index)"></el-input>
                 <el-input v-else readonly @focus="showBannerPanel(index)"></el-input>
               </td>
-              <td><a href="javascript: void(0);" @click="delBanner(index)">删除</a></td>
+              <td><a href="javascript: void(0);" @click="delItem(bannerList,index)">删除</a></td>
             </tr>
             </tbody>
           </table>
@@ -38,17 +38,19 @@
           <dl class="inner-dl">
             <dt>标题：</dt>
             <dd>
-              <el-input v-model="address" :maxlength="50" placeholder="详细地址" class="input-long"></el-input><span class="limit"> {{address.length}} / 50</span>
+              <el-input v-model="notice.title" :maxlength="50" placeholder="详细地址" class="input-long"></el-input>
+              <span class="limit" v-if="notice.title.length"> {{notice.title.length}} / 50</span>
             </dd>
             <dt>内容：</dt>
             <dd>
-              <el-input v-model="address" type="textarea" :rows="2" :maxlength="50" placeholder="详细地址" class="input-long"></el-input><span class="limit"> {{address.length}} / 50</span>
+              <el-input v-model="notice.content" type="textarea" :rows="2" :maxlength="50" placeholder="详细地址" class="input-long"></el-input>
+              <span class="limit" v-if="notice.content.length"> {{notice.content.length}} / 50</span>
             </dd>
           </dl>
         </dd>
         <dt>首页海报：</dt>
         <dd>
-          <table class="component configure">
+          <table class="component configure" v-if="posterLists.length">
             <thead>
             <tr>
               <td class="name">产品</td>
@@ -59,35 +61,25 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="(item,index) in posterLists">
               <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
+                <span class="component-pic"><img :src="item.coverPic" alt=""></span>
+                {{item.brandName}}
               </td>
-              <td>德玛吉</td>
-              <td>刀具</td>
-              <td>德国</td>
-              <td><a class="delete" href="##">删除</a></td>
-            </tr>
-            <tr>
-              <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
-              </td>
-              <td>德玛吉</td>
-              <td>刀具</td>
-              <td>德国</td>
-              <td><a class="delete" href="##">删除</a></td>
+              <td>{{item.brandName}}</td>
+              <td>{{item.majorName}}</td>
+              <td>{{item.countryName}}</td>
+              <td><a class="delete" href="javascript:void(0)" @click="delItem(posterLists,index)">删除</a></td>
             </tr>
             </tbody>
           </table>
-          <a href="javascript:void(0);" class="add-btn">添加</a>
+          <a href="javascript:void(0);" class="add-btn" @click="showPosterEquipmentPanel">添加</a>
           <div class="tips"><br>
             最多添加2条，建议选择热门海报或者重点推出的产品海报。</div>
         </dd>
         <dt>首页产品：</dt>
         <dd>
-          <table class="component configure">
+          <table class="component configure" v-if="equipmentLists.length">
             <thead>
             <tr>
               <td class="name">产品</td>
@@ -98,25 +90,15 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="(item,index) in equipmentLists">
               <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
+                <span class="component-pic"><img :src="item.equipmentPic" alt=""></span>
+               {{item.brandName}} {{item.modelNum}}
               </td>
-              <td>德玛吉</td>
-              <td>刀具</td>
-              <td>德国</td>
-              <td><a class="delete" href="##">删除</a></td>
-            </tr>
-            <tr>
-              <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
-              </td>
-              <td>德玛吉</td>
-              <td>刀具</td>
-              <td>德国</td>
-              <td><a class="delete" href="##">删除</a></td>
+              <td>{{item.brandName}}</td>
+              <td>{{item.majorName}}</td>
+              <td>{{item.countryName}}</td>
+              <td><a class="delete" href="javascript:void(0)" @click="delItem(equipmentLists,index)">删除</a></td>
             </tr>
             </tbody>
           </table>
@@ -129,27 +111,33 @@
         <a href="javascript: void(0);" class="save-btn" @click="showbannerLIST">保存</a>
         <a href="javascript: void(0);" class="mobile-preview">手机端预览</a>
       </div>
-      <AlertBanner @sendChildData="getChildData" :showState.sync="showState" />
+      <AlertBanner @sendChildData="getChildData" :bannerPanelshowState.sync="bannerPanelshowState" />
+      <AlertPosterEquipment ref="dmeodmoe" :posterEquipmemntshowState.sync="posterEquipmemntshowState" :posterEquipmemntUrl="posterUrl" />
+      <!--<div style="position: fixed; top: 0;bottom: 0;left: 0;right: 0;background-color: rgba(0,0,0,.4);"></div>-->
     </div>
 </template>
 
 <script>
   import {httpUrl} from "../../http_url";
+  import AlertPosterEquipment from '../common/AlertPosterEquipment'
   import AlertBanner from '../common/AlertBanner'
-  import VueImgInputer from 'vue-img-inputer'
     export default {
         name: "home-page-edit",
       data() {
           return {
-            showState: false,
+            bannerPanelshowState: false,         //banner弹窗
+            posterEquipmemntshowState: false,    //选着海报设备弹窗
             changeTextIndex: 0,                 //点击更换跳转链接文字的index
             bannerList: [],
-            address : '',
+            notice: {},
+            posterLists: [],
+            equipmentLists: [],
+            posterUrl: 'api/product/equipment/poster/list',       //海报窗口url
+            equipmentUrl: 'api/product/equipments',               //设备窗口url
           }
       },
       components: {
-        VueImgInputer,
-        AlertBanner
+        AlertBanner,AlertPosterEquipment
       },
       mounted() {
         this.$nextTick(function () {
@@ -163,6 +151,9 @@
             .then(function (response) {
               console.log(response.data);
               _this.bannerList = response.data.companyHome.banners
+              _this.notice = response.data.companyHome.notice
+              _this.posterLists = response.data.companyHome.videos
+              _this.equipmentLists = response.data.companyHome.equipments
             })
             .catch(function (error) {
               console.log(error)
@@ -213,13 +204,18 @@
             outHtml:'',
           });
         },
-        delBanner(index) {
-          this.bannerList.splice(index,1);
+        delItem(list,index) {
+          list.splice(index,1);
         },
         showBannerPanel(index) {
-          this.showState = true;
+          this.bannerPanelshowState = true;
           console.log(index);
           this.changeTextIndex = index;
+        },
+        showPosterEquipmentPanel() {
+          this.posterEquipmemntshowState = true;
+          this.posterUrl= 'api/product/equipments'
+          // this.$refs.dmeodmoe.getPosterDataList();
         },
         getChildData(data) {
           console.log(data);

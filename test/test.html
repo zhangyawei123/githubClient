@@ -6,9 +6,26 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style>
+    .demo {
+      width: 200px;
+      height: 200px;
+      background: #f0f;
+      /*transition: margin-left .5s;*/
+      animation: slowRight 1s alternate forwards infinite;
+    }
+    @keyframes slowRight {
+      from {
+        margin-left: 0;
+      }
+      to {
+        margin-left: 100px;
+      }
+    }
+  </style>
 </head>
 <body>
-
+<div class="demo"></div>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
 <script>
   $.ajax({

@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-box" v-show="showState">
+  <div class="panel-box" v-show="bannerPanelshowState">
     <div class="panel-header clearfix">
       <span>添加可加工零件</span>
       <a class="close-btn" v-on:click="changeshowState">&times;</a>
@@ -126,7 +126,7 @@
   var JumpTypeText = ['海报','产品','外部链接','海报列表','产品列表'];
   var JumpType = [4801,4083,4087,4082,4084];
   export default {
-    props: ['showState'],
+    props: ['bannerPanelshowState'],
     data() {
       return {
         loadingFlag: false,
@@ -174,7 +174,7 @@
     },
     methods: {
       changeshowState() {
-        this.$emit('update:showState', false)
+        this.$emit('update:bannerPanelshowState', false)
       },
       getPosterDataList() {
         let _this = this;
@@ -330,7 +330,7 @@
           }
         }
         this.$emit('sendChildData', this.showLocalTextLink)
-        this.$emit('update:showState', false)
+        this.$emit('update:bannerPanelshowState', false)
       }
     }
   }

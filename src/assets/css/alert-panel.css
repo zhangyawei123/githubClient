@@ -203,3 +203,19 @@
 .panel-box .custom-select {
   width: 120px;
 }
+
+.footer {
+  margin-top: 10px;
+  color: #a1a8b3;
+}
+.oprate-box {
+  float: right;
+}
+.oprate-box a {
+  display: inline-block;
+  width: 96px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 3px;
+  text-align: center;
+}
