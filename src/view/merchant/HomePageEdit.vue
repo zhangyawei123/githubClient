@@ -113,6 +113,7 @@
       </div>
       <AlertBanner @sendChildData="getChildData" :bannerPanelshowState.sync="bannerPanelshowState" />
       <AlertPosterEquipment ref="dmeodmoe" :posterEquipmemntshowState.sync="posterEquipmemntshowState" :posterEquipmemntUrl="posterUrl" />
+      <AlertPosterEquipment ref="dmeodmoe" :posterEquipmemntshowState.sync="posterEquipmemntshowState" :posterEquipmemntUrl="equipmentUrl" />
       <!--<div style="position: fixed; top: 0;bottom: 0;left: 0;right: 0;background-color: rgba(0,0,0,.4);"></div>-->
     </div>
 </template>
