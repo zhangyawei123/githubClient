@@ -1,10 +1,5 @@
 <template>
-  <div class="panel-box" v-show="bannerPanelshowState">
-    <div class="panel-header clearfix">
-      <span>添加可加工零件</span>
-      <a class="close-btn" v-on:click="changeshowState">&times;</a>
-    </div>
-    <div class="panel-body">
+    <div class="panel-body banner-panel">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="海报" name="first">
           <div class="search-box clearfix">
@@ -19,6 +14,7 @@
               tooltip-effect="dark"
               height="315"
               style="width: 100%"
+              @select-all="posterSelectAll"
               @select="posterSelectionChange">
               <el-table-column
                 label="零件"
@@ -66,6 +62,7 @@
               tooltip-effect="dark"
               height="315"
               style="width: 100%"
+              @select-all="equipmentSelectAll"
               @select="equipmentSelectionChange">
               <el-table-column
                 label="零件"
@@ -111,20 +108,17 @@
       <div class="footer clearfix">
         若您要选择的海报或产品这里没有，请先前往“发布”板块，发布对应的内容。
         <div class="oprate-box">
-          <a href="javascript:void(0);" class="add-btn" @click="addChooseData">添加</a>
+          <a href="javascript:void(0);" class="add-btn" @click="sendBannerData">添加</a>
           <a href="javascript:void(0);" class="cancel-btn" @click="">取消</a>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
-
-  import VueImgInputer from 'vue-img-inputer'
   import { httpUrl} from "../../http_url";
-  var JumpTypeText = ['海报','产品','外部链接','海报列表','产品列表'];
-  var JumpType = [4801,4083,4087,4082,4084];
+  // var JumpTypeText = ['海报','产品','外部链接','海报列表','产品列表'];
+  // var JumpType = [4801,4083,4087,4082,4084];
   export default {
     props: ['bannerPanelshowState'],
     data() {
@@ -144,10 +138,10 @@
         ChooseList: [],                         //海报选中的值
         showLocalTextLink: {                    //本地显示链接的文字以及传给后台的值
           jumpTypeName: '',                     //跳转位置名字
-          bannerTitles: '',                     //跳转位置的标题
-          bannerJumpTypes: '',                  //跳转位置代码
+          bannerTitle: '',                     //跳转位置的标题
+          bannerJumpType: '',                  //跳转位置代码
           outHtml: '',                          //外部链接
-          bannerOutIds: ''                      //跳转是列表的话选择的视频或者产品的ID
+          bannerOutId: ''                      //跳转是列表的话选择的视频或者产品的ID
         },
       }
     },
@@ -238,20 +232,42 @@
           return
         }else if (val.length ===1) {            //海报选项单选的情况下
           this.posterTitleShow = false;
-          this.showLocalTextLink.bannerJumpTypes = 4081;
+          this.showLocalTextLink.bannerJumpType = 4081;
           this.showLocalTextLink.jumpTypeName = '海报';
-          this.showLocalTextLink.bannerTitles = val[0].title;
-          this.showLocalTextLink.bannerOutIds = val[0].vid;
+          this.showLocalTextLink.bannerTitle = val[0].title;
+          this.showLocalTextLink.bannerOutId = val[0].vid;
           this.showLocalTextLink.outHtml = ''
 
         }else {
           this.posterTitleShow = true;
-          this.showLocalTextLink.bannerJumpTypes = 4082;
+          this.showLocalTextLink.bannerJumpType = 4082;
           this.showLocalTextLink.jumpTypeName = '海报列表';
 
-          this.showLocalTextLink.bannerOutIds= '';
+          this.showLocalTextLink.bannerOutId= '';
           for(let i =0;i< val.length;i++) {
-            this.showLocalTextLink.bannerOutIds = this.showLocalTextLink.bannerOutIds + val[i].vid + '/'
+            this.showLocalTextLink.bannerOutId = this.showLocalTextLink.bannerOutId + val[i].vid + '/'
+          }
+          this.showLocalTextLink.outHtml = ''
+        }
+
+        console.log(this.showLocalTextLink);
+      },
+      posterSelectAll(val) {
+        this.$refs.equipmentTable.clearSelection();
+        this.ChooseList = val;
+        this.showLocalTextLink.outHtml='';
+        this.equipmentTitleShow = false;
+        if(val.length ===0) {
+          this.posterTitleShow = false;
+          return
+        }else {
+          this.posterTitleShow = true;
+          this.showLocalTextLink.bannerJumpType = 4082;
+          this.showLocalTextLink.jumpTypeName = '海报列表';
+
+          this.showLocalTextLink.bannerOutId= '';
+          for(let i =0;i< val.length;i++) {
+            this.showLocalTextLink.bannerOutId = this.showLocalTextLink.bannerOutId + val[i].vid + '/'
           }
           this.showLocalTextLink.outHtml = ''
         }
@@ -268,20 +284,42 @@
           return
         }else if (val.length ===1) {            //海报选项单选的情况下
           this.equipmentTitleShow = false;
-          this.showLocalTextLink.bannerJumpTypes = 4083;
+          this.showLocalTextLink.bannerJumpType = 4083;
           this.showLocalTextLink.jumpTypeName = '产品';
-          this.showLocalTextLink.bannerTitles = val[0].brandName;
-          this.showLocalTextLink.bannerOutIds = val[0].id;
+          this.showLocalTextLink.bannerTitle = val[0].brandName;
+          this.showLocalTextLink.bannerOutId = val[0].id;
           this.showLocalTextLink.outHtml = ''
 
         }else {
           this.equipmentTitleShow = true;
-          this.showLocalTextLink.bannerJumpTypes = 4084;
+          this.showLocalTextLink.bannerJumpType = 4084;
           this.showLocalTextLink.jumpTypeName = '产品列表';
 
-          this.showLocalTextLink.bannerOutIds= '';
+          this.showLocalTextLink.bannerOutId= '';
           for(let i =0;i< val.length;i++) {
-            this.showLocalTextLink.bannerOutIds = this.showLocalTextLink.bannerOutIds + val[i].id + '/'
+            this.showLocalTextLink.bannerOutId = this.showLocalTextLink.bannerOutId + val[i].id + '/'
+          }
+          this.showLocalTextLink.outHtml = ''
+        }
+
+        console.log(this.showLocalTextLink);
+      },
+      equipmentSelectAll(val) {
+        this.$refs.posterTable.clearSelection();
+        this.ChooseList = val;
+        this.showLocalTextLink.outHtml='';
+        this.posterTitleShow = false;
+        if(val.length ===0) {
+          this.equipmentTitleShow = false;
+          return
+        }else {
+          this.equipmentTitleShow = true;
+          this.showLocalTextLink.bannerJumpType = 4084;
+          this.showLocalTextLink.jumpTypeName = '产品列表';
+
+          this.showLocalTextLink.bannerOutId= '';
+          for(let i =0;i< val.length;i++) {
+            this.showLocalTextLink.bannerOutId = this.showLocalTextLink.bannerOutId + val[i].id + '/'
           }
           this.showLocalTextLink.outHtml = ''
         }
@@ -289,7 +327,7 @@
         console.log(this.showLocalTextLink);
       },
       changeBannerTitle(title) {
-        this.showLocalTextLink.bannerTitles = title;
+        this.showLocalTextLink.bannerTitle = title;
         console.log(this.showLocalTextLink);
       },
       changeOutHtml() {
@@ -298,25 +336,33 @@
         this.posterTitleShow = false;
         this.equipmentTitleShow = false;
         this.ChooseList = [];
-        this.showLocalTextLink.bannerJumpTypes = 4087;
+        this.showLocalTextLink.bannerJumpType = 4087;
         this.showLocalTextLink.jumpTypeName = '外部链接';
-        this.showLocalTextLink.bannerTitles = this.showLocalTextLink.outHtml;
-        this.showLocalTextLink.bannerOutIds = '';
+        this.showLocalTextLink.bannerTitle = this.showLocalTextLink.outHtml;
+        this.showLocalTextLink.bannerOutId = '';
       },
-      addChooseData() {
+      sendBannerData() {
         console.log(this.ChooseList.length)
         console.log(this.tableIndex)
         console.log(this.equipmentTitle)
 
 
         if(this.ChooseList.length ===0 && this.showLocalTextLink.outHtml ==='') {
-          alert('请至少选中一条海报或者产品或者填写一个外部链接');
+          // alert('请至少选中一条海报或者产品或者填写一个外部链接');
+          this.$notify.error({
+            title: '错误',
+            message: '请至少选中一条海报或者产品或者填写一个外部链接'
+          });
           return
         }
         if(this.tableIndex ==1) {
           if(this.ChooseList.length > 1) {
             if(this.equipmentTitle === '') {
-              alert('请为产品列表填写一个名字');
+              // alert('请为产品列表填写一个名字');
+              this.$notify.error({
+                title: '错误',
+                message: '请为产品列表填写一个名字'
+              });
               return
             }
           }
@@ -324,13 +370,21 @@
         if(this.tableIndex ==0) {
           if(this.ChooseList.length > 1) {
             if(this.posterTitle === '') {
-              alert('请为海报列表填写一个名字');
+              this.$notify.error({
+                title: '错误',
+                message: '请为海报列表填写一个名字'
+              });
+              // alert('请为海报列表填写一个名字');
               return
             }
           }
         }
-        this.$emit('sendChildData', this.showLocalTextLink)
-        this.$emit('update:bannerPanelshowState', false)
+        this.$emit('sendBannerData', this.showLocalTextLink);
+        // 传递数据后清空选择
+        this.ChooseList = [];
+        this.$refs.posterTable.clearSelection();
+        this.$refs.equipmentTable.clearSelection();
+        this.showLocalTextLink.outHtml='';
       }
     }
   }

@@ -259,6 +259,7 @@
             this.customList = [];
             console.log(this.multipleSelection);
             this.$emit('sendOutData',{'one':this.multipleSelection,'two':this.customList});
+            this.$emit('closeDialogVisible')
           },
           shoawdds() {
             console.log(this.customList);

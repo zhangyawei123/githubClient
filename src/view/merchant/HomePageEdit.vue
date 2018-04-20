@@ -16,12 +16,12 @@
             <tr v-for="(item,index) in bannerList">
               <td class="logo-img-url">
                 <!--<VueImgInputer v-model="imageUrl1" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>-->
-                <img :src="item.bannerPics" alt="" class="add-banner-btn" v-if="item.bannerPics" @click="changePic(index)">
+                <img :src="item.bannerPic" alt="" class="add-banner-btn" v-if="item.bannerPic" @click="changePic(index)">
                 <label :for="'addBannerPic_' + index" class="add-banner-btn" v-else></label>
                 <input type="file" :id="'addBannerPic_' + index" class="change-banner-btn" @change="changeBanner" style="display: none">
               </td>
               <td class="logo-name">
-                <el-input v-if="item.jumpTypeName && item.bannerTitles" v-model="item.jumpTypeName + ' ：' + item.bannerTitles" readonly @focus="showBannerPanel(index)"></el-input>
+                <el-input v-if="item.jumpTypeName && item.bannerTitle" v-model="item.jumpTypeName + ' ：' + item.bannerTitle" readonly @focus="showBannerPanel(index)"></el-input>
                 <el-input v-else readonly @focus="showBannerPanel(index)"></el-input>
               </td>
               <td><a href="javascript: void(0);" @click="delItem(bannerList,index)">删除</a></td>
@@ -63,7 +63,7 @@
             <tbody>
             <tr v-for="(item,index) in posterLists">
               <td class="name">
-                <span class="component-pic"><img :src="item.coverPic" alt=""></span>
+                <span class="component-pic"><img :src="item.videoCover" alt=""></span>
                 {{item.brandName}}
               </td>
               <td>{{item.brandName}}</td>
@@ -73,7 +73,7 @@
             </tr>
             </tbody>
           </table>
-          <a href="javascript:void(0);" class="add-btn" @click="showPosterEquipmentPanel">添加</a>
+          <a href="javascript:void(0);" v-if="posterLists.length<2" class="add-btn" @click="showPosterPanel">添加</a>
           <div class="tips"><br>
             最多添加2条，建议选择热门海报或者重点推出的产品海报。</div>
         </dd>
@@ -92,7 +92,7 @@
             <tbody>
             <tr v-for="(item,index) in equipmentLists">
               <td class="name">
-                <span class="component-pic"><img :src="item.equipmentPic" alt=""></span>
+                <span class="component-pic"><img :src="item.picUrl" alt=""></span>
                {{item.brandName}} {{item.modelNum}}
               </td>
               <td>{{item.brandName}}</td>
@@ -102,7 +102,7 @@
             </tr>
             </tbody>
           </table>
-          <a href="javascript:void(0);" class="add-btn">添加</a>
+          <a href="javascript:void(0);" v-if="equipmentLists.length < 2" class="add-btn" @click="showEquipmentPanel">添加</a>
           <div class="tips"><br>
             最多添加2条，建议选择热门海报或者重点推出的产品海报。</div>
         </dd>
@@ -111,10 +111,33 @@
         <a href="javascript: void(0);" class="save-btn" @click="showbannerLIST">保存</a>
         <a href="javascript: void(0);" class="mobile-preview">手机端预览</a>
       </div>
-      <AlertBanner @sendChildData="getChildData" :bannerPanelshowState.sync="bannerPanelshowState" />
-      <AlertPosterEquipment ref="dmeodmoe" :posterEquipmemntshowState.sync="posterEquipmemntshowState" :posterEquipmemntUrl="posterUrl" />
-      <AlertPosterEquipment ref="dmeodmoe" :posterEquipmemntshowState.sync="posterEquipmemntshowState" :posterEquipmemntUrl="equipmentUrl" />
-      <!--<div style="position: fixed; top: 0;bottom: 0;left: 0;right: 0;background-color: rgba(0,0,0,.4);"></div>-->
+      <!--<AlertBanner @sendChildData="getChildData" :bannerPanelshowState.sync="bannerPanelshowState" />-->
+      <el-dialog
+        title="banner链接"
+        :visible.sync="bannerDialogVisible"
+        width="860px">
+        <AlertBanner @sendBannerData="getBannerData" ref="BannerPanel" />
+      </el-dialog>
+      <el-dialog
+        title="添加海报"
+        :visible.sync="posterDialogVisible"
+        width="860px">
+        <AlertPosterEquipment ref="AlertPoster" :posterEquipmemntUrl="posterUrl" :posterLimit="2-posterLists.length" />
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="addPosterData">添 加</el-button>
+          <el-button @click="posterDialogVisible = false">取 消</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog
+        title="添加产品"
+        :visible.sync="equipmentDialogVisible"
+        width="860px">
+        <AlertPosterEquipment ref="AlertEquipment" :posterEquipmemntUrl="equipmentUrl" :equipmentLimit="2-equipmentLists.length" />
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="addEquipmentData">添 加</el-button>
+          <el-button @click="equipmentDialogVisible = false">取 消</el-button>
+        </span>
+      </el-dialog>
     </div>
 </template>
 
@@ -127,7 +150,9 @@
       data() {
           return {
             bannerPanelshowState: false,         //banner弹窗
-            posterEquipmemntshowState: false,    //选着海报设备弹窗
+            bannerDialogVisible: false,          //banner弹窗
+            posterDialogVisible: false,          //海报弹窗
+            equipmentDialogVisible: false,       //设备弹窗
             changeTextIndex: 0,                 //点击更换跳转链接文字的index
             bannerList: [],
             notice: {},
@@ -154,6 +179,7 @@
               _this.bannerList = response.data.companyHome.banners
               _this.notice = response.data.companyHome.notice
               _this.posterLists = response.data.companyHome.videos
+              _this.posterLimit = 2 - response.data.companyHome.videos.length
               _this.equipmentLists = response.data.companyHome.equipments
             })
             .catch(function (error) {
@@ -186,7 +212,7 @@
             processData: false,    //不可缺
             success:function(result){
               console.log(result);
-              _this.bannerList[_index].bannerPics = result.list[0].url;
+              _this.bannerList[_index].bannerPic = result.list[0].url;
               _this.bannerList[_index].bannerPid = result.list[0].pid;
             },
             error:function(result){
@@ -195,36 +221,81 @@
           });
         },
         addBanner() {
-          this.bannerList.push({
-            bannerJumpTypes:'',
-            bannerOutIds:'',
-            bannerPics:'',
-            bannerTitles:'',
-            companyBannerId:'',
-            jumpTypeName:'',
-            outHtml:'',
-          });
+          this.bannerList.push({bannerId:''});
+          console.log(this.bannerList)
         },
         delItem(list,index) {
           list.splice(index,1);
         },
         showBannerPanel(index) {
-          this.bannerPanelshowState = true;
+          // this.bannerPanelshowState = true;
+          this.bannerDialogVisible = true;
           console.log(index);
           this.changeTextIndex = index;
         },
-        showPosterEquipmentPanel() {
-          this.posterEquipmemntshowState = true;
-          this.posterUrl= 'api/product/equipments'
-          // this.$refs.dmeodmoe.getPosterDataList();
+        showPosterPanel() {
+          this.posterDialogVisible = true;
         },
-        getChildData(data) {
+        showEquipmentPanel() {
+          this.equipmentDialogVisible = true;
+        },
+        addPosterData() {                     //获取子组件海报弹窗的数据
+          console.log(this.$refs.AlertPoster.ChooseList);
+          this.posterLists = this.posterLists.concat(this.$refs.AlertPoster.ChooseList);
+          this.posterDialogVisible = false;
+        },//获取子组件海报弹窗的数据
+        addEquipmentData() {                  //获取子组件产品弹窗的数据
+          console.log(this.$refs.AlertEquipment.ChooseList);
+          this.equipmentLists = this.equipmentLists.concat(this.$refs.AlertEquipment.ChooseList);
+          this.equipmentDialogVisible = false;
+        },//获取子组件产品弹窗的数据
+        getBannerData(data) {                     //获取子组件banner弹窗的数据
           console.log(data);
-          this.bannerList[this.changeTextIndex].jumpTypeName = data.jumpTypeName
-          this.bannerList[this.changeTextIndex].bannerTitles = data.bannerTitles
+          this.bannerList[this.changeTextIndex].jumpTypeName = data.jumpTypeName;
+          this.bannerList[this.changeTextIndex].bannerTitle = data.bannerTitle;
+          this.bannerList[this.changeTextIndex].bannerJumpType = data.bannerJumpType;
+          this.bannerList[this.changeTextIndex].bannerOutId = data.bannerOutId;
+          this.bannerList[this.changeTextIndex].outHtml = data.outHtml;
+          this.bannerDialogVisible = false;
         },
         showbannerLIST() {
-          console.log(this.bannerList);
+          // 判断海报列表有没有空缺的项
+          for (let i=0;i< this.bannerList.length;i++) {
+            if(!this.bannerList[i].bannerPic) {
+              this.$notify.error({                               //提示错误，简单的表单验证
+                title: '错误',
+                message: 'banner列表第'+(i+1)+'行图片不能为空'
+              });
+              return false
+            }else if(!this.bannerList[i].jumpTypeName || !this.bannerList[i].bannerTitle){
+              this.$notify.error({                               //提示错误，简单的表单验证
+                title: '错误',
+                message: 'banner列表第'+(i+1)+'行链接内容不能为空'
+              });
+              return false
+            }
+          }
+          var equipmentVideoIds = this.posterLists.map(function (v) {return v.vid })
+          var equipmentIds = this.equipmentLists.map(function (v) {return v.eid })
+          var dataObj = {
+            banner: this.bannerList,
+            companyHomeTitle: this.notice.title,
+            companyHomeConTent: this.notice.content,
+            equipmentVideoIds: equipmentVideoIds,
+            equipmentIds: equipmentIds,
+          };
+          var dataString = JSON.stringify(dataObj);
+          // console.log(this.bannerList)
+          this.axios.post(httpUrl + 'api/company/home/edit/update', this.qs.stringify({
+            accessToken: this.$cookie.get('accessToken'),
+            data: dataString
+          }))
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(err => {
+              console.log(err);
+            });
         }
       }
     }
@@ -232,6 +303,7 @@
 
 <style scoped lang="scss">
   @import url(../../assets/css/publish.css);
+
   .add-banner-btn {
     display: block;
     width: 160px;
@@ -347,4 +419,26 @@
   .mobile-preview {
     background: #f1f2f3;
   }
+</style>
+<style>
+  /*弹窗部分开始*/
+  .el-dialog__header {
+    padding: 20px 50px;
+    background: #FAFAFA;
+  }
+  .el-dialog__headerbtn {
+    right: 50px;
+    line-height: 24px;
+    font-size: 24px;
+  }
+  .el-dialog__footer {
+    padding: 0 50px 20px;
+  }
+  .el-button {
+    padding: 14px 30px;
+  }
+  .banner-panel {
+    margin-top: -20px;
+  }
+  /*弹窗部分结束*/
 </style>

@@ -11,7 +11,15 @@
         <dt>* 海报视频：</dt>
         <dd>
           <div class="video-content">
-            <img src="" alt="上传视频的占位图">
+            <label for="videoFile" class="video-upload-btn"></label>
+            <input type="file" id="videoFile" name="videoFile" class="upinput"  />
+            <div class="video-uplaoding">
+              <el-col :span="23"><el-progress :text-inside="true" :stroke-width="18" :percentage="percentage"></el-progress></el-col>
+              <el-col :span="1" class="abort-upload"><i class="el-icon-close"></i></el-col>
+              <div class="upstatus"></div>
+            </div>
+            <div class="video-wrap">
+            </div>
           </div>
           <div class="tips">1.内容以展示产品为主，可主要展示产品的3至5个点；<br>2.建议视频时间在5s以内。</div>
           <div class="video-cover">
@@ -58,8 +66,47 @@
     name: 'publish-video',
     data() {
       return {
-        videoTitle: ''
+        videoTitle: '',
+        percentage: 0,
       }
+    },
+    mounted() {
+      this.$nextTick(function () {
+        let _this = this;
+        $(".upinput").fileupload({
+          url:"http://192.168.0.69:8010/xjy-web-user/api/common/video/upload",//文件上传地址，当然也可以直接写在input的data-url属性内
+          dataType: "json", //如果不指定json类型，则传来的json字符串就需要解析jQuery.parseJSON(data.result);
+          formData:function(form){//如果需要额外添加参数可以在这里添加
+            return [{name:"oldVideoId",value:$("#videoId").val() || ''},
+              {name:"accessToken",value:'324e26fafd4f4871841e1cdae6a5d8c0'}];
+          },
+          done:function(e,data){
+            //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+            //注意data要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+            //返回的数据在data.result中，这里dataType中设置的返回的数据类型为json
+            if(data.result) {
+              // 上传成功：
+              $('.video-upload-btn').hide();
+              $('.video-uplaoding').hide();
+              $(".video-wrap").show();
+              console.log(data.result);
+              $(".upstatus").html(data.result.msg);
+              $(".video-wrap").html("<video controls height='200' width='360' src="+data.result.previewSrc+"></video>");
+            } else {
+              // 上传失败：
+              _this.percentage = 0;
+              $(".upstatus").html("<span style='color:red;'>"+data.result.msg+"</span>");
+            }
+
+          },
+          progressall: function (e, data) {//上传进度
+            $('.video-upload-btn').hide();
+            $('.video-uplaoding').show();
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            _this.percentage = progress;
+          }
+        });
+      })
     }
   }
 </script>
@@ -75,8 +122,31 @@
  }
  .video-content {
    margin-bottom: 10px;
+   /*width: 360px;*/
+   /*height: 202px;*/
+ }
+ .upinput {
+   display: none;
+ }
+ .abort-upload {
+   text-align: center;
+   cursor: pointer;
+ }
+ .video-wrap{
+   display: block;
    width: 360px;
-   height: 202px;
+   height: 200px;
+   overflow: hidden;
+ }
+ .video-uplaoding,.video-wrap {
+   display: none;
+ }
+ .video-uplaoding {
+   margin-bottom: 10px;
+ }
+ .video-wrap video {
+   width: 100%;
+   height: 100%;
  }
  .video-cover {
    margin-top: 20px;

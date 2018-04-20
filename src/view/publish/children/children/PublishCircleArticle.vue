@@ -6,7 +6,7 @@
       </el-input>
     </el-form-item>
     <el-form-item label="文章内容" required>
-      <UE :defaultMsg=defaultMsg :config=config :id=ue1 ref="ue"></UE>
+      <UE :defaultMsg=defaultMsg :config=config ref="ue"></UE>
     </el-form-item>
     <el-form-item label="文章封面" prop="CoverType">
       <el-radio-group v-model="ruleForm.CoverType">
@@ -98,7 +98,7 @@
     },
     methods: {
       handleClose(tag) {
-        this.ruleForm.dynamicTags.splice(this.ruleForm.dynamicTags.indexOf(tag), 1);
+        this.dynamicTags.splice(this.ruleForm.dynamicTags.indexOf(tag), 1);
       },
 
       showInput() {

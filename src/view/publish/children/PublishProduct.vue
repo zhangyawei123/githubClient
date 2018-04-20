@@ -456,8 +456,6 @@
           url:httpUrl + '/api/common/image/upload',
           type:'POST',
           data:formData,
-          cache: false,
-          async: false,
           contentType: false,    //不可缺
           processData: false,    //不可缺
           success:function(result){
@@ -509,8 +507,6 @@
           url:httpUrl + '/api/common/image/upload',
           type:'POST',
           data:formData,
-          cache: false,
-          async: false,
           contentType: false,    //不可缺
           processData: false,    //不可缺
           success:function(result){
@@ -525,7 +521,7 @@
       addProductIntro() {//添加产品介绍
         this.ProductsIntroList.push({parameterKey: '',parameterValue: ''});
       },
-      removeProductsIntro(index) {//删除残品信息
+      removeProductsIntro(index) {//删除产品信息
         this.ProductsIntroList.splice(index,1);
       },
       showlisy() {

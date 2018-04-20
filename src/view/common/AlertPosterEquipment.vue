@@ -1,10 +1,6 @@
 <template>
-  <div class="panel-box" v-show="posterEquipmemntshowState">
-    <div class="panel-header clearfix">
-      <span>海报</span>
-      <a class="close-btn" v-on:click="changeshowState">&times;</a>
-    </div>
-    <div class="panel-body">
+    <!--如果是海报的弹窗-->
+    <div class="panel-body" v-if="posterEquipmemntUrl=='api/product/equipment/poster/list'">
           <div class="search-box clearfix">
             <el-input placeholder="请输入内容" v-model="seachkey" class="input-with-select">
               <el-button slot="append" icon="el-icon-search"></el-button>
@@ -47,13 +43,57 @@
               </el-table-column>
             </el-table>
           </div>
-      <div class="footer clearfix">
-        若您要选择的海报或产品这里没有，请先前往“发布”板块，发布对应的内容。
-        <div class="oprate-box">
-          <a href="javascript:void(0);" class="add-btn" @click="addChooseData">添加</a>
-          <a href="javascript:void(0);" class="cancel-btn" @click="">取消</a>
-        </div>
-      </div>
+      <!--<div class="footer clearfix">-->
+        <!--若您要选择的海报或产品这里没有，请先前往“发布”板块，发布对应的内容。-->
+        <!--<div class="oprate-box">-->
+          <!--<a href="javascript:void(0);" class="add-btn" @click="addChooseData">添加</a>-->
+          <!--<a href="javascript:void(0);" class="cancel-btn" @click="">取消</a>-->
+        <!--</div>-->
+      <!--</div>-->
+    </div>
+  <!--如果是产品的弹窗-->
+  <div v-else>
+    <div class="search-box clearfix">
+      <el-input placeholder="请输入内容" v-model="seachkey" class="input-with-select">
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </div>
+    <div class="existent-content alertPosterEquipment-eq">
+      <el-table
+        ref="equipmentTable"
+        :data="equipmentList"
+        tooltip-effect="dark"
+        height="315"
+        style="width: 100%"
+        @select-all="selectAll"
+        @select="equipmentSelectionChange">
+        <el-table-column
+          label="零件"
+          width="372">
+          <template slot-scope="scope">
+            <span class="existent-item-pic"><img :src="scope.row.picUrl" alt=""></span>
+            <span class="existent-item-name">{{scope.row.brandName}} {{scope.row.modelNum}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="brandName"
+          label="品牌">
+        </el-table-column>
+        <el-table-column
+          prop="majorName"
+          label="专业"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="countryName"
+          label="产地"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -62,7 +102,7 @@
 
   import { httpUrl} from "../../http_url";
   export default {
-    props: ['posterEquipmemntshowState','posterEquipmemntUrl'],
+    props: ['posterEquipmemntUrl','posterLimit','equipmentLimit'],
     data() {
       return {
         loadingFlag: false,
@@ -76,6 +116,7 @@
     },
     mounted() {
       this.$nextTick(function () {
+        console.log(this.posterLimit)
         console.log(this.posterEquipmemntUrl);
         let _this = this;
         this.checkLogIn();
@@ -83,20 +124,17 @@
         this.getEquipmentDataList();
         $('.alertPosterEquipment .el-table__body-wrapper').scroll(function () {
           if($('.alertPosterEquipment .el-table__body-wrapper').scrollTop() + $('.alertPosterEquipment .el-table__body-wrapper').height() > ($('.alertPosterEquipment .el-table__body').height() -10) && !_this.loadingFlag) {
-            _this.getPosterDataList();
+              _this.getPosterDataList();
           }
         })
-        // $('.equipment .el-table__body-wrapper').scroll(function () {
-        //   if($('.equipment .el-table__body-wrapper').scrollTop() + $('.equipment .el-table__body-wrapper').height() > ($('.equipment .el-table__body').height() -10) && !_this.loadingFlag) {
-        //     _this.getEquipmentDataList();
-        //   }
-        // })
+        $('.alertPosterEquipment-eq .el-table__body-wrapper').scroll(function () {
+          if($('.alertPosterEquipment-eq .el-table__body-wrapper').scrollTop() + $('.alertPosterEquipment-eq .el-table__body-wrapper').height() > ($('.alertPosterEquipment-eq .el-table__body').height() -10) && !_this.loadingFlag) {
+            _this.getEquipmentDataList();
+          }
+        })
       })
     },
     methods: {
-      changeshowState() {
-        this.$emit('update:posterEquipmemntshowState', false)
-      },
       getPosterDataList() {
         let _this = this;
         this.loadingFlag = true;
@@ -145,23 +183,47 @@
             console.log(error)
           })
       },
-      posterSelectionChange(val) {
-        // alert('q143');
-        if(val.length > 2) {
+      posterSelectionChange(selection, row) {
+        // 最多添加几条是根据父组件返回的海报的条数判断
+        if(selection.length > this.posterLimit) {
           // alert(123);
-          this.$refs.posterTable.toggleRowSelection(val[0],false);
+          this.$notify.error({
+            title: '错误',
+            message: '最多添加'+this.posterLimit+'条信息'
+          });
+          this.$refs.posterTable.toggleRowSelection(row,false);
         }
-        this.ChooseList = val;
-        console.log(val)
+        this.ChooseList = selection;
       },
-      selectAll() {
-        alert('这样是不行的饿');
-        this.$refs.posterTable.clearSelection();
+      equipmentSelectionChange(selection, row) {
+        // 最多添加几条是根据父组件返回的产品的条数判断
+        if(selection.length > this.equipmentLimit) {
+          this.$notify.error({
+            title: '错误',
+            message: '最多添加'+this.equipmentLimit+'条信息'
+          });
+          this.$refs.equipmentTable.toggleRowSelection(row,false);
+        }
+        this.ChooseList = selection;
+        console.log(this.ChooseList)
       },
-      addChooseData() {
+      selectAll() {                             //全选功能是禁止的
+        var _this = this;
+        this.ChooseList = [];
+        this.$notify.error({
+          title: '错误',
+          message: '最多添加两条信息,请单独选择'
+        });
+        if(this.posterEquipmemntUrl==='api/product/equipment/poster/list') {
+          setTimeout(function () {
+            _this.$refs.posterTable.clearSelection();
+          },10)
+        }else {
+          setTimeout(function () {
+            _this.$refs.equipmentTable.clearSelection();
+          },10)
+        }
 
-        this.$emit('sendPosterEquipmentData', this.ChooseList)
-        this.$emit('update:bannerPanelshowState', false)
       }
     }
   }
@@ -169,34 +231,5 @@
 
 <style scoped lang="scss">
   @import url(../../assets/css/alert-panel.css);
-  .panel-box .search-box {
-    margin-top: 30px;
-  }
-
-/*  .add-new-btn-box {
-    background: $bg-color;
-    border: 1px solid $border-color;
-  }
-  .add-new-btn {
-    margin: 10px 0 10px 20px;
-    display: inline-block;
-    width: 96px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 3px;
-    text-align: center;
-    color: $primary-color;
-    background-color: #fff;
-    border: 1px solid $border-color;
-  }
-  .add-title-box {
-    margin-top: 20px;
-    padding-left: 120px;
-  }
-  .title-tips {
-    float: left;
-    line-height: 40px;
-    margin-left: -120px;
-  }*/
 </style>
 

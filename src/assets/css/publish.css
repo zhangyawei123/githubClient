@@ -74,6 +74,7 @@
 }
 /*上传视频的按钮*/
 .video-upload-btn {
+  display: block;
   margin-bottom: 10px;
   width: 360px;
   height: 200px;

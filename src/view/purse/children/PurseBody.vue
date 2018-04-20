@@ -3,7 +3,9 @@
     <div class="purse-cell">
       <div class="stag-title">我的钱包</div>
       <div class="remainder">您的钱包当前余额为<span class="remainder-num">3800.00</span>元</div>
-      <div class="purse-banner"></div>
+      <div class="purse-banner">
+        <router-link class="recharge-btn" to="/purse/recharge">去充值</router-link>
+      </div>
     </div>
     <div class="time-panel">
       <div class="time-left">
@@ -104,13 +106,23 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .stag {background: none;padding:0;}
   .purse-cell {padding: 0 40px;background: #fff;overflow:hidden;margin-bottom: 20px;}
   .stag-title {font-size: 20px;color: #333;padding-top: 30px;padding-bottom: 20px;border-bottom: 1px solid #e2e5e7; }
   .remainder { margin-top: 20px;margin-bottom: 20px; }
   .remainder-num { font-size: 28px;color: #ff2626;margin: 0 10px; }
   .purse-banner { height: 120px;background: #0f0;margin-bottom: 46px; }
+  .recharge-btn {
+    margin-top: 28px;
+    margin-right: 38px;
+    float: right;width: 90px;
+    height: 36px;
+    line-height: 36px;
+    background-color: $primary-color;
+    color: #fff;
+    border-radius: 3px;
+  text-align: center}
   .time-panel {padding: 0 40px;overflow: hidden;background: #FAFAFA;}
   .time-left {line-height: 48px;float: left;}
   .time-left > span {margin-right: 40px;cursor: pointer;}

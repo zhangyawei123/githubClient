@@ -20,15 +20,19 @@
         <tbody>
         <tr v-for="(item,index) in lists">
           <td class="name">
-            <div class="product-pic"></div>
-            {{item.name}}
+            <div class="product-pic">
+              <img :src="item.picUrl" alt="">
+            </div>
+            {{item.brandName}} {{item.modelNum}}
           </td>
-          <td class="product-price">￥{{item.price}}</td>
-          <td>{{item.viewCount}}</td>
-          <td>{{item.seekNum}}</td>
-          <td>{{item.time}}</td>
+          <td class="product-price">{{item.customPrice}}</td>
+          <td>{{item.viewNum}}</td>
+          <td>{{item.consultNum}}</td>
+          <td>{{item.opt | formatTime}}</td>
           <td>
+            <el-tooltip content="编辑" placement="top">
             <router-link :to="{ path: '/productManage/edit', query: {productIndex: index}}"><i class="iconfont icon-bianji"></i></router-link>
+            </el-tooltip>
             <i class="iconfont icon-cha" @click="removeItem(index)"></i>
           </td>
         </tr>
@@ -38,16 +42,18 @@
       <el-pagination
         background
         @current-change="handleCurrentChange"
-        :current-page.sync="currentPage1"
-        :page-size="15"
+        :current-page.sync="currentPage"
+        :page-size="pageSize"
         layout="prev, pager, next,total"
-        :total="100">
+        :total="total">
       </el-pagination>
     </div>
 </template>
 
 <script>
-    export default {
+  import {httpUrl} from "../../../http_url";
+
+  export default {
         name: "product-manage-list",
         data () {
           return {
@@ -77,12 +83,33 @@
                 time: '2016年11月16日 16:00'
               }
             ],
+            pageSize: 10,
+            total: 100,
             seachWord: '',
-            currentPage1: 1,
+            currentPage: 1,
 
           }
         },
+        mounted() {
+          this.$nextTick(function () {
+            this.checkLogIn();
+            this.getData();
+          })
+        },
         methods: {
+          getData() {
+            let _this = this;
+            this.axios.get(httpUrl + 'api/product/equipments?currentPage=' + (this.currentPage-1) + '&accessToken=' +  this.$cookie.get('accessToken'))
+              .then(function (response) {
+                console.log(response.data);
+                _this.pageSize = response.data.pageSize;
+                _this.total = response.data.total;
+                _this.lists = response.data.list;
+              })
+              .catch(function (error) {
+                console.log(error)
+              })
+          },
           clearInput() {
             this.seachWord = ''
           },
@@ -106,6 +133,8 @@
           },
           handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
+            this.currentPage = val;
+            this.getData();
           },
         }
     }

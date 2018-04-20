@@ -66,6 +66,7 @@ import ServeManage from '@/view/deal/ServeManage'
 //钱包
 import Purse from '@/view/purse/Purse'
 import PurseBody from '@/view/purse/children/PurseBody'
+import Recharge from '@/view/purse/children/Recharge'
 import PursePoster from '@/view/purse/children/children/PursePoster'
 import PurseSeek from '@/view/purse/children/children/PurseSeek'
 
@@ -171,6 +172,7 @@ export default new Router({
       	{path: '/purse',component: Purse,
           children: [//我的钱包二级菜单
             {path: '/',component: PurseBody},
+            {path: 'recharge',component: Recharge},
             {path: 'purseposter',component: PursePoster},
             {path: '/purse/purseseek',component: PurseSeek},
           ]
