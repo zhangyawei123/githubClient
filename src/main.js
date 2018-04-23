@@ -33,7 +33,7 @@ import VueAwesomeSwiper from 'vue-awesome-swiper'
 // 这种方法不用每个页面都引入httpUrl
 let index = 1;//1为测试URL，2为正式上线URL
 if (index === 1) {
-  Vue.prototype.httpUrl = 'http://192.168.0.69:8010/xjy-web-user/';//测试URL
+  Vue.prototype.httpUrl = 'http://192.168.0.69:8080/xjy-web-user/';//测试URL
 } else {
   Vue.prototype.httpUrl = '';//正式上线URL
 }

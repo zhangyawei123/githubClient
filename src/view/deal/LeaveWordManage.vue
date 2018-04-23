@@ -7,7 +7,7 @@
       <div class="visitor-name">{{item.basicUser.nickName}}</div>
       <div class="visitor-message">{{item.content}}</div>
       <div class="message-to">留言了您的海报：{{item.messageto}}（关联产品：斗山PUMAVST500G）</div>
-      <div class="time-reply"><span>{{ 1517300103000 | formatTime}}</span><span class="reply-btn" @click="changOpen(item)">{{item.opened ? '收起': '回复'}}</span></div>
+      <div class="time-reply"><span>{{ item.dateTime | formatTime}}</span><span class="reply-btn" @click="changOpen(item)">{{item.opened ? '收起': '回复'}}</span></div>
       <div class="reply-box" v-if="item.opened">
         <!--<textarea class="reply-text" name="" id="" placeholder="回复该留言" v-model="item.textarea"></textarea>-->
         <el-input
@@ -51,7 +51,7 @@
             <div class="answer-content">
               <span class="answer-to">{{item.companyUser.firm}} &gt; {{item.basicUser.nickName}}：</span>{{answer.content}}
             </div>
-            <p class="answer-time">{{answer.dateTime | formatTime}}  <a href="javascript:void(0)" @click="deleteAnswer(item,answerIndex)">删除</a></p>
+            <p class="answer-time">{{answer.dateTime | formatTime}}  <a href="javascript:void(0)" @click="deleteAnswer(item,answerIndex,answer.rid)">删除</a></p>
           </div>
         </div>
       </div>
@@ -100,20 +100,20 @@
                 "content": item.textarea,
                 "dateTime": new Date().getTime(),
               });
-              // this.axios.post(httpUrl + 'api/product/equipment/reply', this.qs.stringify({ // 回复的回复传数据
-              //   eid: item.eid,
-              //   accessToken: _this.$cookie.get('accessToken'),
-              //   content: item.textarea,
-              //   replyUserId: item.replyUserId,
-              //   parentId: 0,
-              // }))
-              //   .then(function (response) {
-              //     console.log(response);
-              //     item.textarea = '';
-              //   })
-              //   .catch(function (error) {
-              //     console.log(error);
-              //   });
+              this.axios.post(httpUrl + 'api/product/equipment/reply', this.qs.stringify({ // 回复的回复传数据
+                eid: item.eid,
+                accessToken: _this.$cookie.get('accessToken'),
+                content: item.textarea,
+                replyUserId: item.replyUserId,
+                parentId: 0,
+              }))
+                .then(function (response) {
+                  console.log(response);
+                  item.textarea = '';
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
             }
         },
           getDataList: function () {
@@ -150,7 +150,8 @@
                   "nickName": item.basicUser.nickName,
                 },
                 "content":answer.textarea ,
-                'isSelf': 1
+                'isSelf': 1,
+                'dateTime': new Date()
               });
               this.axios.post(httpUrl + 'api/product/equipment/reply', this.qs.stringify({ // 回复的回复传数据
                 eid: answer.eid,
@@ -168,8 +169,18 @@
                 });
             }
           },
-          deleteAnswer(item,answerIndex){
-            item.replys.splice(answerIndex,1)
+          deleteAnswer(item,answerIndex,rid){                 //删除评论
+            item.replys.splice(answerIndex,1);
+            // this.axios.post(httpUrl + 'api/product/equipment/reply',this.qs.stringify({
+            //   rid: rid,
+            //   accessToken: this.$cookie.get('accessToken'),
+            // }))
+            //   .then(function (response) {
+            //       console.log('msg')
+            //   })
+            //   .catch(function (error) {
+            //
+            //   })
           },
           loadMore() {
             this.currentPage++;

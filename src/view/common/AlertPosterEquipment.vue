@@ -212,7 +212,7 @@
         this.ChooseList = [];
         this.$notify.error({
           title: '错误',
-          message: '最多添加两条信息,请单独选择'
+          message: '最多添加'+this.equipmentLimit+'条信息,请单独选择'
         });
         if(this.posterEquipmemntUrl==='api/product/equipment/poster/list') {
           setTimeout(function () {

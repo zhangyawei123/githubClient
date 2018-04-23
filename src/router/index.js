@@ -8,6 +8,9 @@ import LogIn from '@/view/login/LogIn'
 import Home from '@/view/home/Home'
 //消息中心
 import MessageCenter from '@/view/message/MessageCenter'
+import CenterDiscuss from '@/view/message/children/CenterDiscuss'
+import CenterPraise from '@/view/message/children/CenterPraise'
+import SystemMsg from '@/view/message/children/SystemMsg'
 //发布
 import Publish from '@/view/publish/Publish'
 import Publishvideo from '@/view/publish/children/PublishVideo'
@@ -85,6 +88,9 @@ export default new Router({
       children: [
       	{path: '/',component: Home},//主页
       	{path: '/messagecenter',component: MessageCenter},//消息中心页
+      	{path: '/centerpraise',component: CenterPraise},//消息中心赞详情页
+      	{path: '/centerdiscuss',component: CenterDiscuss},//消息中心评论页
+      	{path: '/systemmsg',component: SystemMsg},//消息中心系统消息
       	{path: '/publish',component: Publish,
           children: [
             { path: '', component: Publishvideo},
