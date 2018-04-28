@@ -52,7 +52,7 @@
         var _this = this;
         this.axios.get(httpUrl + '/api/product/equipment/poster/list?accessToken='+ this.$cookie.get('accessToken') +'&&currentPage=' + currentPage,)
           .then(response => {
-            // console.log(response.data);
+            console.log(response.data);
             _this.total = response.data.total;
             _this.lists = response.data.list;
           })

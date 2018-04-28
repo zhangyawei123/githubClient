@@ -149,9 +149,12 @@
   color: #fff;
   font-size: 12px;
 }
-.mark-new { background: #fda551;}
-.mark-discount { background: #ef4990;}
+.mark-4601 { background: #fda551;}  /*上新*/
+.mark-4602 { background: #ef4990;}  /*折扣*/
+.mark-4603 { background: #19c39c;}  /*新闻*/
+.mark-4604 { background: #a763e7;}  /*人员*/
+.mark-4605 { background: #187ff5;}  /*圈子*/
 .mark-notice { background: #36d7e9;}
-.mark-circle { background: #187ff5;}
-.mark-employ { background: #a763e7;}
-.mark-news { background: #19c39c;}
+
+
+

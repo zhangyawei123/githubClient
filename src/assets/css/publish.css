@@ -37,6 +37,7 @@
   overflow: hidden;
 }
 .product-info-item dt {
+  line-height: 40px;
   padding-right: 20px;
   float: left;
   width: 130px;
@@ -140,6 +141,9 @@ input.attribute-item-value {
   height: 52px;
   border: 1px solid #f0f0f0;
 }
+.component .component-pic.poster {
+  width: 92px;
+}
 .component-pic img {
   display: block;
   width: 100%;
@@ -211,6 +215,17 @@ input.attribute-item-value {
 }
 .publish-btn {
   display: inline-block;
+  width: 120px;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  text-align: center;
+  background: #1278ec;
+  border-radius: 3px;
+}
+.save-btn {
+  margin: 0 auto;
+  display: block;
   width: 120px;
   height: 40px;
   line-height: 40px;

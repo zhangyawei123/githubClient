@@ -24,16 +24,16 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="brand"
+                prop="brandName"
                 label="品牌">
               </el-table-column>
               <el-table-column
-                prop="major"
+                prop="majorName"
                 label="专业"
                 show-overflow-tooltip>
               </el-table-column>
               <el-table-column
-                prop="country"
+                prop="countryName"
                 label="产地"
                 show-overflow-tooltip>
               </el-table-column>
@@ -115,6 +115,7 @@
       }
     },
     mounted() {
+      this.checkLogIn();
       this.$nextTick(function () {
         console.log(this.posterLimit)
         console.log(this.posterEquipmemntUrl);
@@ -212,7 +213,7 @@
         this.ChooseList = [];
         this.$notify.error({
           title: '错误',
-          message: '最多添加'+this.equipmentLimit+'条信息,请单独选择'
+          message: '最多添加'+(this.equipmentLimit || this.posterLimit)+'条信息,请单独选择'
         });
         if(this.posterEquipmemntUrl==='api/product/equipment/poster/list') {
           setTimeout(function () {

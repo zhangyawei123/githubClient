@@ -110,7 +110,7 @@
         </dd>
         <dt>* 可加工零件：</dt>
         <dd>
-          <table class="component">
+          <table class="component" v-if="partsLibraryList.length || partsCustomList.length">
             <thead>
             <tr>
               <td class="name">零件</td>
@@ -120,27 +120,31 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="(item,index) in partsLibraryList">
               <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
+                <span class="component-pic">
+                  <img :src="item.coverPic" alt="">
+                </span>
+                {{item.titleName+ ' ' + item.introduction}}
               </td>
-              <td>电子与电气仪表</td>
-              <td>全自动变速系统</td>
-              <td><a class="delete" href="##">删除</a></td>
+              <td>{{item.secondName}}</td>
+              <td>{{item.industryName}}</td>
+              <td><a class="delete" href="javascript:void(0)">删除</a></td>
             </tr>
-            <tr>
+            <tr v-for="(item,index) in partsCustomList">
               <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
+                <span class="component-pic">
+                  <img :src="item.coverPic" alt="">
+                </span>
+                {{item.titleName+ ' ' + item.introduction}}
               </td>
-              <td>电子与电气仪表</td>
-              <td>全自动变速系统</td>
-              <td><a class="delete" href="##">删除</a></td>
+              <td>{{item.secondName}}</td>
+              <td>{{item.industryName}}</td>
+              <td><a class="delete" href="javascript:void(0)">删除</a></td>
             </tr>
             </tbody>
           </table>
-          <div class="tips"><a href="##" class="add-btn">添加</a>最多可添加零件20条。</div>
+          <div class="tips"><a href="javascript:void(0)" @click="componentDialogVisible=true" class="add-btn">添加</a><br>最多可添加零件20条。</div>
         </dd>
         <dt>现场应用：</dt>
         <dd>
@@ -259,11 +263,19 @@
         </div>
       </div>
     </div>
+    <!--零件的弹出框-->
+    <el-dialog
+      title="添加可加工零件"
+      :visible.sync="componentDialogVisible"
+      width="860px">
+      <AlertPanel :dataUrl="componentUrl" ref="componentDialog" @sendOutData="componentDialogData" @closeDialogVisible="componentDialogVisible=false" />
+    </el-dialog>
   </div>
 
 </template>
 <script>
   import { httpUrl} from "../../../http_url";
+  import AlertPanel from '../../common/AlertPanel'
   const professionOptions = ['汽车', '航空航天', '工程机械', '农业机械', '纺织机械', '通用机械', '轨道交通', '通信计算机', '石油天然气', '电子与电气仪表'];
   export default {
     name: 'publish-product',
@@ -275,7 +287,7 @@
           areaValue: '',           //产地
           seriesConfirmValue: {},     //产品系列弹出框选中确认关闭的时候的值
           modelo: '',         // 型号
-          price: ''            // 价格
+          price: '',            // 价格
         },
         productRules: {
           brandValue: [
@@ -297,25 +309,28 @@
             { required: true, message: '请输入价格', trigger: 'blur' }
           ]
         },
+
         brandOptions: [],       //品牌的下拉选项
         majorsOptions:[],       //专业的下拉选项
         areaOptions: [],        //产地下拉框
+        seriesPanelState: false, //系列弹窗的显示影藏状态
+        addSeriesName: '', //系列弹窗的增加系列的输入框的值
         seriesOptions: [],      //系列弹窗列表
         seriesValue: '',        //产品系列弹出框的选中值
         price: '',              //价格
         productFileList: [],    //产品图的图片数组
         coverFileList: [],      //产品封面图的图片数组
-        dialogImageUrl: '',
-        dialogVisible: false,
-        imageUrl: '',
+        // dialogImageUrl: '',
+        // dialogVisible: false,
+        // imageUrl: '',
         professions: professionOptions,
-        checkedProfessions: ['航空航天'],
-        showState: '1',
-        ProductsIntroList: [
-
-        ],
-        seriesPanelState: false, //系列弹窗的显示影藏状态
-        addSeriesName: '', //系列弹窗的增加系列的输入框的值
+        checkedProfessions: ['航空航天'],        //应用行业
+        componentDialogVisible:false,           //添加零件弹窗
+        componentUrl: 'api/product/equipment/parts',
+        partsLibraryList: [],                   //零件库选择的零件
+        partsCustomList: [],                    //自定义添加的零件
+        showState: '1',                         //推荐型号显示隐藏
+        ProductsIntroList: [],                  //产品介绍
       }
     },
     mounted(){
@@ -323,7 +338,11 @@
         this.checkLogIn();
         this.getbrands();
         this.getAreas();
+
       })
+    },
+    components: {
+      AlertPanel
     },
     methods: {
       submitForm(formName) {
@@ -345,7 +364,7 @@
           .catch(err => {
             console.log(err);
           });
-      },
+      },//获取品牌的下拉框数据
       getMajors(){        //根据品牌获取专业的下拉框数据
         if(!this.productRuleForm.brandValue) {
           this.$notify({
@@ -363,9 +382,9 @@
               console.log(err);
             });
         }
-      },
+      },//根据品牌获取专业的下拉框数据
+
       showSeriesPanel(){                //打开系列面板，获取数据
-        console.log('打开系列选择面板');
         this.seriesPanelState = true;
         this.axios.get(httpUrl + 'api/product/serieses?accessToken='+ this.$cookie.get('accessToken'))
           .then(response => {
@@ -375,9 +394,8 @@
           .catch(err => {
 
           })
-      },
+      }, //打开系列面板，获取数据
       addSeriesFn(){                    //输入框添加系列的值
-        console.log('zengjiazhi');
         this.axios.post(httpUrl + 'api/product/series/add', this.qs.stringify({
           accessToken: this.$cookie.get('accessToken'),
           name: this.addSeriesName
@@ -390,7 +408,7 @@
           .catch(err => {
             console.log(err);
           });
-      },
+      },//输入框添加系列的值
       deleteSeries(sid,index){                   //删除系列
         this.axios.post(httpUrl + 'api/product/series/del', this.qs.stringify({
           accessToken: this.$cookie.get('accessToken'),
@@ -414,7 +432,7 @@
           .catch(err => {
             console.log(err);
           });
-      },
+      }, //删除系列
       showseriesValue() {                               //把系列弹窗选中的值回显到页面内
         console.log(this.seriesValue);
         for (let i=0;i < this.seriesOptions.length;i++){
@@ -423,7 +441,7 @@
             this.seriesPanelState = false;
           }
         }
-      },
+      },//把系列弹窗选中的值回显到页面内
       getAreas(){                                         //获取地区选择
         this.axios.get(httpUrl + '/api/common/codes?val=area&accessToken='+ this.$cookie.get('accessToken'))
           .then(response => {
@@ -433,12 +451,12 @@
           .catch(err => {
             console.log(err);
           });
-      },
+      },//获取地区选择
       onFileChange(e) {    //产品图上传多图
         var _this = this;
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length) return;
-        if(files.length>5) {
+        if(files.length + _this.productFileList.length>5) {
           this.$notify({
             title: '警告',
             message: '文件个数不能超过5个',
@@ -466,7 +484,7 @@
             console.log(result);
           }
         });
-      },
+      }, //产品图上传多图
       delPic(index,pid) {   //删除图片
         var _this = this;
         $.ajax({
@@ -487,13 +505,13 @@
             console.log(result);
           }
         });
-      },
+      },//删除图片
       changeCover(e) {
         e.preventDefault();
         $('#addCoverPic').trigger('click');
         return false;
       },
-      onFileChangeCover(e) {
+      onFileChangeCover(e) {  //产品封面图上传
         var _this = this;
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length) return;
@@ -517,10 +535,16 @@
             console.log(result);
           }
         });
+      },//产品封面图上传
+      componentDialogData(data) {                 //取零件弹窗子组件的值
+        console.log(data)
+        this.partsLibraryList = this.partsLibraryList.concat(data.one);
+        this.partsCustomList = this.partsCustomList.concat(data.two);
+        this.componentDialogVisible = false
       },
       addProductIntro() {//添加产品介绍
         this.ProductsIntroList.push({parameterKey: '',parameterValue: ''});
-      },
+      },//添加产品介绍
       removeProductsIntro(index) {//删除产品信息
         this.ProductsIntroList.splice(index,1);
       },
@@ -710,7 +734,7 @@
   .product-profession {
     padding-right: 50px;
   }
-  .el-checkbox {
+  .product-profession .el-checkbox {
     margin-bottom: 20px;
     margin-left: 0!important;
     width: 128px;

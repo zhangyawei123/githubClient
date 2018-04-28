@@ -47,7 +47,7 @@
         </router-link>
       </div>
       <div class="message-cell">
-        <router-link to="/centerpraise">
+        <router-link :to="{path: '/centerpraise',query: {messageType: 1609}}">
           <span class="message-icon icon-praise"></span>
           <el-badge class="mark brage" :value="lists[5].unReadSum" :max="10">
           </el-badge>
@@ -56,7 +56,7 @@
         </router-link>
       </div>
       <div class="message-cell">
-        <router-link to="/systemmsg">
+        <router-link :to="{path: '/centerpraise',query: {messageType: 1617}}">
           <span class="message-icon icon-systemMsg"></span>
           <el-badge class="mark brage" :value="lists[6].unReadSum" :max="10">
           </el-badge>
@@ -79,6 +79,7 @@
         },
         mounted() {
           this.$nextTick(function () {
+            this.checkLogIn();
             this.getData();
           })
         },

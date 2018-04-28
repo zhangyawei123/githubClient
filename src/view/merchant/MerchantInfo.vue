@@ -45,15 +45,15 @@
           <tbody>
             <tr v-for="(item,index) in brandLogoList">
               <td class="logo-img-url">
-                <VueImgInputer v-model="item.picUrl" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>
+                <img src="http://www.xinjiyuancps.com/xinjiyuanimg/upload/we_Media/image_list/2017.06.26/b59e7daa-0053-4d0b-824e-fe5e74f125ba.png" alt="" width="80" height="80">
               </td>
-              <td class="logo-name"><el-input v-model="item.brandName"></el-input></td>
+              <td class="logo-name"><el-input v-model="item.brandName" readonly></el-input></td>
               <td><a href="javascript: void(0);" @click="delBrandLogo">删除</a></td>
             </tr>
           </tbody>
         </table>
         <div class="clearfix">
-          <a href="javascript:void(0);" class="add-btn" @click="addBrandLogo">添加</a>
+          <a href="javascript:void(0);" class="add-btn" @click="logoDialogVisible=true">添加</a>
           <div class="tips">品牌logo即为该商号所经营售卖的产品品牌logo。<br>
             logo图片格式PNG、JPGE、PNG，文件尺寸为120*120px.</div>
         </div>
@@ -146,11 +146,22 @@
     </dl>
     <a href="javascript:void(0);" @click="submitForm('ruleForm')" class="save-btn">保存</a>
     </el-form>
+    <el-dialog
+      title="添加海报"
+      :visible.sync="logoDialogVisible"
+      width="860px">
+      <LogoPanel ref="AlertLogo" :logoUrl="brandLogoUrl" :logoLimit="5-brandLogoList.length" />
+      <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="addBrandLogoData">添 加</el-button>
+          <el-button @click="logoDialogVisible = false">取 消</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import {httpUrl} from "../../http_url";
+  import LogoPanel from '../common/LogoPanel';
   import VueImgInputer from 'vue-img-inputer'
     export default {
         name: "merchant-info",
@@ -210,9 +221,9 @@
               ]
             },
             logoUrl: '',                              //公司logo
-            brandLogoList: [                          //品牌logo
-              { picUrl: '',brandName: ''},
-            ],
+            logoDialogVisible: false,
+            brandLogoUrl: 'api/company/brands',
+            brandLogoList: [],                        //品牌logo
             imageUrl1: '',
             logoname: '',
             professions: [],                    //主要经营六大行业
@@ -224,7 +235,7 @@
           }
       },
       components: {
-        VueImgInputer
+        LogoPanel
       },
       mounted() {
         this.$nextTick(function () {
@@ -304,15 +315,13 @@
             }
           });
         },
-        addBrandLogo() {                    //添加品牌logo
-          this.brandLogoList.push({ picUrl: '',brandName: ''});
+        addBrandLogoData() {                    //添加品牌logo
+
         },
         delBrandLogo() {
 
         },
-        fileChange(file, name) {
-          console.log(file);
-        },
+
         submitForm(formName) {
           this.$refs[formName].validate((valid) => {
             if (valid) {
@@ -393,6 +402,9 @@
     box-sizing: border-box;
     overflow: hidden;
   }
+  .logo-img-url img {
+    vertical-align: middle;
+  }
   .logo-name {
     width: 420px;
     padding-right: 120px;
@@ -400,6 +412,7 @@
   }
   tbody tr {
     height: 118px;
+    line-height: 118px;
     border-bottom: 1px solid #e3e6e9;
   }
   .img-inputer--small {

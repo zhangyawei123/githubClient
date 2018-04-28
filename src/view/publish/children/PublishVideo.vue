@@ -37,33 +37,37 @@
         </dd>
         <dt>* 关联产品：</dt>
         <dd>
-          <table class="component configure">
-            <thead>
-            <tr>
-              <td class="name">产品</td>
-              <td class="price">价格</td>
-              <td class="profession">品牌</td>
-              <td class="system">专业</td>
-              <td class="location">产地</td>
-              <td class="operate">操作</td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-              <td class="name">
-                <span class="component-pic"></span>
-                螺母 我司大量生产汽车仪器零部件...
-              </td>
-              <td class="price-value">￥298000</td>
-              <td>德玛吉</td>
-              <td>刀具</td>
-              <td>德国</td>
-              <td><a class="delete" href="##">编辑</a></td>
-            </tr>
-            </tbody>
-          </table>
-          <div class="tips">设备型号将显示于各视频列表，如有问题可在产品管理中修改。</div>
-          <a href="javascript:void(0)" @click="equipmentDialogVisible=true" class="add-btn">添加</a>
+          <div v-if="linkProduct">
+            <table class="component configure">
+              <thead>
+              <tr>
+                <td class="name">产品</td>
+                <td class="price">价格</td>
+                <td class="profession">品牌</td>
+                <td class="system">专业</td>
+                <td class="location">产地</td>
+                <td class="operate">操作</td>
+              </tr>
+              </thead>
+              <tbody>
+              <tr >
+                <td class="name">
+                  <span class="component-pic">
+                    <img :src="linkProduct.picUrl" alt="">
+                  </span>
+                  {{linkProduct.majorName +' '+ linkProduct.modelNum}}
+                </td>
+                <td class="price-value">{{linkProduct.customPrice}}</td>
+                <td>{{linkProduct.brandName}}</td>
+                <td>{{linkProduct.majorName}}</td>
+                <td>{{linkProduct.countryName || '---'}}</td>
+                <td><a class="delete" @click="equipmentDialogVisible=true"  href="javascript:void(0)">编辑</a></td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="tips">设备型号将显示于各视频列表，如有问题可在产品管理中修改。</div>
+          </div>
+          <a href="javascript:void(0)" v-if="!linkProduct" @click="equipmentDialogVisible=true" class="add-btn">添加</a>
         </dd>
       </dl>
       <a href="javascript:void(0)" class="save-btn">保存</a>
@@ -143,12 +147,14 @@
         systemPicUrl: '',                                         //系统选择的的视频封面
         systemPicList: [],                                        //系统封面列表
         videoCoverUrl: '',                                        //页面内选择后显示的封面
+        linkProduct: null,
       }
     },
     components: {
       AlertPosterEquipment
     },
     mounted() {
+      this.checkLogIn();
       this.$nextTick(function () {
         let _this = this;
         let showTimeInterval = null;
@@ -274,7 +280,8 @@
         this.videoCoverDialogVisible= false;
       },
       addEquipmentData() {
-
+        console.log(this.$refs.AlertEquipment.ChooseList);
+        this.linkProduct = this.$refs.AlertEquipment.ChooseList[0];
       }
     }
   }

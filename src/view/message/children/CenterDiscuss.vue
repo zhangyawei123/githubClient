@@ -2,15 +2,16 @@
   <div>
     <div class="crumbs">
       <div class="crumbs-inner">
-        <router-link to="/videoManage">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/videoManage">消息中心</router-link><i class="crumbs-icon">&gt;</i><span>评论</span>
+        <router-link to="/messagecenter">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/messagecenter">消息中心</router-link><i class="crumbs-icon">&gt;</i><span>评论</span>
       </div>
     </div>
     <div class="message-cell" v-for="(item,index) in lists">
       <span class="visitor-pic"><img :src="item.basicUser.userPic" alt=""></span>
       <div class="visitor-name">{{item.basicUser.nickName}}</div>
       <div class="visitor-message">{{item.content}}</div>
-      <div class="message-to">留言了您的海报：{{item.messageto}}（关联产品：斗山PUMAVST500G）</div>
+      <div class="message-to">评论了您的{{item.mediaType | formatType}}：{{item.title}}</div>
       <div class="time-reply"><span>{{ item.dateTime | formatTime}}</span><span class="reply-btn" @click="changOpen(item)">{{item.opened ? '收起': '回复'}}</span></div>
+      <el-collapse-transition>
       <div class="reply-box" v-if="item.opened">
         <!--<textarea class="reply-text" name="" id="" placeholder="回复该留言" v-model="item.textarea"></textarea>-->
         <el-input
@@ -19,6 +20,7 @@
           :rows="3"
           :maxlength="100"
           placeholder="回复该留言"
+          @keyup.enter.native="sendMessage(item)"
           v-model="item.textarea">
         </el-input>
         <div class="send-info">
@@ -26,6 +28,7 @@
           <span class="send-btn" v-bind:class="{disabled: item.textarea.length===0}" @click="sendMessage(item)">发送</span>
         </div>
       </div>
+      </el-collapse-transition>
       <div class="answer-box" v-if="item.replys">
         <div class="answer-item" v-for="(answer,answerIndex) in item.replys">
           <!--个人对商家-->
@@ -34,6 +37,7 @@
               <span class="answer-to">{{item.basicUser.nickName}} &gt; {{item.companyUser.firm}}：</span>{{answer.content}}
             </div>
             <p class="answer-time">{{answer.dateTime | formatTime}}  <a href="javascript:void(0)" @click="changOpen(answer)">{{answer.opened ? '收起': '回复'}}</a></p>
+            <el-collapse-transition>
             <div class="reply-box" v-if="answer.opened">
               <el-input
                 class="reply-text"
@@ -41,6 +45,7 @@
                 :rows="3"
                 :maxlength="100"
                 placeholder="回复该留言"
+                @keyup.enter.native="sendAnswerMessage(item,answer)"
                 v-model="answer.textarea">
               </el-input>
               <div class="send-info">
@@ -48,6 +53,7 @@
                 <span class="send-btn" v-bind:class="{disabled: answer.textarea.length===0}" @click="sendAnswerMessage(item,answer)">发送</span>
               </div>
             </div>
+            </el-collapse-transition>
           </div>
           <!--商家回复个人-->
           <div v-else>
@@ -79,10 +85,50 @@
     },
     mounted: function () {
       this.$nextTick(function () {
+        this.checkLogIn();
         this.getDataList();
       })
     },
+    filters: {
+      formatType: function (value) {
+        switch (value) {
+          case 'article':
+            return '文章';
+              break;
+          case 'image':
+            return '图片';
+            break;
+          case 'video':
+            return '视频';
+            break;
+          default:
+            break;
+        }
+      }
+    },
     methods: {
+      getDataList: function () {
+        var _this = this;
+        _this.axios.get( httpUrl + 'api/circle/evaluates?accessToken='+_this.$cookie.get('accessToken')+'&currentPage=' + _this.currentPage)
+          .then(function (response) {
+            console.log(response.data);
+            if (response.data.list.length > 0) {
+              _this.lists= _this.lists.concat(response.data.list);
+            }else {
+
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        // $.ajax({
+        //   url: httpUrl + 'api/product/equipment/evaluates?accessToken='+this.$cookie.get('accessToken')+'&currentPage=' + this.currentPage,
+        //   type: 'get',
+        //   success: function (data) {
+        //     console.log(data);
+        //   }
+        // })
+      },
       changOpen: function (item) {
         if (typeof item.opened == 'undefined') {
           this.$set(item,'opened',true)
@@ -103,11 +149,11 @@
             "content": item.textarea,
             "dateTime": new Date().getTime(),
           });
-          this.axios.post(httpUrl + 'api/product/equipment/reply', this.qs.stringify({ // 回复的回复传数据
+          this.axios.post(httpUrl + 'api/circle/reply', this.qs.stringify({
             eid: item.eid,
             accessToken: _this.$cookie.get('accessToken'),
             content: item.textarea,
-            replyUserId: item.replyUserId,
+            replyUserId: item.basicUser.uid,
             parentId: 0,
           }))
             .then(function (response) {
@@ -119,28 +165,7 @@
             });
         }
       },
-      getDataList: function () {
-        var _this = this;
-        _this.axios.get( httpUrl + 'api/product/equipment/evaluates?accessToken='+_this.$cookie.get('accessToken')+'&currentPage=' + _this.currentPage)
-          .then(function (response) {
-            console.log(response.data);
-            if (response.data.list.length > 0) {
-              _this.lists= _this.lists.concat(response.data.list);
-            }else {
 
-            }
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-        // $.ajax({
-        //   url: httpUrl + 'api/product/equipment/evaluates?accessToken='+this.$cookie.get('accessToken')+'&currentPage=' + this.currentPage,
-        //   type: 'get',
-        //   success: function (data) {
-        //     console.log(data);
-        //   }
-        // })
-      },
       sendAnswerMessage(item,answer) {                       //回复回答列表中的回复
         var _this = this;
         if (answer.textarea.length > 0) {
@@ -156,7 +181,7 @@
             'isSelf': 1,
             'dateTime': new Date()
           });
-          this.axios.post(httpUrl + 'api/product/equipment/reply', this.qs.stringify({ // 回复的回复传数据
+          this.axios.post(httpUrl + 'api/circle/reply', this.qs.stringify({ // 回复的回复传数据
             eid: answer.eid,
             accessToken: _this.$cookie.get('accessToken'),
             content: answer.textarea,
@@ -173,17 +198,23 @@
         }
       },
       deleteAnswer(item,answerIndex,rid){                 //删除评论
+        let _this = this;
         item.replys.splice(answerIndex,1);
-        // this.axios.post(httpUrl + 'api/product/equipment/reply',this.qs.stringify({
-        //   rid: rid,
-        //   accessToken: this.$cookie.get('accessToken'),
-        // }))
-        //   .then(function (response) {
-        //       console.log('msg')
-        //   })
-        //   .catch(function (error) {
-        //
-        //   })
+        this.axios.post(httpUrl + 'api/circle/reply/del',this.qs.stringify({
+          rid: rid,
+          accessToken: this.$cookie.get('accessToken'),
+        }))
+          .then(function (response) {
+            if(response.data.code ===1) {
+              _this.$message({
+                message: response.data.msg,
+                type: 'success'
+              });
+            }
+          })
+          .catch(function (error) {
+
+          })
       },
       loadMore() {
         this.currentPage++;

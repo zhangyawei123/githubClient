@@ -40,7 +40,9 @@ import MerchantInfo from '@/view/merchant/MerchantInfo'
 import HomePageEdit from '@/view/merchant/HomePageEdit'
 import Trends from '@/view/merchant/Trends'
 import TrendsBody from '@/view/merchant/children/TrendsBody'
-import TrendsPublishNew from '@/view/merchant/children/TrendsPublishNew'
+import TrendsPublishNew from '@/view/merchant/children/TrendsPublishNew'          //发布上新
+import TrendUpdateNew from '@/view/merchant/children/TrendUpdateNew'              //编辑上新
+import TrendsPublishArticle from '@/view/merchant/children/TrendsPublishArticle'
 //数据统计
 import Data from '@/view/data/Data'
 import DataProfiling from '@/view/data/children/DataProfiling'
@@ -136,6 +138,8 @@ export default new Router({
           children: [
             { path: '', component: TrendsBody},
             { path: 'publishnew', component: TrendsPublishNew},
+            { path: 'updatenew', component: TrendUpdateNew},
+            { path: 'publisharticle', component: TrendsPublishArticle},
           ]
         },
       	{

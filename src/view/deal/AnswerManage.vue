@@ -11,7 +11,7 @@
       <!--<div class="message-to">留言了您的海报：{{item.messageto}}（关联产品：斗山PUMAVST500G）</div>-->
       <div class="time-reply">
         <span>{{item.qtime | formatTime}}</span>
-        <span v-if="item.acontent==''" class="reply-btn" @click="changOpen(item)">{{item.opened ? '收起': '回答'}}</span>
+        <span v-if="item.acontent===null" class="reply-btn" @click="changOpen(item)">{{item.opened ? '收起': '回答'}}</span>
         <span class="reply-btn disabled" v-else>已回答</span>
       </div>
       <div class="reply-box" v-if="item.opened">
@@ -100,10 +100,10 @@
         if (item.textarea.length > 0) {
           item.opened = false;
           item.acontent = item.textarea;
-          this.axios.post(httpUrl + 'api/product/equipment/question/answer', this.qs.stringify({ // 回复的回复传数据
+          this.axios.post(httpUrl + 'api/product/equipment/question/answer', this.qs.stringify({
             qid: id,
             accessToken: _this.$cookie.get('accessToken'),
-            content: item.textarea,
+            acontent: item.textarea,
           }))
             .then(function (response) {
               console.log(response);
@@ -116,13 +116,17 @@
       },
       deleteAnswer: function (item,id) {
         let _this = this;
-        this.axios.post(httpUrl + 'api/product/equipment/question/answer', this.qs.stringify({ // 回复的回复传数据
+        this.axios.post(httpUrl + 'api/product/equipment/question/answer/del', this.qs.stringify({
           qid: id,
           accessToken: _this.$cookie.get('accessToken'),
         }))
           .then(function (response) {
             console.log(response);
-            item.acontent = '';
+            _this.$message({
+              message: '删除成功',
+              type: 'success'
+            })
+            item.acontent = null;
           })
           .catch(function (error) {
             console.log(error);

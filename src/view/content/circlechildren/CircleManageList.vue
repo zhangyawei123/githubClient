@@ -24,7 +24,7 @@
             <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listVerify)">删除</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listVerify,item.id,item.type)">删除</span></div>
           <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
         <a href="javascript:void(0)" v-if="listVerifyLoadMoreTips" class="load-more" @click="loadMoreVerify">查看更多</a>
@@ -36,7 +36,7 @@
             <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listPublish)">删除</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listPublish,item.id,item.type)">删除</span></div>
           <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
         <a href="javascript:void(0)" v-if="listPublishLoadMoreTips" class="load-more" @click="loadMorePublish">查看更多</a>
@@ -48,7 +48,7 @@
             <img :src="item.mainPic" alt="">
           </div>
           <div class="cell-title">{{item.title}}</div>
-          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listNoPass)">删除</span></div>
+          <div class="state"><span class="cell-mark">{{stateObj[item.verifyState]}}</span>工艺 · {{item.publishTime | formatTime}} · <span class="delete" @click="removeItem(index,listNoPass,item.id,item.type)">删除</span></div>
           <div class="infomation"><span>阅读 {{item.viewNum}}</span><span>评论 {{item.evaluateNum}}</span><span class="last">收藏 {{item.collectNum}}</span></div>
         </div>
         <a href="javascript:void(0)" v-if="listNoPassLoadMoreTips" class="load-more" @click="loadMoreNoPass">查看更多</a>
@@ -105,7 +105,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.axios.post(httpUrl + '/api/circle/manager/del?accessToken='+this.$cookie.get('accessToken')+'&circleId='+circleId+'&type='+ type)
+          this.axios.post(httpUrl + 'api/circle/manager/del?accessToken='+this.$cookie.get('accessToken')+'&circleId='+circleId+'&type='+ type)
             .then(function (response) {
               console.log(response.data);
               if (response.data.code ===1) {
@@ -135,7 +135,7 @@
       loadListAll() {
         var _this = this;
         this.listAllPage++;
-        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+  _this.listAllPage)
+        this.axios.get(httpUrl + 'api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+  _this.listAllPage)
           .then(function (response) {
             console.log(response.data);
             _this.listAll = _this.listAll.concat(response.data.list);
@@ -150,7 +150,7 @@
       loadMoreVerify() {
         var _this = this;
         this.listVerifyPage++;
-        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+ _this.listVerifyPage+ '&&verifyState=2002')
+        this.axios.get(httpUrl + 'api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+ _this.listVerifyPage+ '&&verifyState=2002')
           .then(function (response) {
             _this.listVerify = _this.listVerify.concat(response.data.list);
             if(_this.listVerifyPage === (response.data.pageSum -1) || response.data.pageSum===0) {  //如果当前页等于总页码的时候加载更多按钮消失
@@ -164,7 +164,7 @@
       loadMorePublish() {
         var _this = this;
         this.listPublishPage++;
-        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+  _this.listPublishPage+ '&&verifyState=2002')
+        this.axios.get(httpUrl + 'api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+  _this.listPublishPage+ '&&verifyState=2002')
           .then(function (response) {
             _this.listPublish = _this.listPublish.concat(response.data.list);
             if(_this.listPublishPage === (response.data.pageSum -1) || response.data.pageSum===0) {  //如果当前页等于总页码的时候加载更多按钮消失
@@ -178,7 +178,7 @@
       loadMoreNoPass() {
         var _this = this;
         this.listNoPassPage++;
-        this.axios.get(httpUrl + '/api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+ _this.listNoPassPage+ '&&verifyState=2003')
+        this.axios.get(httpUrl + 'api/circle/manager/list?accessToken='+ this.$cookie.get('accessToken')+'&currentPage='+ _this.listNoPassPage+ '&&verifyState=2003')
           .then(function (response) {
             console.log(response.data);
             _this.listNoPass = _this.listNoPass.concat(response.data.list);

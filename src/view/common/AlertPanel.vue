@@ -1,9 +1,5 @@
 <template>
-    <div class="panel-box" v-if="panelShow">
-      <div class="panel-header clearfix">
-        <span>添加可加工零件</span>
-        <a class="close-btn" v-on:click="panelClose">&times;</a>
-      </div>
+    <div class="panel-box">
       <div class="panel-body">
         <el-tabs v-model="activeName">
           <el-tab-pane label="零件库添加" name="first">
@@ -76,22 +72,22 @@
                     <el-input class="custom-item-desc" v-model="custom.introduction" placeholder="描述"></el-input>
                   </td>
                   <td class="custom-item3">
-                    <el-select v-model="custom.industryName" class="custom-select" placeholder="请选择">
+                    <el-select v-model="custom.industryName" @change="clearSystemOption(customIndex)" class="custom-select" placeholder="请选择">
                       <el-option
-                        v-for="item in tradeOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                        v-for="item in industryOptions"
+                        :key="item.id"
+                        :label="item.value"
+                        :value="item.id">
                       </el-option>
                     </el-select>
                   </td>
                   <td class="custom-item4">
-                    <el-select v-model="custom.secondName" class="custom-select" placeholder="请选择">
+                    <el-select v-model="custom.secondName" @focus="getSystemOptions(customIndex)" class="custom-select" placeholder="请选择">
                       <el-option
-                        v-for="item in tradeOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
+                        v-for="item in custom.systemOptions"
+                        :key="item.cid"
+                        :label="item.cvalue"
+                        :value="item.cid">
                       </el-option>
                     </el-select>
                   </td>
@@ -122,52 +118,26 @@
     titleName: '名称',
     introduction: '描述',
     industryName: '行业',
-    secondName: '专业',
+    secondName: '系统',
   }
   import VueImgInputer from 'vue-img-inputer'
   import { httpUrl} from "../../http_url";
 
   export default {
         name: "alert-panel",
-        props: ['showState','state2'],
+        props: ['dataUrl'],
         data() {
             return {
-              panelShow: true,
               activeName: 'first',
               seachkey: '',
               loadingFlag: false,
               currentPage: -1,
-              tableData3: [
-              //   {
-              //     coverPic: '',
-              //     titleName: '螺母',
-              //     introduction: '我公司专业生产螺母等各种零件...',
-              //     industryName: '轨道交通',
-              //     secondName: '自动刹车系统'
-              // }
-              ],
+              tableData3: [],                                 //零件列表
               multipleSelection: [],                          //table选中项
-              tableSelections: [],                            //table选中项储存一下
-              tradeOptions: [
-                {
-                value: 1,
-                label: '黄金糕'
-              }, {
-                value: 2,
-                label: '双皮奶'
-              }, {
-                value: 3,
-                label: '蚵仔煎'
-              }, {
-                value: 4,
-                label: '龙须面'
-              }, {
-                value: 5,
-                label: '北京烤鸭'
-              }
-              ],
+              industryOptions: [],                            //行业的下拉框
+              systemOptions: [],                               //行业二级分类的下拉框（系统）
               customList: [
-                { coverPic: '',titleName: '',introduction: '',industryName: '',secondName: ''},
+                // { coverPic: '',titleName: '',introduction: '',industryName: '',secondName: ''},
               ],
               customListSelection: []                         //自定义添加选中项
             }
@@ -178,8 +148,8 @@
         mounted() {
           this.$nextTick(function () {
             let _this = this;
-            console.log(this.loadingFlag);
             this.checkLogIn();
+            this.getIndustry();
             this.getDataList();
             _this.$refs.multipleTable.toggleRowSelection(_this.tableData3[0],true);
             $('.el-table__body-wrapper').scroll(function () {
@@ -187,21 +157,51 @@
 
                 console.log(_this.multipleSelection);
                 _this.getDataList();
-                // _this.multipleSelection.forEach(row => {
-                //   _this.$refs.multipleTable.toggleRowSelection(row,true);
-                // });
               }
             })
-            // console.log(this.showState);
-            // console.log(this.state2);
           })
         },
         methods: {
+          getIndustry() {
+            this.axios.get(httpUrl + 'api/common/codes?val=industry&accessToken='+ this.$cookie.get('accessToken'))
+              .then(response => {
+                console.log(response.data.list);
+                this.industryOptions = response.data.list;
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          },
+          clearSystemOption(index) {
+            this.customList[index].secondName = '';
+          },
+          getSystemOptions(index) {
+            let _this =this;
+            if(!this.customList[index].industryName) {
+              this.$notify({
+                title: '警告',
+                message: '请先选择行业',
+                type: 'warning'
+              });
+            }else {
+              console.log(this.customList[index].industryName);
+              this.axios.get(httpUrl + 'api/product/part/category?levels=2&pid='+this.customList[index].industryName+'&accessToken='+ this.$cookie.get('accessToken'),)
+                .then(response => {
+                  console.log(response.data);
+                  // 为什么系统下拉框渲染的是上一次请求的值
+                  this.customList[index].systemOptions = [];
+                  this.customList[index].systemOptions = response.data.list
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+            }
+          },
           getDataList() {
             this.loadingFlag = true;
             this.currentPage++;
             var _this = this;
-            this.axios.get(httpUrl + _this.showState + '?currentPage='+ _this.currentPage+'&accessToken=' + this.$cookie.get('accessToken'))
+            this.axios.get(httpUrl + _this.dataUrl + '?currentPage='+ _this.currentPage+'&accessToken=' + this.$cookie.get('accessToken'))
               .then(function (response) {
                 // console.log(response.data);
                 if(response.data.current <= response.data.pageSum) {
@@ -255,17 +255,16 @@
                 });
               }
             }
-            this.multipleSelection = this.multipleSelection.concat(this.customList);
-            this.customList = [];
+            // this.multipleSelection = this.multipleSelection.concat(this.customList);
             console.log(this.multipleSelection);
             this.$emit('sendOutData',{'one':this.multipleSelection,'two':this.customList});
-            this.$emit('closeDialogVisible')
+            this.customList = [];
+            this.multipleSelection=[];
+            this.$refs.multipleTable.clearSelection();
           },
           shoawdds() {
             console.log(this.customList);
-          },
-          panelClose(){
-            this.panelShow = false;
+            this.$emit('closeDialogVisible');
           },
           handleSelectionChange(val,row) {      //零件库添加
             this.multipleSelection = val;
@@ -289,6 +288,7 @@
             // console.log('File:', file);
             // console.log('FileName:', name);
             // console.log(file);
+            console.log(URL.createObjectURL(file))
             URL.createObjectURL(file);
           }
         }
@@ -315,6 +315,7 @@
   .add-new-btn-box {
     background: $bg-color;
     border: 1px solid $border-color;
+    border-top: none;
   }
   .add-new-btn {
     margin: 10px 0 10px 20px;

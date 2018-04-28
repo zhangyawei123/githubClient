@@ -4,10 +4,10 @@
       <div class="login-box">
         <div class="inner">
           <div class="tel">
-            <el-input v-model="telNum"></el-input>
+            <el-input v-model="telNum" placeholder="请输入账号"></el-input>
           </div>
           <div class="password">
-            <el-input v-model="password"></el-input>
+            <el-input v-model="password" placeholder="密码"></el-input>
           </div>
           <!--<p class="nologin">-->
             <!--<input type="checkbox">一个月内免登录-->

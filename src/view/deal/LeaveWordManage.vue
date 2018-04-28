@@ -104,7 +104,7 @@
                 eid: item.eid,
                 accessToken: _this.$cookie.get('accessToken'),
                 content: item.textarea,
-                replyUserId: item.replyUserId,
+                replyUserId: item.basicUser.uid,
                 parentId: 0,
               }))
                 .then(function (response) {
@@ -170,17 +170,23 @@
             }
           },
           deleteAnswer(item,answerIndex,rid){                 //删除评论
+            let _this = this;
             item.replys.splice(answerIndex,1);
-            // this.axios.post(httpUrl + 'api/product/equipment/reply',this.qs.stringify({
-            //   rid: rid,
-            //   accessToken: this.$cookie.get('accessToken'),
-            // }))
-            //   .then(function (response) {
-            //       console.log('msg')
-            //   })
-            //   .catch(function (error) {
-            //
-            //   })
+            this.axios.post(httpUrl + 'api/product/equipment/reply/del',this.qs.stringify({
+              rid: rid,
+              accessToken: this.$cookie.get('accessToken'),
+            }))
+              .then(function (response) {
+                if(response.data.code ===1) {
+                  _this.$message({
+                    message: response.data.msg,
+                    type: 'success'
+                  });
+                }
+              })
+              .catch(function (error) {
+
+              })
           },
           loadMore() {
             this.currentPage++;

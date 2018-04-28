@@ -13,12 +13,12 @@
             </tr>
             </thead>
             <tbody>
+            <input type="file"  class="change-banner-btn" @change="changeBanner" style="display: none">
             <tr v-for="(item,index) in bannerList">
               <td class="logo-img-url">
                 <!--<VueImgInputer v-model="imageUrl1" accept="image/*" size="small" noMask customerIcon="&#xe60e;" nhe @onChange="fileChange" placeholder=""></VueImgInputer>-->
-                <img :src="item.bannerPic" alt="" class="add-banner-btn" v-if="item.bannerPic" @click="changePic(index)">
-                <label :for="'addBannerPic_' + index" class="add-banner-btn" v-else></label>
-                <input type="file" :id="'addBannerPic_' + index" class="change-banner-btn" @change="changeBanner" style="display: none">
+                <label @click="changePic(index)" class="add-banner-btn" v-if="!item.bannerPic"></label>
+                <img :src="item.bannerPic" alt="" class="add-banner-btn" v-else @click="changePic(index)">
               </td>
               <td class="logo-name">
                 <el-input v-if="item.jumpTypeName && item.bannerTitle" v-model="item.jumpTypeName + ' ：' + item.bannerTitle" readonly @focus="showBannerPanel(index)"></el-input>
@@ -187,11 +187,12 @@
             })
         },
         changePic(index) {
-          $('.change-banner-btn').eq(index).click();
+          this.changeTextIndex = index;
+          $('.change-banner-btn').trigger('click');
         },
         changeBanner(e) {
           // console.log($(e.target).parent().parent().index());
-          let _index = $(e.target).parent().parent().index();
+          // let _index = $(e.target).parent().parent().index();
           var _this = this;
 
           var files = e.target.files || e.dataTransfer.files;
@@ -212,8 +213,9 @@
             processData: false,    //不可缺
             success:function(result){
               console.log(result);
-              _this.bannerList[_index].bannerPic = result.list[0].url;
-              _this.bannerList[_index].bannerPid = result.list[0].pid;
+              // 为什么需要一个触发事件才能显示图片呢
+              _this.bannerList[_this.changeTextIndex].bannerPic = result.list[0].url;
+              _this.bannerList[_this.changeTextIndex].bannerPid = result.list[0].pid;
             },
             error:function(result){
               console.log(result);

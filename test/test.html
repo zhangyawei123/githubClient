@@ -9,22 +9,27 @@
 
 </head>
 <body>
-<button id="demo">click me</button>
+<img src="http://www.xinjiyuancps.com/xinjiyuanimg/upload/images/consumer/2017.12.19/400/b96fa5f1-bf50-4245-8fda-3ce87011bf9e.jpg" alt="">
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
 <script>
-$('#demo').click(function () {
-  $.ajax({
-    url: 'http://192.168.0.69:8080/xjy-web-user/api/alipay/recharge/pay',
-    type: 'post',
-    data: {
-      accessToken: 'e24b2ed45aad43b2ad0f12413e64904a',
-      totalAmount: 1
-    },
-    success: function (data) {
-      window.location.href = data
-    }
-  })
-})
+  var imgs = new Image();
+  imgs.crossOrigin = "Anonymous"; //注意存放顺序
+  imgs.src = "https://p.pstatp.com/origin/3791/5070639578";
+  imgs.onload = function () {
+    var canvas = document.createElement('canvas');
+    canvas.width = imgs.width;
+    canvas.height = imgs.height;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(imgs, 0, 0, imgs.width, imgs.height);
+    var img1 = new Image();
+    img1.src = canvas.toDataURL("image/png");
+    // alert("s")
+    $('body').html(img1)
+  }
+
+  imgs.onerror = function () {
+    alert("error")
+  }
 </script>
 </body>
 </html>

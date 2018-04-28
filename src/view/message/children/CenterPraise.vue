@@ -2,14 +2,17 @@
   <div>
     <div class="crumbs">
       <div class="crumbs-inner">
-        <router-link to="/videoManage">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/videoManage">消息中心</router-link><i class="crumbs-icon">&gt;</i><span>赞</span>
+        <router-link to="/messagecenter">返回上一级</router-link><i class="crumbs-icon">|</i><router-link to="/messagecenter">消息中心</router-link><i class="crumbs-icon">&gt;</i><span>{{$route.query.messageType=='1617'? '系统消息': '赞'}}</span>
       </div>
     </div>
     <div class="message-cell" v-for="(item,index) in lists">
-      <span class="visitor-pic"><img :src="item.basicUser.userPic" alt=""></span>
-      <div class="visitor-name">{{item.basicUser.nickName}}</div>
-      <div class="visitor-message">{{item.content}}</div>
-      <div class="time-reply"><span>{{ item.dateTime | formatTime}}</span></div>
+      <span class="visitor-pic">
+        <img v-if="$route.query.messageType=='1617'" :src="item.basicUser.logoUrl" alt="">
+        <img v-else :src="item.basicUser.userPic" alt="">
+      </span>
+      <div class="visitor-name">{{$route.query.messageType=='1617' ? item.basicUser.firmBrief : item.basicUser.nickName}}</div>
+      <div class="visitor-message">{{item.noticeContent}}</div>
+      <div class="time-reply"><span>{{ item.opt | formatTime}}</span></div>
     </div>
     <div style="text-align: center;padding-top: 20px">
       <a href="##" v-if="lists.length%10 === 0 && lists.length !==0" class="load-more" @click="loadMore()">查看更多</a>
@@ -20,7 +23,8 @@
 </template>
 
 <script>
-  import {httpUrl} from '../../../http_url'
+  import {httpUrl} from '../../../http_url';
+  var textObj = {'1617': '系统消息','1609': '赞'};
   export default {
     name: "center-discuss",
     data() {
@@ -31,10 +35,36 @@
     },
     mounted: function () {
       this.$nextTick(function () {
-        this.getDataList();
+        this.checkLogIn();
+        this.getData();
       })
     },
+    filters: {
+      formatType: function (value) {
+        switch (value) {
+          case '1617':
+            return '系统消息';
+            break;
+          case '1609':
+            return '赞';
+            break;
+          default:
+            break;
+        }
+      }
+    },
     methods: {
+      getData() {
+        var _this = this;
+        _this.axios.get( httpUrl + 'api/company/message/list?accessToken='+_this.$cookie.get('accessToken')+'&messageType='+this.$route.query.messageType+'&currentPage=' + _this.currentPage)
+          .then(function (response) {
+              console.log(response.data);
+              _this.lists= _this.lists.concat(response.data.list);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
       getDataList: function () {
         var _this = this;
         _this.axios.get( httpUrl + 'api/product/equipment/evaluates?accessToken='+_this.$cookie.get('accessToken')+'&currentPage=' + _this.currentPage)

@@ -6,7 +6,7 @@
         <span class="visitor-pic"><img :src="item.basicUser.userPic" alt=""></span>
         <div class="visitor-name">{{item.basicUser.nickName}}
           <span class="contact-state">当前状态：
-            <el-select v-model="item.dealState" v-bind:disabled="item.dealState == 1" size="mini" placeholder="请选择">
+            <el-select v-model="item.dealState" v-bind:disabled="item.dealState == 1" size="mini" placeholder="请选择" @change="changeState(item.oid)">
               <el-option
                 v-for="option in options"
                 :key="option.value"
@@ -65,23 +65,13 @@
               cancelButtonText: '取消',
               center: true
             }).then(() => {
-              // 不知道为什么这个方法就会跨域借不到数据
-              // _this.axios.post(httpUrl + '/api/product/equipment/order/see', {
-              //   oid: 100071
-              // })
-              //   .then(function (response) {
-              //     console.log(response);
-              //   })
-              //   .catch(function (error) {
-              //     console.log(error);
-              //   });
               $.ajax({
                 url: httpUrl + 'api/product/equipment/order/see?accessToken='+_this.$cookie.get('accessToken'),
                 type: 'post',
                 data:{oid:soid},
                 dataType: 'json',
                 success: function (data) {
-                  // console.log(data.data);
+                  console.log(data.data);
                   item.isSee = 1;
                   item.contact = data.data;
                 }
@@ -94,6 +84,7 @@
             var _this = this;
             this.axios.get( httpUrl + 'api/product/equipment/orders?accessToken='+_this.$cookie.get('accessToken')+'&currentPage=' + this.currentPage)
               .then(function (response) {
+                console.log(response.data)
                 if (response.data.list.length > 0) {
                   _this.lists= _this.lists.concat(response.data.list);
                 }else {
@@ -103,6 +94,18 @@
               .catch(function (error) {
                 console.log(error);
               });
+          },
+          changeState(oid) {
+            this.axios.post(httpUrl + 'api/product/equipment/order/state',this.qs.stringify({
+              accessToken: this.$cookie.get('accessToken'),
+              oid: oid,
+            }))
+              .then(function (response) {
+                console.log(response.data)
+              })
+              .catch(function (error) {
+                console.log(error)
+              })
           },
           loadMore() {
             this.currentPage++;
