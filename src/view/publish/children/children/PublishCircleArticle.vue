@@ -9,15 +9,16 @@
       <UE :defaultMsg=defaultMsg :config=config ref="ue"></UE>
     </el-form-item>
     <el-form-item label="文章封面" prop="CoverType">
-      <el-radio-group v-model="ruleForm.CoverType">
+      <el-radio-group v-model="ruleForm.CoverType" @change="changeCoverType">
         <el-radio label="0">无图模式</el-radio>
         <el-radio label="1">单图模式</el-radio>
         <el-radio label="3">三图模式</el-radio>
       </el-radio-group>
-      <div class="front-cover-upload clearfix" v-if="ruleForm.CoverType!='0'">
-        <div class="front-cover-img front-cover-single" v-if="ruleForm.CoverType=='1' || ruleForm.CoverType=='3'"></div>
-        <div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>
-        <div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>
+      <div class="front-cover-upload clearfix">
+        <!--<div class="front-cover-img front-cover-single" v-if="ruleForm.CoverType=='1' || ruleForm.CoverType=='3'"></div>-->
+        <!--<div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>-->
+        <!--<div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>-->
+        <div v-for="(item,index) in ruleForm.coverList" class="front-cover-img" @click="dneid(index)"></div>
       </div>
     </el-form-item>
     <el-form-item label="频道分类" prop="channel">
@@ -66,6 +67,7 @@
           title: '',                  //文章标题
           channel: '',                //频道分类
           CoverType: '0',             //文章封面
+          coverList: [],
           dynamicTags: [],            //文章标签
         },
         defaultMsg: '<span><strong>夏钧姗：成功的投资需具备哪些心态和掌握哪些重要止损位</strong></span>',
@@ -97,6 +99,18 @@
       UE
     },
     methods: {
+      changeCoverType(value) {
+        // this.ruleForm.coverList.length = parseInt(value);
+        this.ruleForm.coverList=new Array(parseInt(value));
+        console.log(this.ruleForm.coverList);
+
+        // for(var i=0;i<value;i++) {
+        //   this.ruleForm.coverList.push('')
+        // }
+      },
+      dneid(index) {
+        console.log(index);
+      },
       handleClose(tag) {
         this.dynamicTags.splice(this.ruleForm.dynamicTags.indexOf(tag), 1);
       },
@@ -143,6 +157,11 @@
     width: 120px;
     height: 120px;
     border: 1px solid $border-color;
+  }
+  .front-cover-img img {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
   .tag-box {
     padding: 0 15px;

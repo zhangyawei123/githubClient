@@ -20,6 +20,8 @@ import '../static/UE/ueditor.config.js'
 import '../static/UE/ueditor.all.min.js'
 import '../static/UE/lang/zh-cn/zh-cn.js'
 import '../static/UE/ueditor.parse.min.js'
+import '../static/UE/themes/default/css/ueditor.css'
+import '../static/UE/third-party/codemirror/codemirror.css'
 
 // import '../static/toutiao/jquery-3.1.1.min.js'
 import '../static/toutiao/jquery-file-upload-pack.js'
@@ -64,6 +66,15 @@ Vue.filter('formatTime', function (time) {
   if (timeDis < 1000*60*60&&timeDis >= 1000*60) return Math.floor(timeDis/(1000*60)) +'分钟前';
   if (timeDis < 1000*60*60*24&&timeDis >= 1000*60*60) return Math.floor(timeDis/(1000*60*60)) +'小时前';
   if (timeDis > 1000*60*60*24) return publishTime.getFullYear() + '-' + (publishTime.getMonth()+1) + '-' + publishTime.getDate() +'\t'+
+    hours +':'+minutes;
+})
+Vue.filter('formatTime2', function (time) {
+  var publishTime = new Date(time);
+  var hours = publishTime.getHours();
+  var minutes = publishTime.getMinutes();
+  if (hours < 10) hours = '0'+hours;
+  if (minutes < 10) minutes = '0'+minutes;
+  return publishTime.getFullYear() + '年' + (publishTime.getMonth()+1) + '月' + publishTime.getDate() +'日 '+
     hours +':'+minutes;
 })
 /* eslint-disable no-new */

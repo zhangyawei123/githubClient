@@ -4,6 +4,7 @@ import HelloWorld from '@/view/HelloWorld'
 
 //登录
 import LogIn from '@/view/login/LogIn'
+import PaySuccess from '@/view/common/PaySuccess'
 //主页
 import Home from '@/view/home/Home'
 //消息中心
@@ -83,6 +84,7 @@ export default new Router({
   // 'mode': 'history',
   routes: [
     { path: '/login', component: LogIn},
+    { path: '/paysuccess', component: PaySuccess},
     {
       path: '/',
       // name: 'HelloWorld',

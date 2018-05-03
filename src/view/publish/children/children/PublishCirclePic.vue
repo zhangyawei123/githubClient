@@ -46,9 +46,16 @@
           <el-radio label="3">三图模式</el-radio>
         </el-radio-group>
         <div class="front-cover-upload clearfix">
-          <div class="front-cover-img front-cover-single"></div>
-          <div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>
-          <div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>
+          <!--<div v-for="(item,index) in ruleForm.coverList" class="front-cover-img" @click="openVideoDialog(index)"></div>-->
+          <div class="front-cover-img" @click="openImgDialog(0)">
+            <img :src="ruleForm.coverList[0].url" alt="">
+          </div>
+          <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(1)">
+            <img :src="ruleForm.coverList[1].url" alt="">
+          </div>
+          <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(2)">
+            <img :src="ruleForm.coverList[2].url" alt="">
+          </div>
         </div>
       </el-form-item>
       <el-form-item label="频道分类" prop="channel">
@@ -71,7 +78,7 @@
       title="正文图片"
       class="imgCoverDialog">
           <ul class="images-items">
-            <li v-for="(item,index) in imgList" class="image-item" :class="{selected: currentIndex===index}" @click="chooseVideoCover(index)">
+            <li v-for="(item,index) in imgList" class="image-item" :class="{selected: picCurrentIndex===index}" @click="chooseVideoCover(index)">
                 <img :src="item.url">
                 <div class="image-hover"></div>
             </li>
@@ -90,14 +97,16 @@
   export default {
     data() {
       return {
-        imgList: [{url:'http://www.xinjiyuancps.com/xinjiyuanimg/upload/test/common/image/2018.04.24/0303e667-f8fa-4997-a46a-b745cdaaba00.jpg'}],
+        imgList: [],
         changeImgIndex: '',
-        imgCoverDialogVisible:true,
-        currentIndex:'',
+        imgCoverDialogVisible:false,
+        picCurrentIndex:'',            //选择的图片弹窗的图片索引
+        picBoxCurrentIndex:'',            //点击的哪个图片图片弹窗按钮
         ruleForm: {
           title: '',                  //文章标题
           channel: '',                //频道分类
           CoverType: '1',             //文章封面
+          coverList: [{url: ''},{url: ''},{url: ''}],              //封面图片数组
         },
         rules: {
           title: [
@@ -117,7 +126,7 @@
       draggable,
     },
     methods: {
-      onFileChange(e) {    //产品图上传多图
+      onFileChange(e) {    //上传多图
         var _this = this;
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length) return;
@@ -142,11 +151,12 @@
           contentType: false,    //不可缺
           processData: false,    //不可缺
           success:function(result){
+            console.log(result)
             _this.imgList = _this.imgList.concat(result.list);
-            var newArr;
-            _this.imgList.map(function (item) {
-              item.desc = '';
-            })
+            // var newArr;
+            // _this.imgList.map(function (item) {
+            //   item.desc = '';
+            // })
           },
           error:function(result){
             console.log(result);
@@ -192,14 +202,22 @@
       delImage(index) {
         this.imgList.splice(index,1);
       },
-      showImglist() {
+      showImglist() {                    //排序的时候打印图片列表的值，显示用的，没有实际意义
         console.log(this.imgList)
       },
+      openImgDialog(index) {//打开选择封面弹窗
+        this.imgCoverDialogVisible = true;
+        this.picBoxCurrentIndex = index;
+      },
       chooseVideoCover(index) {
-        this.currentIndex = index;
+        this.picCurrentIndex = index;
+
       },
       confirmSystemPic() {
-
+        this.ruleForm.coverList[this.picBoxCurrentIndex] = this.imgList[this.picCurrentIndex];
+        this.imgCoverDialogVisible = false;
+        this.picCurrentIndex = '';
+        console.log(this.ruleForm.coverList);
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
@@ -338,11 +356,17 @@
     margin-top: 10px;
   }
   .front-cover-img {
+    overflow: hidden;
     float: left;
     margin-right: 20px;
     width: 120px;
     height: 120px;
     border: 1px solid $border-color;
+  }
+  .front-cover-img img{
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 </style>
 <style lang="scss">

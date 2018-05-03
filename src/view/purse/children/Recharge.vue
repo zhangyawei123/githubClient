@@ -10,7 +10,7 @@
         <div id="20000" class="cell-item" @click="changeNum(20000)" :class="{cur: rechargeNum===20000}">20000元</div>
         <div id="50000" class="cell-item" @click="changeNum(50000)" :class="{cur: rechargeNum===50000}">50000元</div>
         <div class="cell-item">
-          <el-input placeholder="自定义金额" @focus="changeNum(0)" @keyup.native="changeNum(Number(rechargeInput))" v-model="rechargeInput"></el-input>
+          <el-input placeholder="自定义金额"  @keyup.native="changeNum(rechargeInput)" v-model="rechargeInput"></el-input>
         </div>
       </div>
     </div>
@@ -22,9 +22,9 @@
       </div>
     </div>
     <div class="total-box">
-      应付金额： <span class="total-num">{{rechargeNum}}</span> 元
+      应付金额： <span class="total-num">{{rechargeNum.toFixed(2)}}</span> 元
     </div>
-    <div class="pay-btn">立即支付</div>
+    <div class="pay-btn" @click="recharge">立即支付</div>
     <div class="tips-box">
       <div class="tips-title">温馨提示</div>
       <ul class="tips-content">
@@ -32,25 +32,75 @@
         <li>2.如账户中有剩余，可随时转出账户现金。</li>
       </ul>
     </div>
+    <form action="http://192.168.0.69:8010/xjy-web-user/api/alipay/recharge/pay" method="post" style="display: none" target="_blank">
+      <input type="text" name="accessToken" v-model="accessToken">
+      <input type="text" name="outTradeNo" v-model="outTradeNo">
+      <input type="submit" id="rechargeBtn">
+    </form>
+    <el-dialog
+      title="登录平台支付"
+      :visible.sync="payDialogVisible"
+      width="640px">
+      <span>请您在新打开的页面进行支付，支付完成前请不要关闭该窗口 ！</span>
+      <span slot="footer" class="dialog-footer">
+        <span class="other-method">选择其它支付方式</span>
+        <el-button type="primary" @click="rechargeCallback">已完成支付</el-button>
+        <el-button @click="dialogVisible = false">支付遇到问题</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+  import {httpUrl} from "../../../http_url";
+
   export default {
     name: "recharge",
     data() {
       return {
+        accessToken: this.$cookie.get('accessToken'),
         rechargeNum: 0,
         rechargeInput: "",
         payMethod: 'weixin',
+        payDialogVisible: false,
+        outTradeNo: '',
       }
+    },
+    mounted() {
+      this.checkLogIn();
     },
     methods: {
       changeNum(num) {
-        this.rechargeNum = num;
+          let reg = /^([1-9]\d*|0)(\.\d*)?$/;
+          if(!reg.test(Number(num))) {
+            this.rechargeInput = '';
+            this.rechargeNum = 0;
+          }else {
+            this.rechargeNum = Number(num);
+          }
       },
-      changeInputNum() {
-        this.rechargeNum = Number(this.rechargeInput);
+      recharge() {
+        this.payDialogVisible =true;
+        let _this =this;
+        this.axios.post(httpUrl + 'api/alipay/recharge/order',this.qs.stringify({
+          totalAmount: _this.rechargeNum,
+          accessToken: _this.$cookie.get('accessToken')
+        }))
+          .then(function (response) {
+            console.log(response.data);
+            _this.outTradeNo = response.data.data;
+            setTimeout(function () {
+              $('#rechargeBtn').trigger('click');
+            },100)
+          })
+          .catch(function (error) {
+            console.log(error)
+          })
+
+      },
+      rechargeCallback() {
+        this.payDialogVisible = false;
+        this.$router.push({path: '/paysuccess',query: { outTradeNo: this.outTradeNo}})
       }
     }
   }
@@ -139,6 +189,11 @@
   }
   .tips-content li{
     margin-bottom: 22px;
+  }
+  .other-method {
+    line-height: 38px;
+    float: left;
+    color: $primary-color;
   }
 </style>
 <style>

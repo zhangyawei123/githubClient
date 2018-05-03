@@ -6,30 +6,30 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-
 </head>
 <body>
-<img src="http://www.xinjiyuancps.com/xinjiyuanimg/upload/images/consumer/2017.12.19/400/b96fa5f1-bf50-4245-8fda-3ce87011bf9e.jpg" alt="">
+<form action="http://192.168.0.69:8080/xjy-web-user/api/alipay/recharge/pay" method="post">
+  <input type="text" name="accessToken" value="2bcb5c8750794443b9697d7884801452">
+  <input type="text" name="outTradeNo" value="20180502175040789000161">
+  <input type="submit" id="button" value="click">
+</form>
 <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
 <script>
-  var imgs = new Image();
-  imgs.crossOrigin = "Anonymous"; //注意存放顺序
-  imgs.src = "https://p.pstatp.com/origin/3791/5070639578";
-  imgs.onload = function () {
-    var canvas = document.createElement('canvas');
-    canvas.width = imgs.width;
-    canvas.height = imgs.height;
-    var ctx = canvas.getContext("2d");
-    ctx.drawImage(imgs, 0, 0, imgs.width, imgs.height);
-    var img1 = new Image();
-    img1.src = canvas.toDataURL("image/png");
-    // alert("s")
-    $('body').html(img1)
-  }
+  // $('#button').click(function () {
+  //   $.ajax({
+  //     url: 'http://192.168.0.69:8010/xjy-web-user/api/alipay/recharge/pay',
+  //     type: 'post',
+  //     data: {
+  //       outTradeNo: '20180502175040789000161',
+  //       accessToken: '2bcb5c8750794443b9697d7884801452'
+  //     },
+  //     success: function (data) {
+  //       console.log(data);
+  //       // $('body').html(data.data.payResult)
+  //     }
+  //   })
+  // })
 
-  imgs.onerror = function () {
-    alert("error")
-  }
 </script>
 </body>
 </html>
