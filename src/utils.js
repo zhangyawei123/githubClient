@@ -30,7 +30,7 @@ export function GetAccessToken() {                             //获取令牌
 }
 
 export function checkLogIn() {                                  //判断登录状态
-  if (!this.$cookie.get('accessToken')) {         //如果令牌过期，就从新获取
+  if (!this.$cookie.get('accessToken')) {                       //如果令牌过期，就从新获取
     if (!this.$cookie.get('cid') || !this.$cookie.get('secret')) {  //没有秘钥就到登录页面去
       this.$router.push({ path: '/login'})
     }else {

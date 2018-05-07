@@ -1,0 +1,859 @@
+#pagelet-write .modal {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 2040;
+	overflow: auto;
+	overflow-y: scroll;
+  background: rgba(0,0,0,.4);
+}
+
+#pagelet-write .modal-dialog-wrapper {
+	display: table;
+	height: 100%;
+	margin: 0 auto;
+}
+
+#pagelet-write  #video-modal .modal-dialog {
+	width: 530px;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#pagelet-write .modal.in .modal-dialog {
+	-webkit-transform: translate(0, 0);
+	-ms-transform: translate(0, 0);
+	transform: translate(0, 0);
+}
+
+#pagelet-write  .modal-dialog-wrapper .modal-dialog {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+@media screen and (min-width: 768px) .modal-dialog {
+	width:600px;
+	padding-top:30px;
+	padding-bottom:30px;
+}
+
+#pagelet-write  .modal-dialog {
+	z-index: 1050;
+	width: auto;
+	padding: 10px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+@media screen and (min-width: 768px)
+.modal-content {
+    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+#pagelet-write #video-modal .modal-content {
+	width: 530px;
+	height: 290px;
+  background: #fff;
+}
+
+#pagelet-write .modal-body {
+	padding: 20px;
+}
+
+#pagelet-write .modal-body {
+	text-align: center;
+}
+
+#pagelet-write #video-modal .modal-body {
+	padding: 0;
+	text-align: left;
+	font-size: 14px;
+}
+
+#pagelet-write #video-modal .video-header {
+	position: relative;
+	height: 60px;
+	border-bottom: 1px solid #e9e9e9;
+	text-align: left;
+}
+
+#pagelet-write #video-modal .video-tags {
+	position: relative;
+	padding: 25px 0 0 45px;
+	background: transparent;
+}
+
+#pagelet-write #video-modal .video-tag {
+	display: inline-block;
+	line-height: 31px;
+	border-bottom: 1px solid transparent;
+	cursor: pointer;
+	color: #9e9e9e;
+	font-size: 18px;
+}
+
+#pagelet-write #video-modal .video-tag:first-child {
+	margin-right: 30px;
+}
+
+#pagelet-write #video-modal .video-tag.cur {
+	color: #1278ec;
+	border-color: #1278ec;
+}
+
+#pagelet-write #video-modal .video-close {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	color: #9e9e9e;
+	cursor: pointer;
+	width: 15px;
+	height: 15px;
+	opacity: .6;
+	background-repeat: no-repeat;
+}
+
+#pagelet-write #video-modal .video-close {
+	background-position: -886px -69px;
+}
+
+#pagelet-list .essay-recommended,.settings_edit,.loginindex .layer.layer-4 .feature-bubble .feature-3 .feature-icon-bottom,#pagelet-list .essay-top,#column-tags-modal .tags-dialog-header i,#comment-report-modal .report-dialog .report-dialog-header i,#video-modal .video-close
+	{
+	background-image: url(pagelet_z.a222db5.png);
+}
+
+#video-modal .video-content {
+	padding: 0 45px;
+}
+
+#pagelet-write .new-btn {
+  display: inline-block;
+	line-height: 40px;
+	width: 140px;
+	height: 40px;
+	text-align: center;
+	font-size: 16px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	color: #9e9e9e;
+	margin-left: 23px;
+	background: #f4f5f7;
+}
+
+#pagelet-write .new-btn.submit {
+	color: #fff;
+	background: #0f7ddb;
+}
+
+#video-modal .new-btn {
+	width: 138px;
+	margin: 0;
+}
+
+#video-modal .video-select {
+  display: block;
+	position: relative;
+	margin: 50px auto 28px;
+	overflow: hidden;
+}
+
+#video-modal #video_file {
+	position: absolute;
+	height: 100%;
+	top: 0;
+	right: 0;
+	opacity: 0;
+	cursor: pointer;
+	filter: alpha(opacity = 0);
+	font-size: 100em;
+}
+
+#video-modal .video-tip {
+	color: #9e9e9e;
+	text-align: left;
+	margin-bottom: 20px;
+}
+
+#pagelet-write .overlay{
+	display:none;
+	width:100%;
+	height:100%;
+    background-color: #777;
+    opacity:0.5;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index:1000;
+}
+
+
+#pagelet-write .video-card {
+    margin: 20px 0;
+}
+#pagelet-write .video-uploaded, #pagelet-write .video-uploading {
+    border: 1px solid #e9e9e9;
+    border-radius: 4px;
+    padding: 11px 12px;
+    position: relative;
+}
+#pagelet-write .video-uploading {
+    height: 74px;
+    padding: 20px 8px 0 20px;
+}
+#pagelet-write .video-info {
+    margin: 0 31px 10px 0;
+    position: relative;
+}
+#pagelet-write .video-info .video-data {
+    color: #9e9e9e;
+    float: right;
+    font-size: 14px;
+    line-height: 19px;
+    margin-left: 10px;
+}
+#pagelet-write .video-info .video-data {
+    color: #9e9e9e;
+    font-size: 14px;
+}
+#pagelet-write .oneline {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#pagelet-write .video-name {
+    color: #595959;
+    font-size: 16px;
+}
+#pagelet-write .video-progressbar {
+    height: 20px;
+    margin: 10px 0;
+    position: relative;
+}
+
+#pagelet-write .progressbar-outer {
+    background: #ebebeb none repeat scroll 0 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    height: 20px;
+    margin-right: 31px;
+    overflow: hidden;
+    position: relative;
+}
+#pagelet-write #progressbar-inner {
+    animation: 2s linear 0s normal none infinite running progress-bar-stripes;
+    background-color: #85b1fc;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-size: 20px 20px;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: width 0.6s ease 0s;
+    width: 0;
+}
+#pagelet-write .video-cancel {
+    background-repeat: no-repeat;
+    cursor: pointer;
+    height: 19px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 19px;
+}
+#pagelet-write .video-cancel {
+    background-position: -597px -324px;
+}
+
+#pagelet-header .author_dashbord li.new_logout:hover i, #pagelet-write .video-feedback-mtop > i, #pagelet-pureVideo .video-cancel, #pagelet-write .author-remove, #pagelet-write .video-cancel, .gallery-del, #pagelet-pureVideo .video-cancel:hover {
+    background-image: url(pagelet_z.a222db5.png);
+}
+.hide {
+    display: none !important;
+}
+#pagelet-write .hide {
+    display: none;
+}
+
+#pagelet-write .video-uploaded, #pagelet-write .video-uploading {
+    border: 1px solid #e9e9e9;
+    border-radius: 4px;
+    padding: 11px 12px;
+    position: relative;
+}
+
+#pagelet-write .video-uploaded .video-modify-poster, #pagelet-write .video-uploading .video-modify-poster {
+    background-color: rgba(0, 0, 0, 0.6);
+    bottom: 11px;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 10px;
+    height: 20px;
+    left: 12px;
+    line-height: 20px;
+    position: absolute;
+    text-align: center;
+    width: 128px;
+    z-index: 50;
+}
+
+#pagelet-write .video-link {
+    height: 72px;
+    padding-left: 152px;
+    position: relative;
+}
+
+#pagelet-write .video-feedback-status {
+    overflow: hidden;
+    background: #f0f1f3 none repeat scroll 0 0;
+    height: 72px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 128px;
+}
+#pagelet-write a {
+    color: inherit;
+    text-decoration: none;
+}
+#pagelet-write a.video-success {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+#pagelet-write a.video-success > i {
+    background-repeat: no-repeat;
+    height: 38px;
+    left: 50%;
+    margin-left: -19px;
+    margin-top: -24px;
+    position: absolute;
+    top: 50%;
+    width: 38px;
+}
+#pagelet-write a.video-success > i {
+    background-position: -610px -180px;
+}
+
+#pagelet-write .loginindex .layer.layer-6 .feature .collection::after, #pagelet-pureVideo a.video-success-poster > i, #pagelet-write .video-success > i, .loginindex .layer.layer-6 .triangle.pos1, #pagelet-list .interactive-users-con li a.interactive-users-more, #pagelet-list .sns-share-con li a.sns-weibo, #pagelet-list .sns-share-con li a.sns-weixin {
+    background-image: url(pagelet_z.a222db5.png);
+}
+
+#video-modal .video-close {
+    background-position: -886px -69px;
+}
+
+#pagelet-write .video-feedback-middle {
+    height: 100%;
+    padding-right: 120px;
+}
+
+#pagelet-write .video-feedback-mtop {
+    float: left;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 12px;
+    max-width: 290px;
+    padding: 13px 51px 0 0;
+    position: relative;
+}
+#pagelet-write .oneline {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#pagelet-write .video-name {
+    color: #595959;
+    font-size: 16px;
+}
+#pagelet-write #video-feedback-name {
+    color: #9e9e9e;
+    font-size: 16px;
+    margin-right: 24px;
+    max-width: 300px;
+}
+#pagelet-write .video-feedback-mtop > i {
+    background-repeat: no-repeat;
+    bottom: 0;
+    height: 19px;
+    position: absolute;
+    right: 0;
+    width: 41px;
+}
+#pagelet-write .video-feedback-mtop > i {
+    background-position: -554px -324px;
+}
+
+#pagelet-write .video-feedback-mbottom {
+    clear: both;
+    color: #4e7dd2;
+    font-size: 14px;
+}
+#pagelet-write .video-delete {
+    cursor: pointer;
+    float: left;
+    margin-right: 20px;
+}
+#pagelet-write .video-feedback-retry {
+    color: #4e7dd2;
+    cursor: pointer;
+    float: left;
+    overflow: hidden;
+    position: relative;
+}
+
+#pagelet-write input, #pagelet-write select,#pagelet-write textarea {
+    outline: 0 none;
+}
+
+#pagelet-write #retry_video_file {
+    cursor: pointer;
+    font-size: 100em;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#pagelet-write .video-feedback-btn {
+    font-size: 14px;
+    height: 34px;
+    line-height: 34px;
+    margin: -17px 0 0;
+    min-width: 84px;
+    padding: 0 15px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: auto;
+}
+#pagelet-write .oneline {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#pagelet-write .video-card-tip {
+    color: #9e9e9e;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+/**弹出确认框逻辑**/
+#pagelet-popalert .popalert-modal .modal-dialog{
+	width: 368px;
+	padding-bottom: 30px;
+    padding-top: 30px;
+}
+#pagelet-popalert .popalert-modal .modal-dialog .modal-content {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+    outline: 0 none;
+    position: relative;
+    width : 100%;
+    height: 234px;
+}
+#pagelet-popalert .popalert-modal .modal-content {
+    border: 0 none;
+}
+#pagelet-popalert .popalert-modal .modal-body {
+    padding: 0;
+}
+#pagelet-popalert .popalert-info {
+    border-bottom: 1px solid #efefef;
+    margin-bottom: 20px;
+    min-height: 84px;
+    padding-top: 60px;
+}
+#pagelet-popalert .popalert-icon {
+    color: #5d5d5d;
+    font-size: 18px;
+    line-height: 22px;
+    margin: 0 auto 12px;
+    padding-left: 30px;
+    position: relative;
+    width: 40px;
+}
+#pagelet-popalert .popalert-icon > i {
+    background-repeat: no-repeat;
+    height: 22px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 22px;
+}
+#pagelet-popalert .popalert-icon > i {
+    background-position: -879px -258px;
+}
+
+.daterange_search:hover, .daterange_search, #pagelet-popalert .popalert-icon > i, .weixin li .border, #pagelet-feedback .fb-msg .fb-msg-loading.fb-msg-error, #pagelet-header .author_dashbord i, #pagelet-header .author_dashbord li.new_logout i {
+    background-image: url(pagelet_z.a222db5.png);
+}
+#pagelet-popalert .popalert-tip {
+    color: #9e9e9e;
+    font-size: 14px;
+    margin-bottom: 12px;
+    padding: 0 15px;
+    text-align: center;
+    word-break: break-all;
+}
+#pagelet-popalert .popalert-btns {
+    font-size: 0;
+    padding-bottom: 20px;
+}
+#pagelet-popalert .popalert-submit {
+    margin-left: 0;
+    position: relative;
+}
+
+/**封面设置**/
+#pagelet-write .edit-cell {
+    margin-bottom: 40px;
+}
+#pagelet-write .front-cover {
+    margin-top: 20px;
+}
+#pagelet-write .edit-label {
+    float: left;
+    width: 122px;
+    text-align: left;
+    font-size: 16px;
+    color: #5d5d5d;
+    line-height: 40px;
+}
+#pagelet-write .edit-input, #pagelet-write .edit-tip {
+    margin-left: 122px;
+    font-size: 13px;
+    color: #9e9e9e;
+}
+#pagelet-write .front-cover-type {
+    overflow: hidden;
+}
+#pagelet-write .front-cover-item {
+    float: left;
+    margin-right: 22px;
+    line-height: 20px;
+    font-size: 14px;
+}
+#pagelet-write .front-cover-radio {
+    float: left;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    margin-right: 10px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+}
+#pagelet-write .front-cover-radio {
+    background-position: -735px -346px;
+}
+.pagelet-figure-main .figure-cover-radio, .pagelet-figure-main .pagelet-figure-image .gg-radio, #pagelet-create-live .edit-item .replay .replay-check, #pagelet-pureVideo .gg-radio, #pagelet-write .front-cover-radio, #pagelet-write .gg-radio, .menu_spread.alone:hover i {
+    background-image: url(//s2.pstatp.com/pgc/v2/resource/pgc_web/static/pkg/pagelet_z.a222db5.png);
+}
+#pagelet-write .front-cover .edit-label {
+    line-height: normal;
+}
+#pagelet-write .front-cover-item [data-title] {
+    cursor: pointer;
+}
+#pagelet-write .front-cover-radio.selected {
+    background-repeat: no-repeat;
+}
+#pagelet-write .front-cover-radio.selected {
+    background-position: -715px -346px;
+}
+#pagelet-write .front-cover-main {
+    position: relative;
+    display: none;
+    margin-top: 16px;
+    padding-top: 20px;
+    border-top: 1px solid #e9e9e9;
+}
+#pagelet-write .front-cover-cur {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 16px;
+    height: 8px;
+    background-repeat: no-repeat;
+}
+#pagelet-write .front-cover-cur {
+    background-position: -796px -386px;
+}
+#pagelet-list .sns-share-tri i, #pagelet-list .more-action-head, #pagelet-adincome .bankcard-edit:before, .pagelet-figure-main .figure-cover-cur, #pagelet-header .sys-msg-outer:before, #pagelet-header .sys-msg-important:before, #pagelet-write .front-cover-cur {
+    background-image: url(//s2.pstatp.com/pgc/v2/resource/pgc_web/static/pkg/pagelet_z.a222db5.png);
+}
+#pagelet-write .front-cover-upload {
+    float: left;
+}
+#pagelet-write .front-cover-img {
+    position: relative;
+    float: left;
+    width: 150px;
+    height: 105px;
+    margin-right: 20px;
+    background-color: #f0f1f3;
+    cursor: pointer;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+}
+#pagelet-write .front-cover-img {
+    background-position: -288px 0px;
+}
+.gallery-new i, .loginindex .layer.layer-4 .feature-bubble .feature-4 .feature-icon, .loginindex .layer.layer-6 .triangle.pos4, .signtype_item_bg, .pagelet-figure-main .figure-cover-img, #pagelet-write .front-cover-img, .loginindex .layer.layer-4 .feature-bubble .feature-3 .feature-icon {
+    background-image: url(//s2.pstatp.com/pgc/v2/resource/pgc_web/static/pkg/pagelet_z.a222db5.png);
+}
+#pagelet-write .cover-img-modify {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    color: #fff;
+    background: rgba(0,0,0,.7);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=1,startColorstr=#CC000000,endColorstr=#CC000000)";
+    cursor: pointer;
+}
+#pagelet-write .cover-img-modify i {
+    position: relative;
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    top: 7px;
+    vertical-align: top;
+    background-repeat: no-repeat;
+}
+#pagelet-write .cover-img-modify i {
+    background-position: -699px -294px;
+}
+.pagelet-quiz .quiz-main .question-upload .pic-del::before, #pagelet-write .video-processing-loading, .pagelet-figure-main .figure-cover-img-modify i, #pagelet-write .cover-img-modify i, .loginindex .layer.layer-1 .triangle.pos1, .gallery-sort-icon, .loginindex .layer.layer-1 .triangle.pos4 {
+    background-image: url(//s2.pstatp.com/pgc/v2/resource/pgc_web/static/pkg/pagelet_z.a222db5.png);
+}
+#pagelet-write .front-cover-img {
+    background-position: -288px 0px;
+}
+#pagelet-write .front-cover-right {
+    float: left;
+    width: 100px;
+    margin-left: 20px;
+}
+#pagelet-write .front-cover-preview {
+    width: 100px;
+    margin: 0;
+    height: 34px;
+    line-height: 34px;
+    font-size: 14px;
+}
+#pagelet-write .front-cover-tip {
+    clear: both;
+    font-size: 13px;
+    color: #9e9e9e;
+    padding-top: 12px;
+}
+
+/*****分类*****/
+#pagelet-write .form-control {
+    display: block;
+    width: 100%;
+    height: 40px;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1em;
+    color: #666;
+    vertical-align: middle;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #e9e9e9;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+@media screen and (-webkit-min-device-pixel-ratio: 0)
+.form-control {
+    line-height: normal;
+}
+#pagelet-write #channel_tags {
+    display: inline-block;
+    width: 92px;
+    padding: 6px 12px;
+    margin-right: 14px;
+}
+
+/****视频标签****/
+#video-tag-center .tag-input-center {
+    border: 1px solid #ccc;
+    width: 400px;
+    min-height: 40px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+#video-tag-center .tag-input-center .tag {
+    padding-left: 20px;
+    padding-right: 20px;
+    height: 30px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    line-height: 30px;
+    margin-bottom: 10px;
+    position: relative;
+}
+#video-tag-center .tag-input-center .tag .tag-content {
+    display: block;
+    height: 30px;
+    margin-left: 0;
+    margin-right: 15px;
+    min-width: 10px;
+}
+#video-tag-center .tag-input-center .tag .tag-close {
+    width: 23px;
+    -webkit-border-top-right-radius: 15px;
+    -moz-border-radius-topright: 15px;
+    border-top-right-radius: 15px;
+    -webkit-border-bottom-right-radius: 15px;
+    -moz-border-radius-bottomright: 15px;
+    border-bottom-right-radius: 15px;
+    background: #ccc;
+    height: 30px;
+    display: block;
+    position: absolute;
+    right: -1px;
+    top: 0;
+}
+
+#video-tag-center .tag-input-center .tag .tag-close::after {
+    color: #fff;
+    content: "✖";
+    font-size: 10px;
+    position: absolute;
+    right: 7px;
+    top: 1px;
+}
+/**选择图片**/
+#pagelet-write .cover-modal .modal-dialog {
+    width: 490px;
+}
+#pagelet-write .cover-modal .modal-content {
+    border: 0;
+}
+#pagelet-write .cover-modal .modal-body {
+    padding: 0;
+}
+#pagelet-write .cover-header {
+    position: relative;
+    padding: 20px 0 16px;
+    line-height: 1;
+    font-size: 20px;
+    color: #595959;
+}
+#pagelet-write .pagelet-figure-main .figure-cover-img-hover {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.5);
+    cursor: pointer;
+}
+#pagelet-write .cover-select-items li.selected .cover-img-hover {
+    display: block;
+    background-color: transparent;
+    background-repeat: no-repeat;
+}
+#pagelet-write .cover-select-items li.selected .cover-img-hover{
+    background-position: -106px -255px;
+}
+#pagelet-write .cover-select-items li.selected .cover-img-hover{
+    background-image: url(//s2.pstatp.com/pgc/v2/resource/pgc_web/static/pkg/pagelet_z.a222db5.png);
+}
+#pagelet-write .cover-crop-main, .cover-select-main {
+    background: #e9e9e9;
+}
+#pagelet-write .cover-select-main {
+    max-height: 247px;
+    overflow-y: auto;
+}
+#pagelet-write .cover-select-items {
+    position: relative;
+    text-align: left;
+    overflow: hidden;
+    margin-bottom: 0;
+    padding-left: 17px;
+}
+ol, ul {
+    list-style: none;
+}
+#pagelet-write .cover-select-items li {
+    position: relative;
+    float: left;
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    margin: 0 7px 16px;
+    background: rgba(0,0,0,.5);
+}
+#pagelet-write .cover-select-items li img {
+    max-width: 100%;
+    min-height: 100%;
+    cursor: pointer;
+}
+#pagelet-write .cover-img-hover {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.5);
+    cursor: pointer;
+}
+#pagelet-write .cover-footer {
+    padding: 20px 0;
+    font-size: 0;
+}
+#cover-select-modal .modal-content {
+    width: 500px;
+}
+/**裁剪图片**/
+#cover-crop-modal .cover-crop-main {
+    position: relative;
+    height: 270px;
+    text-align: center;
+    overflow: hidden;
+}
+#cover-crop-modal .cover-modal .new-btn {
+    margin-left: 44px;
+}
+#cover-crop-modal .cover-modal .new-btn:first-child {
+    margin-left: 0;
+}
+#cover-crop-modal .modal-content{
+	position : relative;
+}
+#cover-crop-modal .jcrop-holder{
+	margin: 0 auto;
+}

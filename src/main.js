@@ -16,12 +16,15 @@ import './assets/css/reset.css'
 import 'element-ui/lib/theme-chalk/index.css'//原始的饿了么主题色
 import './assets/scss/common.scss'//修改后主题颜色的样式，可在文件中接触注释就行了
 
-import '../static/UE/ueditor.config.js'
-import '../static/UE/ueditor.all.min.js'
-import '../static/UE/lang/zh-cn/zh-cn.js'
-import '../static/UE/ueditor.parse.min.js'
-import '../static/UE/themes/default/css/ueditor.css'
-import '../static/UE/third-party/codemirror/codemirror.css'
+import '../static/ueditor/ueditor.config.js'
+import '../static/ueditor/ueditor.all.js'
+import '../static/ueditor/lang/zh-cn/zh-cn.js'
+import '../static/ueditor/ueditor.parse.min.js'
+import '../static/ueditor/self/js/ueditor.68091ee.js'
+// import '../static/ueditor/themes/default/css/ueditor.css'
+import '../static/ueditor/themes/iframe.css'
+import '../static/ueditor/self/css/ueditor_custom.css'
+import '../static/ueditor/third-party/codemirror/codemirror.css'
 
 // import '../static/toutiao/jquery-3.1.1.min.js'
 import '../static/toutiao/jquery-file-upload-pack.js'

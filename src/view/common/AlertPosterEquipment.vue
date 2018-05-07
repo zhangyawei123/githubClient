@@ -9,6 +9,7 @@
           <div class="existent-content alertPosterEquipment">
             <el-table
               ref="posterTable"
+              v-loading="loadingFlag"
               :data="posterList"
               tooltip-effect="dark"
               height="375"
@@ -60,6 +61,7 @@
     </div>
     <div class="existent-content alertPosterEquipment-eq">
       <el-table
+        v-loading="loadingFlag"
         ref="equipmentTable"
         :data="equipmentList"
         tooltip-effect="dark"

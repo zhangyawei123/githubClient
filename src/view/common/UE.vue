@@ -24,19 +24,27 @@
         },
       },
       mounted() {
-        const _this = this;
-        this.editor = UE.getEditor('editor', this.config); // 初始化UE
-        this.editor.addListener("ready", function () {
-          _this.editor.setContent(_this.defaultMsg); // 确保UE加载完成后，放入内容。
-        });
-        console.log("上传这堆错误不用理会，上传接口需自行开发配置");
+        this.$nextTick(function () {
+          this.editor = UE.getEditor('editor', this.config); // 初始化UE
+          console.log("上传这堆错误不用理会，上传接口需自行开发配置");
+        })
       },
       methods: {
         getUEContent() { // 获取内容方法
           return this.editor.getContent()
         },
-        getUEContentTxt() { // 获取纯文本内容方法
-          return this.editor.getContentTxt()
+        insertHtml(html) {
+          this.editor.execCommand('insertHtml', html);
+        },
+        changeIframeCover(html,videoId,img) {                    //更换富文本里面的视频封面
+          $(this.editor.document).find(".local-video").attr("src" , html).attr("data-id", videoId).attr("data-img", img);
+          $(this.editor.document).find(".local-video img").attr("src" , img);
+        },
+        delVideoCover() {                     //删除视频的时候
+          $(this.editor.document).find(".local-video").parent().remove();
+        },
+        checkIframeVideoCover() { //  判断添加视频后有没有加入到正文
+          if ($(this.editor.document).find(".local-video").length > 0) { return true} else { return false}
         }
       },
       destroyed() {

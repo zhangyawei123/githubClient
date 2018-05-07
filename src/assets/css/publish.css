@@ -80,6 +80,7 @@
   width: 360px;
   height: 200px;
   border: 1px solid #e2e5e7;
+  cursor: pointer;
 }
 input.attribute-item-value {
   width: 238px;

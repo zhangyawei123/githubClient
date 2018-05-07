@@ -59,6 +59,8 @@
           .catch(err => {
             this.checkLogIn();
             console.log(err);
+            alert('您的账号在其他设备登录，请重新登录');
+            _this.$router.push({path: '/login'})
           });
       },
       handleCurrentChange(val) {
