@@ -1,10 +1,10 @@
 (function() {
-    window.UEDITOR_HOME_URL = 'static/ueditor/';
+    window.UEDITOR_HOME_URL = '/static/ueditor/';
     var URL = window.UEDITOR_HOME_URL || getUEBasePath();
     var l = "//s2.pstatp.com/pgc/v2/resource/pgc_web/static/ueditor/iframe.9323603.css";
     window.UEDITOR_CONFIG = {
         UEDITOR_HOME_URL: URL,
-        serverUrl: "http://192.168.0.69:8080/xjy-web-user/api/common/image/deal",
+        serverUrl: "/api/common/image/deal",
         toolbars: [
             ['h1', 'bold', 'blockquote', 'ul', 'ol', 'horizontal', '|', 'insertimage', 'upload_video', '|', 'removeformat', 'undo', 'redo']
 //            ['h1', 'bold', 'blockquote', 'ul', 'ol', 'horizontal', '|', 'insertimage', '|', 'removeformat', 'undo', 'redo']

@@ -45,6 +45,16 @@
         },
         checkIframeVideoCover() { //  判断添加视频后有没有加入到正文
           if ($(this.editor.document).find(".local-video").length > 0) { return true} else { return false}
+        },
+        getImgList() {                          //获取富文本里面的图片数组url
+          var jbody = $(this.editor.document);
+          var $img = $("p img[class!='remoteImageErrorPlaceholder']",jbody);
+          let imgList=[];
+
+          $.each($img,function (index,item) {
+            imgList[index] = $(item).attr('src');
+          })
+          return imgList;
         }
       },
       destroyed() {

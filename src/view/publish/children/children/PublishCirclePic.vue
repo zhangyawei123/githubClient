@@ -77,22 +77,14 @@
       width="712px"
       title="正文图片"
       class="imgCoverDialog">
-          <ul class="images-items">
-            <li v-for="(item,index) in imgList" class="image-item" :class="{selected: picCurrentIndex===index}" @click="chooseVideoCover(index)">
-                <img :src="item.url">
-                <div class="image-hover"></div>
-            </li>
-          </ul>
-          <div class="confirm-box">
-            <label class="upload-video-cover" @click="confirmSystemPic">确认</label>
-            <label class="upload-video-cover" @click="imgCoverDialogVisible=false">取消</label>
-          </div>
+      <ImgCoverPanel :imgCoverList="imgCoverList" @sendImgCover="getImgCover" @closeImgDialog="imgCoverDialogVisible=false" />
     </el-dialog>
   </div>
 </template>
 <script>
   import {httpUrl} from "../../../../http_url";
-  import draggable from 'vuedraggable'
+  import draggable from 'vuedraggable';
+  import ImgCoverPanel from '../../../common/ImgCoverPanel'
 
   export default {
     data() {
@@ -122,8 +114,17 @@
         }
       };
     },
+    computed: {
+      imgCoverList:function () {
+        let _imgCoverList = this.imgList.map(function (item) {
+          return item.url;
+        })
+        return _imgCoverList;
+      }
+    },
     components: {
       draggable,
+      ImgCoverPanel
     },
     methods: {
       onFileChange(e) {    //上传多图
@@ -205,19 +206,13 @@
       showImglist() {                    //排序的时候打印图片列表的值，显示用的，没有实际意义
         console.log(this.imgList)
       },
-      openImgDialog(index) {//打开选择封面弹窗
+      openImgDialog(index) {//打开选择封面弹窗,记录是点击哪一个打开的
         this.imgCoverDialogVisible = true;
         this.picBoxCurrentIndex = index;
       },
-      chooseVideoCover(index) {
-        this.picCurrentIndex = index;
-
-      },
-      confirmSystemPic() {
-        this.ruleForm.coverList[this.picBoxCurrentIndex] = this.imgList[this.picCurrentIndex];
+      getImgCover(data) {
+        this.ruleForm.coverList[this.picBoxCurrentIndex].url = data;
         this.imgCoverDialogVisible = false;
-        this.picCurrentIndex = '';
-        console.log(this.ruleForm.coverList);
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
@@ -367,62 +362,5 @@
     display: block;
     width: 100%;
     height: 100%;
-  }
-</style>
-<style lang="scss">
-  /*头条系统封面选择*/
-  .image-item {
-    width: 142px;
-    height: 120px;
-    position: relative;
-    display: inline-block;
-    border: 1px solid #e8e8e8;
-    margin: 10px;
-    cursor: pointer;
-  }
-  .image-item img{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 100%;
-    max-height: 100%;
-    margin: auto;
-  }
-  .image-hover {
-    display: none;
-  }
-  .image-item:hover .image-hover{
-    display: block;
-  }
-  .image-hover {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,.5);
-    cursor: pointer;
-  }
-  .image-item.selected .image-hover {
-    display: block;
-    background: url("../../../../assets/img/common_z.daac891.png") no-repeat -34px -10px;
-    background-size: 240px 196px;
-  }
-  .confirm-box {
-    text-align: center;
-  }
-  .upload-video-cover {
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
-    width: 140px;
-    text-align: center;
-    background: $primary-color;
-    color: #fff;
-    border-radius: 3px;
-    cursor: pointer;
   }
 </style>

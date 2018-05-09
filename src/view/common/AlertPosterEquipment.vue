@@ -155,11 +155,12 @@
               },10)
               _this.loadingFlag = false;
             }else {
-
+              _this.loadingFlag = false;
             }
           })
           .catch(function (error) {
-            console.log(error)
+            console.log(error);
+            _this.checkLogIn();
           })
 
       },

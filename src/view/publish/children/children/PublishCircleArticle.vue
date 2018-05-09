@@ -98,20 +98,28 @@
               </div>
             </div>
           </div>
-          <UploadVideo :videoInputId="'demo'" :videoCoverUrl="videoCover"  />
         </div>
       </el-form-item>
       <el-form-item label="文章封面" prop="CoverType">
-        <el-radio-group v-model="ruleForm.CoverType" @change="changeCoverType">
+        <el-radio-group v-model="ruleForm.CoverType">
           <el-radio label="0">无图模式</el-radio>
           <el-radio label="1">单图模式</el-radio>
           <el-radio label="3">三图模式</el-radio>
         </el-radio-group>
-        <div class="front-cover-upload clearfix">
-          <!--<div class="front-cover-img front-cover-single" v-if="ruleForm.CoverType=='1' || ruleForm.CoverType=='3'"></div>-->
-          <!--<div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>-->
-          <!--<div class="front-cover-img front-cover-multi" v-if="ruleForm.CoverType=='3'"></div>-->
-          <div v-for="(item,index) in ruleForm.coverList" class="front-cover-img" @click="dneid(index)"></div>
+        <div class="front-cover-upload clearfix" v-show="ruleForm.CoverType!=='0'">
+          <div class="front-cover-img" @click="openImgDialog(0)">
+            <img :src="ruleForm.coverList[0].url" alt="">
+            <div v-if="ruleForm.coverList[0].url" @click.stop="openCropPanel(0)" class="cropper-icon"></div>
+          </div>
+          <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(1)">
+            <img :src="ruleForm.coverList[1].url" alt="">
+            <div v-if="ruleForm.coverList[1].url" @click.stop="openCropPanel(1)" class="cropper-icon"></div>
+          </div>
+          <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(2)">
+            <img :src="ruleForm.coverList[2].url" alt="">
+            <div v-if="ruleForm.coverList[2].url" @click.stop="openCropPanel(2)" class="cropper-icon"></div>
+          </div>
+          <!--<div v-for="(item,index) in ruleForm.coverList" class="front-cover-img" @click="openImgCoverPanel(index)"></div>-->
         </div>
       </el-form-item>
       <el-form-item label="频道分类" prop="channel">
@@ -157,12 +165,29 @@
       class="videoCoverDialog">
       <VideoCoverPanel @sendVideoCover="getVideoCover" @closeVideoDialog="videoCoverDialogVisible=false" :systemPicList="systemPicList" />
     </el-dialog>
+    <!--文章封面的弹窗-->
+    <el-dialog
+      :visible.sync="imgCoverDialogVisible"
+      width="712px"
+      title="正文图片"
+      class="imgCoverDialog">
+      <ImgCoverPanel :imgCoverList="imgCoverList" @sendImgCover="getImgCover" @closeImgDialog="imgCoverDialogVisible=false" />
+    </el-dialog>
+    <!--剪切的弹窗-->
+    <el-dialog
+      :visible.sync="cropperDialogVisible"
+      width="712px"
+      title="正文图片"
+      class="imgCoverDialog">
+      <Cropper :cropImgUrl="cropImgUrl" ref="cropperPanel" @sendCropData="getCropImg" @closeCropPanel="cropperDialogVisible=false" />
+    </el-dialog>
   </div>
 </template>
 <script>
   import UE from '../../../common/UE';
   import VideoCoverPanel from '../../../common/VideoCoverPanel';
-  import UploadVideo from '../../../common/UploadVideo';
+  import ImgCoverPanel from '../../../common/ImgCoverPanel';
+  import Cropper from '../../../common/Cropper';
   import {httpUrl} from "../../../../http_url";
 
   export default {
@@ -171,19 +196,25 @@
         ruleForm: {
           title: '',                  //文章标题
           channel: '',                //频道分类
-          CoverType: '0',             //文章封面
-          coverList: [],
+          CoverType: '0',             //文章封面类型
+          coverList: [{url: ''},{url: ''},{url: ''}],              //文章封面的值(未剪切的时候)
+          coverCropList: [{url: ''},{url: ''},{url: ''}],              //文章封面的值(剪切后)
           dynamicTags: [],            //文章标签
         },
         config: {
           initialFrameWidth: null,
-          initialFrameHeight: 200
+          initialFrameHeight: 350,
         },
         ue1: "ue1", // 不同编辑器必须不同的id
-        videoCoverDialogVisible: false,
-        systemPicList: [],
+        videoCoverDialogVisible: false,//视频的封面列表弹窗
+        imgCoverDialogVisible: false,//文章的封面列表弹窗
+        picBoxCurrentIndex:'',            //点击的哪个图片图片弹窗按钮
+        systemPicList: [],            //视频的封面列表弹窗
+        imgCoverList: [],            //文章的封面列表弹窗
         videoCoverUrl: '',
         videoCover: '',
+        cropperDialogVisible: false,//剪切弹窗
+        cropImgUrl: '',//剪切弹窗传入的img
         inputVisible: false,
         inputValue: '',
         rules: {
@@ -349,7 +380,8 @@
     components: {
       UE,
       VideoCoverPanel,
-      UploadVideo
+      ImgCoverPanel,
+      Cropper
     },
     methods: {
       getVideoCover(data) {
@@ -364,14 +396,31 @@
         this.$refs.ue.changeIframeCover(html,videoId,videoImg);
         this.videoCoverDialogVisible = false;
       },
-      changeCoverType(value) {
-        // this.ruleForm.coverList.length = parseInt(value);
-        this.ruleForm.coverList=new Array(parseInt(value));
-        console.log(this.ruleForm.coverList);
-        // this.$refs.ue.insertHtml();
+      openImgDialog(index) {//打开选择封面弹窗,记录是点击哪一个打开的
+        this.imgCoverList = this.$refs.ue.getImgList();
+        this.imgCoverDialogVisible = true;
+        this.picBoxCurrentIndex = index;
       },
-      dneid(index) {
-        console.log(index);
+      getImgCover(data) { //回填选中后的图片封面
+        this.ruleForm.coverList[this.picBoxCurrentIndex].url = data;
+        this.imgCoverDialogVisible = false;
+      },
+      openCropPanel(num) {                            //打开剪切窗口，记录位置
+        let _this =this;
+        this.cropperDialogVisible = true;
+
+        this.picBoxCurrentIndex=num;
+        this.cropImgUrl = this.ruleForm.coverList[num].url;
+        setTimeout(function () {
+          _this.$refs.cropperPanel.replaceImg(_this.cropImgUrl);
+        },10)
+        console.log(this.cropImgUrl);
+      },
+      getCropImg(data) {//回填剪切后的数据，只操作dom，不改变封面数组内的值
+        let _this = this;
+        console.log(data)
+          $('.front-cover-img img').eq(_this.picBoxCurrentIndex).attr('src',data);
+        this.cropperDialogVisible = false;
       },
       handleClose(tag) {
         this.dynamicTags.splice(this.ruleForm.dynamicTags.indexOf(tag), 1);
@@ -398,12 +447,15 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let checkIframeVideoCover = _this.$refs.ue.checkIframeVideoCover();
+
             if(videoId && !checkIframeVideoCover) {//加了视频但没有加到正文
               alert('没有加入到正文');
             }else {
               alert('submit!');
             }
           } else {
+            // let imgList = _this.$refs.ue.getImgList();
+            // console.log(imgList)
             console.log('error submit!!');
             return false;
           }
@@ -422,16 +474,37 @@
     margin-top: 10px;
   }
   .front-cover-img {
+    position: relative;
     float: left;
     margin-right: 20px;
     width: 120px;
     height: 120px;
     border: 1px solid $border-color;
+    cursor: pointer;
   }
   .front-cover-img img {
     display: block;
     width: 100%;
     height: 100%;
+  }
+  .cropper-icon {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    opacity: .6;
+    cursor: pointer;
+    -webkit-transition: opacity .1s;
+    -moz-transition: opacity .1s;
+    transition: opacity .1s;
+    background: #ddd url(https://p3.pstatp.com/origin/213200066a873a8df82e) no-repeat 50%;
+    width: 30px;
+    height: 30px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+  }
+  .cropper-icon:hover {
+    opacity: 1;
   }
   .tag-box {
     padding: 0 15px;

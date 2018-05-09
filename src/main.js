@@ -10,8 +10,7 @@ import echarts from 'echarts'
 import {LogIn,GetAccessToken,checkLogIn } from './utils'
 // import VueAxios from 'vue-axios'
 import ElementUI from 'element-ui'
-import $ from 'jquery'
-import swal from 'sweetalert'
+
 import './assets/css/reset.css'
 import 'element-ui/lib/theme-chalk/index.css'//原始的饿了么主题色
 import './assets/scss/common.scss'//修改后主题颜色的样式，可在文件中接触注释就行了
