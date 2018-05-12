@@ -2,7 +2,7 @@
     <div class="imgCoverWrap">
       <ul class="images-items">
         <li v-for="(item,index) in imgCoverList" class="image-item" :class="{selected: picCurrentIndex===index}" @click="chooseImgCover(index)">
-          <img :src="item">
+          <img :src="item.url">
           <div class="image-hover"></div>
         </li>
       </ul>

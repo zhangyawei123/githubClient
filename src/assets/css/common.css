@@ -114,7 +114,9 @@ img {
 	padding: 30px 40px;
 	background: #fff;
 }
-
+.required {
+  color: #f00;
+}
 
 
 

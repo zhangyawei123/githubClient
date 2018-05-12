@@ -232,7 +232,7 @@
           return
         }else if (val.length ===1) {            //海报选项单选的情况下
           this.posterTitleShow = false;
-          this.showLocalTextLink.bannerJumpType = 4081;
+          this.showLocalTextLink.bannerJumpType = 4801;
           this.showLocalTextLink.jumpTypeName = '海报';
           this.showLocalTextLink.bannerTitle = val[0].title;
           this.showLocalTextLink.bannerOutId = val[0].vid;
@@ -240,7 +240,7 @@
 
         }else {
           this.posterTitleShow = true;
-          this.showLocalTextLink.bannerJumpType = 4082;
+          this.showLocalTextLink.bannerJumpType = 4802;
           this.showLocalTextLink.jumpTypeName = '海报列表';
 
           this.showLocalTextLink.bannerOutId= '';
@@ -262,7 +262,7 @@
           return
         }else {
           this.posterTitleShow = true;
-          this.showLocalTextLink.bannerJumpType = 4082;
+          this.showLocalTextLink.bannerJumpType = 4802;
           this.showLocalTextLink.jumpTypeName = '海报列表';
 
           this.showLocalTextLink.bannerOutId= '';
@@ -284,7 +284,7 @@
           return
         }else if (val.length ===1) {            //海报选项单选的情况下
           this.equipmentTitleShow = false;
-          this.showLocalTextLink.bannerJumpType = 4083;
+          this.showLocalTextLink.bannerJumpType = 4803;
           this.showLocalTextLink.jumpTypeName = '产品';
           this.showLocalTextLink.bannerTitle = val[0].brandName;
           this.showLocalTextLink.bannerOutId = val[0].id;
@@ -292,7 +292,7 @@
 
         }else {
           this.equipmentTitleShow = true;
-          this.showLocalTextLink.bannerJumpType = 4084;
+          this.showLocalTextLink.bannerJumpType = 4804;
           this.showLocalTextLink.jumpTypeName = '产品列表';
 
           this.showLocalTextLink.bannerOutId= '';
@@ -314,7 +314,7 @@
           return
         }else {
           this.equipmentTitleShow = true;
-          this.showLocalTextLink.bannerJumpType = 4084;
+          this.showLocalTextLink.bannerJumpType = 4804;
           this.showLocalTextLink.jumpTypeName = '产品列表';
 
           this.showLocalTextLink.bannerOutId= '';
@@ -336,7 +336,7 @@
         this.posterTitleShow = false;
         this.equipmentTitleShow = false;
         this.ChooseList = [];
-        this.showLocalTextLink.bannerJumpType = 4087;
+        this.showLocalTextLink.bannerJumpType = 4807;
         this.showLocalTextLink.jumpTypeName = '外部链接';
         this.showLocalTextLink.bannerTitle = this.showLocalTextLink.outHtml;
         this.showLocalTextLink.bannerOutId = '';

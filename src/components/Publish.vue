@@ -12,7 +12,7 @@
 </template>
 <script>
   // import { addnum } from "../assets/js/test";
-  import * as test from '../assets/js/test';
+  import * as test from '../assets/js/eventBus';
   export default {
   name: 'publish',
   mounted: function () {

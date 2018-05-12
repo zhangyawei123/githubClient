@@ -20,7 +20,7 @@
         <draggable v-model="imgList" :options="{handle: '.el-icon-sort',animation: 150}" @end="showImglist">
           <div class="pagelet-figure-gallery-item clearfix" v-for="(item,index) in imgList">
             <div class="gallery-img"><img alt="图集" :src="item.url"></div>
-            <div class="gallery-txt"><textarea v-model="item.desc" placeholder="图片说明（不超过200个字）" maxlength="200"></textarea></div>
+            <div class="gallery-txt"><textarea v-model="item.content" placeholder="图片说明（不超过200个字）" maxlength="200"></textarea></div>
             <div class="gallery-action">
               <i class="el-icon-picture-outline gallery-icon" @click="changeImgTrigger(index)">
               </i>
@@ -48,23 +48,26 @@
         <div class="front-cover-upload clearfix">
           <!--<div v-for="(item,index) in ruleForm.coverList" class="front-cover-img" @click="openVideoDialog(index)"></div>-->
           <div class="front-cover-img" @click="openImgDialog(0)">
-            <img :src="ruleForm.coverList[0].url" alt="">
+            <img :src="ruleForm.coverList[0].url" :data-pid="ruleForm.coverList[0].pid" alt="">
+            <div v-if="ruleForm.coverList[0].url" @click.stop="openCropPanel(0)" class="cropper-icon"></div>
           </div>
           <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(1)">
-            <img :src="ruleForm.coverList[1].url" alt="">
+            <img :src="ruleForm.coverList[1].url" :data-pid="ruleForm.coverList[1].pid" alt="">
+            <div v-if="ruleForm.coverList[1].url" @click.stop="openCropPanel(1)" class="cropper-icon"></div>
           </div>
           <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(2)">
-            <img :src="ruleForm.coverList[2].url" alt="">
+            <img :src="ruleForm.coverList[2].url" :data-pid="ruleForm.coverList[2].pid" alt="">
+            <div v-if="ruleForm.coverList[2].url" @click.stop="openCropPanel(2)" class="cropper-icon"></div>
           </div>
         </div>
       </el-form-item>
       <el-form-item label="频道分类" prop="channel">
         <el-radio-group v-model="ruleForm.channel">
-          <el-radio label="0">现场</el-radio>
-          <el-radio label="1">零件</el-radio>
-          <el-radio label="2">工艺</el-radio>
-          <el-radio label="3">设备</el-radio>
-          <el-radio label="4">售后</el-radio>
+          <el-radio label="scene">现场</el-radio>
+          <el-radio label="component">零件</el-radio>
+          <el-radio label="skill">工艺</el-radio>
+          <el-radio label="device">设备</el-radio>
+          <el-radio label="customerService">售后</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -77,7 +80,15 @@
       width="712px"
       title="正文图片"
       class="imgCoverDialog">
-      <ImgCoverPanel :imgCoverList="imgCoverList" @sendImgCover="getImgCover" @closeImgDialog="imgCoverDialogVisible=false" />
+      <ImgCoverPanel :imgCoverList="imgList" @sendImgCover="getImgCover" @closeImgDialog="imgCoverDialogVisible=false" />
+    </el-dialog>
+    <!--剪切的弹窗-->
+    <el-dialog
+      :visible.sync="cropperDialogVisible"
+      width="712px"
+      title="正文图片"
+      class="imgCoverDialog">
+      <Cropper :cropImgUrl="cropImgUrl" ref="cropperPanel" @sendCropData="getCropImg" @closeCropPanel="cropperDialogVisible=false" />
     </el-dialog>
   </div>
 </template>
@@ -85,20 +96,24 @@
   import {httpUrl} from "../../../../http_url";
   import draggable from 'vuedraggable';
   import ImgCoverPanel from '../../../common/ImgCoverPanel'
+  import Cropper from '../../../common/Cropper';
 
   export default {
     data() {
       return {
+        iid: '',
         imgList: [],
         changeImgIndex: '',
         imgCoverDialogVisible:false,
+        cropperDialogVisible: false,
+        cropImgUrl: '',
         picCurrentIndex:'',            //选择的图片弹窗的图片索引
         picBoxCurrentIndex:'',            //点击的哪个图片图片弹窗按钮
         ruleForm: {
           title: '',                  //文章标题
           channel: '',                //频道分类
           CoverType: '1',             //文章封面
-          coverList: [{url: ''},{url: ''},{url: ''}],              //封面图片数组
+          coverList: [{url: '',pid: ''},{url: '',pid: ''},{url: '',pid: ''}],              //封面图片数组
         },
         rules: {
           title: [
@@ -114,19 +129,26 @@
         }
       };
     },
-    computed: {
-      imgCoverList:function () {
-        let _imgCoverList = this.imgList.map(function (item) {
-          return item.url;
-        })
-        return _imgCoverList;
-      }
+    mounted() {
+      this.getData()
     },
     components: {
       draggable,
-      ImgCoverPanel
+      ImgCoverPanel,
+      Cropper
     },
     methods: {
+      getData() {
+        this.axios.get(httpUrl + 'api/media/image/edit/index?aid=382&accessToken='+ this.$cookie.get('accessToken'))
+          .then(response => {
+            console.log(response.data);
+            // console.log(this.ruleForm.title);
+            this.imgList = response.data.data.imgList
+          })
+          .catch(err => {
+
+          });
+      },
       onFileChange(e) {    //上传多图
         var _this = this;
         var files = e.target.files || e.dataTransfer.files;
@@ -156,7 +178,7 @@
             _this.imgList = _this.imgList.concat(result.list);
             // var newArr;
             // _this.imgList.map(function (item) {
-            //   item.desc = '';
+            //   item.content = '';
             // })
           },
           error:function(result){
@@ -211,13 +233,96 @@
         this.picBoxCurrentIndex = index;
       },
       getImgCover(data) {
-        this.ruleForm.coverList[this.picBoxCurrentIndex].url = data;
+        this.ruleForm.coverList[this.picBoxCurrentIndex].url = data.url;
         this.imgCoverDialogVisible = false;
+      },
+      openCropPanel(num) {                            //打开剪切窗口，记录位置
+        let _this =this;
+        this.cropperDialogVisible = true;
+
+        this.picBoxCurrentIndex=num;
+        this.cropImgUrl = this.ruleForm.coverList[num].url;
+        setTimeout(function () {
+          _this.$refs.cropperPanel.replaceImg(_this.cropImgUrl);
+        },10)
+        console.log(this.cropImgUrl);
+      },
+      getCropImg(data) {//回填剪切后的数据，只操作dom，不改变封面数组内的值
+        let _this = this;
+        console.log(data)
+        $('.front-cover-img img').eq(_this.picBoxCurrentIndex).attr({
+          'src' : data.url,
+          'data-pid' : data.pid
+        });
+        this.cropperDialogVisible = false;
+      },
+      getSendData(url) {//获取所有数据
+        let _this = this;
+        let coverList=[];//到这里在从DOM里去封面的值
+        if(_this.ruleForm.CoverType==1) {
+          if($('.front-cover-img img').eq(0).attr('src')=='') {
+            alert('请选择封面');
+            return
+          }else {
+            coverList[0] = $('.front-cover-img img').eq(0).attr('src');
+          }
+        }else if(_this.ruleForm.CoverType==3) {
+          $.each($('.front-cover-img img'),function (index,item) {
+            if($(item).attr('src')=='') {
+              alert('请选择封面');
+              return
+            }else {
+              coverList[index] = $(item).attr('src');
+            }
+          })
+        }
+        let images = [];
+        // _this.imgList.forEach(function(item,index) {
+        //   images[index].pid = item.pid;
+        //   images[index].content = item.content;
+        // })
+        for(let i=0;i<_this.imgList.length;i++) {
+          images[i] = {pid:_this.imgList[i].pid,content: _this.imgList[i].content};//这个是从富文本返回的图片对象，没有pid
+        }
+        var dataObj = {
+          iid: _this.iid,
+          title: _this.ruleForm.title,
+          images: images,
+          imageNum: _this.imgList.length,
+          coverNum: Number(_this.ruleForm.CoverType),
+          imageType:_this.ruleForm.channel,
+          covers: coverList
+        }
+        var dataString = JSON.stringify(dataObj);
+        _this.axios.post(httpUrl + url,_this.qs.stringify({
+          data: dataString,
+          accessToken: _this.$cookie.get('accessToken'),
+        }))
+          .then(res=> {
+            console.log(res.data);
+            if(res.data.code===1) {
+              _this.$message({
+                message: res.data.msg,
+                type: 'success'
+              });
+            }else {
+              _this.$message.error(res.data.msg)
+            }
+          })
+          .catch(err=> {
+            console.log(err)
+          })
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             alert('submit!');
+            if(this.iid) {//修改
+              this.getSendData('api/media/image/edit/update');
+            }else {//增加
+              this.getSendData('api/media/image/add');
+            }
+
           } else {
             console.log('error submit!!');
             return false;
@@ -277,8 +382,8 @@
   }
   .pagelet-figure-gallery-item .gallery-img {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 105px;
     overflow: hidden;
   }
   .pagelet-figure-gallery-item .gallery-img img {
@@ -351,16 +456,36 @@
     margin-top: 10px;
   }
   .front-cover-img {
+    position: relative;
     overflow: hidden;
     float: left;
     margin-right: 20px;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 105px;
     border: 1px solid $border-color;
   }
   .front-cover-img img{
     display: block;
     width: 100%;
     height: 100%;
+  }
+  .cropper-icon {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    opacity: .6;
+    cursor: pointer;
+    -webkit-transition: opacity .1s;
+    -moz-transition: opacity .1s;
+    transition: opacity .1s;
+    background: #ddd url(https://p3.pstatp.com/origin/213200066a873a8df82e) no-repeat 50%;
+    width: 30px;
+    height: 30px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+  }
+  .cropper-icon:hover {
+    opacity: 1;
   }
 </style>

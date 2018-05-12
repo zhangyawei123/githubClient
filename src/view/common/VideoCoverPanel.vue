@@ -6,7 +6,15 @@
         <label class="upload-video-cover"><input type="file" id="videoPicUrl" @change="onFileChangeCover" style="display: none;">选择图片</label>
       </div>
       <div class="video-cover-uploaded" v-show="customVideoCover">
-        <img :src="customVideoCover.url" alt="" height="224" width="400" style="padding: 16px 0px;">
+        <!--<img :src="customVideoCover.url" alt="" height="224" width="400" style="padding: 16px 0px;">-->
+        <InnerCropper :cropInnerImgUrl="customVideoCover.url"  ref="innerCrop" />
+        <!--<div class="container clearfix">-->
+          <!--<div style="width: 400px;height: 380px;float: left;">-->
+            <!--<img id="videoImg" crossorigin="anonymous">-->
+          <!--</div>-->
+          <!--<div class="small-preview"  style="width: 172px;height: 120px;overflow:hidden; float: left;margin-left: 20px;"></div>-->
+        <!--</div>-->
+
         <div class="confirm-box">
           <label for="videoPicUrl" class="upload-video-cover">重新上传</label>
           <label class="upload-video-cover" @click="confirmCustomPic">确认</label>
@@ -41,7 +49,20 @@
 </template>
 <script>
   import {httpUrl} from "../../http_url";
-
+  // import '../../../static/cropper4.0.0/cropper.js';
+  import InnerCropper from "./InnerCropper"
+  let options = {
+    aspectRatio: 1.4,
+    viewMode: 2,
+    preview:".small-preview",
+    movable: false,//是否允许可以移动后面的图片
+    checkCrossOrigin: false,//检查当前图像是否为跨域图像。
+    guides: false,	//显示在裁剪框上方的虚线。
+    background: true  ,//显示容器的网格背景。（就是后面的马赛克）
+    autoCropArea: 1,//定义自动裁剪面积大小(百分比)和图片进行对比。
+    scalable: false,//是否允许缩放图像。
+    zoomable: false,//是否允许放大图像。
+  }
   export default {
     props: ['systemPicList'],
     data() {
@@ -52,6 +73,9 @@
         systemVideoCover: '',                                         //系统选择的的视频封面
         videoCover: '',                                        //页面内选择后显示的封面
       }
+    },
+    components: {
+      InnerCropper
     },
     methods: {
       onFileChangeCover(e) {
@@ -72,6 +96,13 @@
           success:function(result){
             console.log(result);
             _this.customVideoCover = result.list[0];
+            // var $image = $('#videoImg');
+            // setTimeout(function () {
+            //   $image.cropper('destroy').attr('src', 'https://p3.pstatp.com/list/pgc-image/15259324310959d54468f9f').cropper(options);
+            // },100)
+            setTimeout(function () {
+              _this.$refs.innerCrop.replaceImg(_this.customVideoCover.url);
+            },10)
           },
           error:function(result){
             console.log(result);
@@ -84,6 +115,7 @@
         console.log(this.systemVideoCover);
       },
       confirmCustomPic() {            //点击自定义上传tab确认按钮
+        this.customVideoCover = this.$refs.innerCrop.sendCropImg();
         this.$emit('sendVideoCover',this.customVideoCover);
         this.customVideoCover='';
       },
@@ -99,14 +131,17 @@
     }
   }
 </script>
+<style>
+  .videoCoverDialog .el-dialog__headerbtn {
+    z-index: 1!important;
+  }
+</style>
 <style scoped lang="scss">
   /*自定义上传样式*/
   .videoCoverDialog .el-dialog__header {
     padding: 0;
   }
-  .videoCoverDialog .el-dialog__headerbtn {
-    z-index: 1;
-  }
+
   .video-uploader-upload-background {
     height: 234px;
     background: url("../../assets/img/purevideo_pic.dba9515.png") no-repeat center center;

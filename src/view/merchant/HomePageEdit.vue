@@ -39,12 +39,12 @@
             <dt>标题：</dt>
             <dd>
               <el-input v-model="notice.title" :maxlength="50" placeholder="详细地址" class="input-long"></el-input>
-              <span class="limit" v-if="notice.title.length"> {{notice.title.length}} / 50</span>
+              <span class="limit"> {{notice.title.length}} / 50</span>
             </dd>
             <dt>内容：</dt>
             <dd>
               <el-input v-model="notice.content" type="textarea" :rows="2" :maxlength="50" placeholder="详细地址" class="input-long"></el-input>
-              <span class="limit" v-if="notice.content.length"> {{notice.content.length}} / 50</span>
+              <span class="limit"> {{notice.content.length}} / 50</span>
             </dd>
           </dl>
         </dd>
@@ -138,6 +138,13 @@
           <el-button @click="equipmentDialogVisible = false">取 消</el-button>
         </span>
       </el-dialog>
+      <el-dialog
+        :visible.sync="cropperDialogVisible"
+        width="712px"
+        title="正文图片"
+        class="imgCoverDialog">
+        <Cropper :cropImgUrl="cropImgUrl" ref="cropperPanel" @sendCropData="getCropImg" @closeCropPanel="cropperDialogVisible=false" />
+      </el-dialog>
     </div>
 </template>
 
@@ -145,6 +152,7 @@
   import {httpUrl} from "../../http_url";
   import AlertPosterEquipment from '../common/AlertPosterEquipment'
   import AlertBanner from '../common/AlertBanner'
+  import Cropper from '../common/Cropper'
     export default {
         name: "home-page-edit",
       data() {
@@ -153,6 +161,8 @@
             bannerDialogVisible: false,          //banner弹窗
             posterDialogVisible: false,          //海报弹窗
             equipmentDialogVisible: false,       //设备弹窗
+            cropperDialogVisible: false,         //剪切弹窗
+            cropImgUrl: '',
             changeTextIndex: 0,                 //点击更换跳转链接文字的index
             bannerList: [],
             notice: {},
@@ -163,7 +173,7 @@
           }
       },
       components: {
-        AlertBanner,AlertPosterEquipment
+        AlertBanner,AlertPosterEquipment,Cropper
       },
       mounted() {
         this.$nextTick(function () {
@@ -177,7 +187,7 @@
             .then(function (response) {
               console.log(response.data);
               _this.bannerList = response.data.companyHome.banners
-              _this.notice = response.data.companyHome.notice
+              _this.notice = response.data.companyHome.notice || {title: '',content: ''}
               _this.posterLists = response.data.companyHome.videos
               _this.posterLimit = 2 - response.data.companyHome.videos.length
               _this.equipmentLists = response.data.companyHome.equipments
@@ -207,23 +217,30 @@
             url:httpUrl + '/api/common/image/upload',
             type:'POST',
             data:formData,
-            cache: false,
-            async: false,
+            // cache: false,
+            // async: false,
             contentType: false,    //不可缺
             processData: false,    //不可缺
             success:function(result){
               console.log(result);
-              // 为什么需要一个触发事件才能显示图片呢
-              _this.bannerList[_this.changeTextIndex].bannerPic = result.list[0].url;
-              _this.bannerList[_this.changeTextIndex].bannerPid = result.list[0].pid;
+              _this.cropperDialogVisible =true;
+              _this.cropImgUrl = result.list[0].url;
+              setTimeout(function () {
+                _this.$refs.cropperPanel.replaceImg(_this.cropImgUrl);
+              },10)
             },
             error:function(result){
               console.log(result);
             }
           });
         },
+        getCropImg(data) {
+          this.bannerList[this.changeTextIndex].bannerPic = data.url;
+          this.bannerList[this.changeTextIndex].bannerPid = data.pid;
+          this.cropperDialogVisible =false;
+        },
         addBanner() {
-          this.bannerList.push({bannerId:''});
+          this.bannerList.push({});
           console.log(this.bannerList)
         },
         delItem(list,index) {

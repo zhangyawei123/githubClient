@@ -203,7 +203,12 @@
     <div class="product-info-item">
       <dl>
         <dt>* 产品介绍：</dt>
-        <dd></dd>
+        <dd>
+          <!--包一个ID是因为头条的自定义样式加了这个ID-->
+          <div id="pagelet-write" style="border: 1px solid #e5e5e5;">
+            <UE :config=config ref="ue"></UE>
+          </div>
+        </dd>
       </dl>
     </div>
     <div class="product-info-item">
@@ -276,6 +281,7 @@
 <script>
   import { httpUrl} from "../../../http_url";
   import AlertPanel from '../../common/AlertPanel'
+  import UE from '../../common/UE';
   const professionOptions = ['汽车', '航空航天', '工程机械', '农业机械', '纺织机械', '通用机械', '轨道交通', '通信计算机', '石油天然气', '电子与电气仪表'];
   export default {
     name: 'publish-product',
@@ -330,6 +336,13 @@
         partsLibraryList: [],                   //零件库选择的零件
         partsCustomList: [],                    //自定义添加的零件
         showState: '1',                         //推荐型号显示隐藏
+        config: {                               //富文本的config
+          initialFrameWidth: null,
+          initialFrameHeight: 350,
+          toolbars: [
+            ['h1', 'bold', 'blockquote', 'ul', 'ol', 'horizontal', '|', 'insertimage', '|', 'removeformat', 'undo', 'redo']
+          ],
+        },
         ProductsIntroList: [],                  //产品介绍
       }
     },
@@ -342,7 +355,8 @@
       })
     },
     components: {
-      AlertPanel
+      AlertPanel,
+      UE
     },
     methods: {
       submitForm(formName) {

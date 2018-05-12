@@ -10,8 +10,7 @@
         </dd>
         <dt>* 海报视频：</dt>
         <dd>
-          <div class="video-upload-btn" @click="triggerUploadVideo"></div>
-          <UploadVideo ref="video1" :videoInputId="'demo1'" :videoCoverUrl="videoCover" @openVideoCoverPanel="openVideoCover" />
+          <UploadVideo ref="video1" :videoInputId="'demo1'" :videoId="videoParentId" :videoUrl="videoParentUrl" :videoCoverUrl="videoCover" @openVideoCoverPanel="openVideoCover" />
         </dd>
         <dt>* 关联产品：</dt>
         <dd>
@@ -80,13 +79,13 @@
     data() {
       return {
         videoTitle: '',
-        // percentage: 0,
-        // videoId: '',
+        videoParentId: '',              //视频编辑页面传入的视频Id
+        videoParentUrl: '',             //视频编辑页面传入的视频url
         videoCoverDialogVisible: false,
         equipmentUrl: 'api/product/equipments',
         equipmentLists: [],
         equipmentDialogVisible: false,
-        activeName: 'first',
+
         systemPicList: [],                                        //系统封面列表
         videoCover: '',                                           //页面内选择后显示的封面
         linkProduct: null,
@@ -100,93 +99,10 @@
     mounted() {
       this.checkLogIn();
       this.$nextTick(function () {
-        // let _this = this;
-        // let showTimeInterval = null;
-        // $(".upinput").fileupload({
-        //   url: httpUrl + "api/common/video/upload",//文件上传地址，当然也可以直接写在input的data-url属性内
-        //   dataType: "json", //如果不指定json类型，则传来的json字符串就需要解析jQuery.parseJSON(data.result);
-        //   formData:function(form){//如果需要额外添加参数可以在这里添加
-        //     return [{name:"oldVideoId",value:_this.videoId || ''},
-        //       {name:"accessToken",value: _this.$cookie.get('accessToken')}];
-        //   },
-        //   maxFileSize: 999,
-        //   done:function(e,data){
-        //     //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
-        //     //注意data要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
-        //     //返回的数据在data.result中，这里dataType中设置的返回的数据类型为json
-        //     if(data.result.code ===1) {
-        //       // 上传成功：
-        //       $(".feedback-icon").removeClass("success");
-        //       $('.video-upload-btn').hide();
-        //       $('.video-uplaoding').hide();
-        //       $(".video-wrap").show();
-        //       $(".video-select").show();
-        //       console.log(data.result);
-        //       _this.videoId = data.result.videoId;
-        //       $(".feedback-text").html(data.result.msg);
-        //       $(".video-wrap").html("<video controls height='200' width='360' src="+data.result.previewSrc+"></video>");
-        //       // 定时查询有没有生成封面
-        //       showTimeInterval = setInterval(checkVideoPic,500);
-        //     } else {
-        //       // 上传失败：
-        //       _this.percentage = 0;
-        //       $(".upstatus").html("<span style='color:red;'>"+data.result.msg+"</span>");
-        //     }
-        //
-        //   },
-        //   progressall: function (e, data) {//上传进度
-        //     _this.systemPicList= [];
-        //     _this.videoCover= '';
-        //     _this.currentIndex= '';
-        //     $('.video-upload-btn').hide();
-        //     $('.video-select').hide();
-        //     $(".video-wrap").hide();
-        //     $('.video-uplaoding').show();
-        //     var progress = parseInt(data.loaded / data.total * 100, 10);
-        //     _this.percentage = progress;
-        //     if(progress==1) {
-        //       $(".feedback-text").text('上传成功！正在自动生成封面...');
-        //     }
-        //   }
-        // });
-        // //定时查询是否生成封面
-        // function checkVideoPic(){
-        //   $.ajax({
-        //     type : "get",
-        //     url : httpUrl+"api/common/video/cover?accessToken="+_this.$cookie.get('accessToken')+"&videoId=" + _this.videoId,
-        //     // async : true,
-        //     // data:{
-        //     //   videoId :videoId,
-        //     //   accessToken: _this.$cookie.get('accessToken')
-        //     // },
-        //     // dataType : 'json',
-        //     success : function(result) {
-        //       if(result.code == 1 && result.list.length > 0){
-        //         //修改视频上传图片
-        //         console.log(result)
-        //         // $("#video-feedback").addClass("video-success");
-        //         $(".feedback-text").text("上传成功！生成封面成功！");
-        //         $(".feedback-icon").addClass("success");
-        //         _this.systemPicList = result.list;
-        //         //去除定时请求
-        //         clearInterval(showTimeInterval);
-        //       }else {
-        //         // clearInterval(showTimeInterval);
-        //         // alert('msg');
-        //       }
-        //     }
-        //   });
-        // }
+
       })
     },
     methods: {
-      triggerUploadVideo() {                //触发视频上传事件
-        if(true) {
-          this.$refs.video1.uploadVideo();
-        }else { //有视频正在处理
-          alert('msg');
-        }
-      },
       openVideoCover(data) {
         this.systemPicList = data;
         this.videoCoverDialogVisible = true;

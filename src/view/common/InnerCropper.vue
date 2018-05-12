@@ -2,13 +2,9 @@
   <div>
     <div class="container">
       <div style="width: 400px;height: 380px;float: left;">
-        <img id="image" crossorigin="anonymous">
+        <img id="Innerimage" crossorigin="anonymous">
       </div>
-      <div class="small-preview"  style="width: 172px;height: 120px;overflow:hidden; float: left;margin-left: 20px;"></div>
-    </div>
-    <div class="footer">
-      <span class="footer-btn" id="getData" @click="sendCropImg">确认</span>
-      <span class="footer-btn cancel-btn" id="destroy" @click="closeCropPanel">取消</span>
+      <div class="inner-preview"  style="width: 172px;height: 120px;overflow:hidden; float: left;margin-left: 20px;"></div>
     </div>
   </div>
 
@@ -18,7 +14,7 @@
   let options = {
     aspectRatio: 1.4,
     viewMode: 2,
-    preview:".small-preview",
+    preview:".inner-preview",
     movable: false,//是否允许可以移动后面的图片
     checkCrossOrigin: false,//检查当前图像是否为跨域图像。
     guides: false,	//显示在裁剪框上方的虚线。
@@ -28,10 +24,10 @@
     zoomable: false,//是否允许放大图像。
   }
   export default {
-    props: ['cropImgUrl'],
+    props: ['cropInnerImgUrl'],
     data() {
       return {
-
+        cropInnerImg: '',
       }
     },
     mounted() {
@@ -39,22 +35,21 @@
     },
     methods: {
       replaceImg(url) {               //打开或者更换图片
-        var $image = $('#image');
+        var $image = $('#Innerimage');
         $image.cropper('destroy').attr('src', url).cropper(options);
       },
       sendCropImg() {
         let _this = this;
-        var $image = $('#image');
+        var $image = $('#Innerimage');
         var data = $image.cropper('getData', true);
-        console.log(data);
         $.ajax({
-          url: _this.httpUrl + 'api/common/image/cutOut?x='+data.x+'&y='+data.y+'&w='+data.width+'&h='+data.height+'&image_url='+_this.cropImgUrl+'&accessToken=' + _this.$cookie.get('accessToken'),
+          url: _this.httpUrl + 'api/common/image/cutOut?x='+data.x+'&y='+data.y+'&w='+data.width+'&h='+data.height+'&image_url='+_this.cropInnerImgUrl+'&accessToken=' + _this.$cookie.get('accessToken'),
           type: 'get',
+          async: false  //设置同步使return的时候有_this.cropInnerImg的值
         })
           .done(function(data) {
-            console.log(data);
             if(data.sta===1) {
-              _this.$emit('sendCropData',data.imagePic);
+              _this.cropInnerImg = data.imagePic;
             }else {
               _this.$notify.error({
                 title: '错误',
@@ -65,12 +60,7 @@
           .fail(function() {
             console.log("error");
           })
-          .always(function() {
-            console.log("complete");
-          });
-      },
-      closeCropPanel() {
-        this.$emit('closeCropPanel');
+        return _this.cropInnerImg;
       }
     }
   }
@@ -83,25 +73,5 @@
     padding: 20px;
     background: #f7f7f7;
     overflow: hidden;
-  }
-  .footer {
-    margin-top: 20px;
-    text-align: center;
-  }
-  .footer-btn {
-    display: inline-block;
-    margin: 0 10px;
-    height: 40px;
-    line-height: 40px;
-    width: 140px;
-    text-align: center;
-    background: #1278ec;
-    color: #fff;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  .cancel-btn {
-    background-color: #f1f1f1;
-    color: #a4a4a4;
   }
 </style>

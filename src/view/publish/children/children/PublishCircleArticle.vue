@@ -108,15 +108,15 @@
         </el-radio-group>
         <div class="front-cover-upload clearfix" v-show="ruleForm.CoverType!=='0'">
           <div class="front-cover-img" @click="openImgDialog(0)">
-            <img :src="ruleForm.coverList[0].url" alt="">
+            <img :src="ruleForm.coverList[0].url" :data-pid="ruleForm.coverList[0].pid" alt="">
             <div v-if="ruleForm.coverList[0].url" @click.stop="openCropPanel(0)" class="cropper-icon"></div>
           </div>
           <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(1)">
-            <img :src="ruleForm.coverList[1].url" alt="">
+            <img :src="ruleForm.coverList[1].url" :data-pid="ruleForm.coverList[1].pid" alt="">
             <div v-if="ruleForm.coverList[1].url" @click.stop="openCropPanel(1)" class="cropper-icon"></div>
           </div>
           <div class="front-cover-img" v-show="ruleForm.CoverType=='3'" @click="openImgDialog(2)">
-            <img :src="ruleForm.coverList[2].url" alt="">
+            <img :src="ruleForm.coverList[2].url" :data-pid="ruleForm.coverList[2].pid" alt="">
             <div v-if="ruleForm.coverList[2].url" @click.stop="openCropPanel(2)" class="cropper-icon"></div>
           </div>
           <!--<div v-for="(item,index) in ruleForm.coverList" class="front-cover-img" @click="openImgCoverPanel(index)"></div>-->
@@ -124,11 +124,11 @@
       </el-form-item>
       <el-form-item label="频道分类" prop="channel">
         <el-radio-group v-model="ruleForm.channel">
-          <el-radio label="0">现场</el-radio>
-          <el-radio label="1">零件</el-radio>
-          <el-radio label="2">工艺</el-radio>
-          <el-radio label="3">设备</el-radio>
-          <el-radio label="4">售后</el-radio>
+          <el-radio label="scene">现场</el-radio>
+          <el-radio label="component">零件</el-radio>
+          <el-radio label="skill">工艺</el-radio>
+          <el-radio label="device">设备</el-radio>
+          <el-radio label="customerService">售后</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="文章标签" prop="dynamicTags">
@@ -229,7 +229,7 @@
             { required: true, message: '请选择频道分类', trigger: 'change' }
           ],
           dynamicTags: [
-            {type: 'array', required: true, message: '请至少添加一个标签'}
+            {type: 'array', required: true, message: '请至少添加一个标签', trigger: 'change'}
           ]
         }
       };
@@ -385,7 +385,12 @@
     },
     methods: {
       getVideoCover(data) {
-        this.videoCoverUrl = data.picUrl || data.url;
+        if(data.picUrl) {
+          this.videoCoverUrl = data.picUrl
+        }else {
+          this.videoCoverUrl = data.url;
+        }
+        // this.videoCoverUrl = data.picUrl || data.url;
         // 把视频封面加载富文本里
         var html = "";
         var videoId = $("#videoId").val();
@@ -397,12 +402,19 @@
         this.videoCoverDialogVisible = false;
       },
       openImgDialog(index) {//打开选择封面弹窗,记录是点击哪一个打开的
-        this.imgCoverList = this.$refs.ue.getImgList();
+        // this.imgCoverList = this.$refs.ue.getImgList();
+        let _this = this;
+        let receiveData =  this.$refs.ue.getImgList();
+        console.log(receiveData)
+        for(let i=0;i<receiveData.length;i++) {
+          _this.imgCoverList[i] = {url:receiveData[i],pid: ''};//这个是从富文本返回的图片对象，没有pid
+        }
+        console.log(this.imgCoverList)
         this.imgCoverDialogVisible = true;
         this.picBoxCurrentIndex = index;
       },
       getImgCover(data) { //回填选中后的图片封面
-        this.ruleForm.coverList[this.picBoxCurrentIndex].url = data;
+        this.ruleForm.coverList[this.picBoxCurrentIndex] = data;
         this.imgCoverDialogVisible = false;
       },
       openCropPanel(num) {                            //打开剪切窗口，记录位置
@@ -419,7 +431,10 @@
       getCropImg(data) {//回填剪切后的数据，只操作dom，不改变封面数组内的值
         let _this = this;
         console.log(data)
-          $('.front-cover-img img').eq(_this.picBoxCurrentIndex).attr('src',data);
+          $('.front-cover-img img').eq(_this.picBoxCurrentIndex).attr({
+            'src' : data.url,
+            'data-pid' : data.pid
+          });
         this.cropperDialogVisible = false;
       },
       handleClose(tag) {
@@ -449,9 +464,54 @@
             let checkIframeVideoCover = _this.$refs.ue.checkIframeVideoCover();
 
             if(videoId && !checkIframeVideoCover) {//加了视频但没有加到正文
-              alert('没有加入到正文');
+              alert('视频没有加入到正文');
             }else {
-              alert('submit!');
+              let coverList=[];//到这里在从DOM里去封面的值
+              if(_this.ruleForm.CoverType==0) {
+                coverList=[];
+              }else if(_this.ruleForm.CoverType==1) {
+                if($('.front-cover-img img').eq(0).attr('src')=='') {
+                  alert('请选择封面');
+                  return
+                }else {
+                  coverList[0] = $('.front-cover-img img').eq(0).attr('src');
+                }
+              }else if(_this.ruleForm.CoverType==3) {
+                $.each($('.front-cover-img img'),function (index,item) {
+                  if($(item).attr('src')=='') {
+                    alert('请选择封面');
+                    return
+                  }else {
+                    coverList[index] = $(item).attr('src');
+                  }
+                })
+              }
+              console.log(coverList)
+              _this.axios.post(httpUrl + 'api/media/article/add',_this.qs.stringify({
+                title: _this.ruleForm.title,
+                content: _this.$refs.ue.getUEContent(),
+                accessToken: _this.$cookie.get('accessToken'),
+                hasVideo: Number(!!videoId),
+                vid: videoId || '',
+                coverNum: Number(_this.ruleForm.CoverType),
+                keyWords: _this.ruleForm.dynamicTags.join(','),
+                articleType: _this.ruleForm.channel,
+                covers: coverList,
+              }))
+                .then(res=> {
+                  console.log(res.data);
+                  if(res.data.code===1) {
+                    _this.$message({
+                      message: res.data.msg,
+                      type: 'success'
+                    });
+                  }else {
+                    _this.$message.error(res.data.msg)
+                  }
+                })
+                .catch(err=> {
+                  console.log(err)
+                })
             }
           } else {
             // let imgList = _this.$refs.ue.getImgList();
@@ -465,7 +525,13 @@
   }
 </script>
 <style scoped lang="scss">
-  /*@import url(../../../../../static/ueditor/dialogs/video/common.5edf405.css);*/
+  @import url(../../../../../static/ueditor/dialogs/video/common.5edf405.css);
+  .pagelet-write {
+    border: 1px solid $border-color;
+  }
+  #video-card {
+    margin-top: 16px;
+  }
   .demo-ruleForm {
     background: #fff;
     padding: 40px 40px 40px 20px;
@@ -477,8 +543,8 @@
     position: relative;
     float: left;
     margin-right: 20px;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 105px;
     border: 1px solid $border-color;
     cursor: pointer;
   }
@@ -527,10 +593,5 @@
   }
 </style>
 <style lang="scss">
-  .pagelet-write {
-    border: 1px solid $border-color;
-  }
-</style>
-<style scoped>
-  @import url(../../../../../static/ueditor/dialogs/video/common.5edf405.css);
+
 </style>
